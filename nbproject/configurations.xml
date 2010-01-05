@@ -2,7 +2,11 @@
 <configurationDescriptor version="62">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <df name="runningram" root=".">
+      <df name="GNU-i386-Linux">
+      </df>
       <in>Functor.h</in>
+      <in>Init_client.cpp</in>
+      <in>Init_client.h</in>
       <in>initparser.cpp</in>
       <in>initparser.h</in>
       <in>sdltest.cpp</in>
@@ -10,8 +14,8 @@
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="false">
-      <itemPath>Makefile</itemPath>
       <itemPath>Makefile-runningram.mk</itemPath>
+      <itemPath>oldMakefile</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

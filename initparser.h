@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <stdlib.h>
 #include "Functor.h"
 
 using std::ifstream;
@@ -29,7 +30,7 @@ public:
 //	virtual string Serialise() = 0;
 };
 //===========================================
-class Section :public Serializator
+class Sectionp :public Serializator
 {
 	vector <Serializator *> _props;
 	char _break_name;
@@ -37,8 +38,8 @@ class Section :public Serializator
 protected:
 	virtual bool Read_frag (ifstream &file);
 public:
-	Section (string name, char break_name);
-	virtual ~Section();
+	Sectionp (string name, char break_name);
+	virtual ~Sectionp();
 	void Add_param (Serializator* p);
 
 	void Delete_props();
@@ -92,42 +93,16 @@ public:
 void No_spaces_begin (ifstream& file);
 //-------------------------------------------------------------------
 template <>
-bool St_loader<int>::Read_frag (ifstream &file)
-{
-	char istr[64] = "wrong value";
-	file.getline (istr, 64);
-	*_val = atoi (istr);
-	return true;
-}
+bool St_loader<int>::Read_frag (ifstream &file);
 //-------------------------------------------------------------------
 template <>
-bool St_loader<double>::Read_frag (ifstream &file)
-{
-	char istr[1024] = "wrong value";
-	file.getline (istr, 1024);
-	*_val = atof (istr);
-	return true;
-}
+bool St_loader<double>::Read_frag (ifstream &file);
 //-------------------------------------------------------------------
 template <>
-bool St_loader<string>::Read_frag (ifstream &file)
-{
-	No_spaces_begin (file);
-	char istr[1024] = "wrong value";
-	file.getline (istr, 1024);
-	*_val = istr;
-	return true;
-}
+bool St_loader<string>::Read_frag (ifstream &file);
 //-------------------------------------------------------------------
 template <>
-bool St_loader<char>::Read_frag (ifstream &file)
-{
-	No_spaces_begin (file);
-	char istr[1024] = "wrong value";
-	file.getline (istr, 1024);
-	*_val = istr[0];
-	return true;
-}
+bool St_loader<char>::Read_frag (ifstream &file);
 #ifdef TENSOR_H_INCLUDED
 #ifndef ST_LOADER_FOR_VECTOR3D_DEFINED
 #define ST_LOADER_FOR_VECTOR3D_DEFINED
