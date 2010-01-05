@@ -68,18 +68,20 @@ bool Serializator::After_read (ifstream &file){return true;}
 bool Serializator::Before_read (ifstream &file){return true;}
 //-----------------------------------------------------------------------------------------------
 //===============================================================================================
-Section::Section (string name, char break_name)
+Sectionp::Sectionp (string name, char break_name)
 	:Serializator (name), _break_name (break_name)
 {
 }
-Section::~Section(){}
+Sectionp::~Sectionp()
+{
+}
 //-----------------------------------------------------------------------------------------------
-void Section::Add_param (Serializator* p)
+void Sectionp::Add_param (Serializator* p)
 {
 	_props.push_back (p);
 }
 //-----------------------------------------------------------------------------------------------
-bool Section::Read_frag (ifstream &file)
+bool Sectionp::Read_frag (ifstream &file)
 {
 	string cur_name;
 	char cn[1024] = "wrong walue";
@@ -114,12 +116,52 @@ bool Section::Read_frag (ifstream &file)
 	return true;
 }
 //-----------------------------------------------------------------------------------------------
-void Section::Delete_props()
+void Sectionp::Delete_props()
 {
 	for (vector <Serializator*>::iterator i = _props.begin(); i != _props.end(); ++i)
 	{
 		delete *i;
 	}
+}
+//-----------------------------------------------------------------------------------------------
+//===============================================================================================
+//-------------------------------------------------------------------
+template <>
+bool St_loader<int>::Read_frag (ifstream &file)
+{
+	char istr[64] = "wrong value";
+	file.getline (istr, 64);
+	*_val = atoi (istr);
+	return true;
+}
+//-------------------------------------------------------------------
+template <>
+bool St_loader<double>::Read_frag (ifstream &file)
+{
+	char istr[1024] = "wrong value";
+	file.getline (istr, 1024);
+	*_val = atof (istr);
+	return true;
+}
+//-------------------------------------------------------------------
+template <>
+bool St_loader<string>::Read_frag (ifstream &file)
+{
+	No_spaces_begin (file);
+	char istr[1024] = "wrong value";
+	file.getline (istr, 1024);
+	*_val = istr;
+	return true;
+}
+//-------------------------------------------------------------------
+template <>
+bool St_loader<char>::Read_frag (ifstream &file)
+{
+	No_spaces_begin (file);
+	char istr[1024] = "wrong value";
+	file.getline (istr, 1024);
+	*_val = istr[0];
+	return true;
 }
 //-----------------------------------------------------------------------------------------------
 //===============================================================================================
