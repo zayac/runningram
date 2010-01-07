@@ -172,7 +172,7 @@ string No_spaces (const string& str)
 	for (int i = 0; i < str.size(); ++i)
 	{
 		char c = str[i];
-		if (c != ' ' && c != '\t' && c != '\n') ret += c;
+		if (c != ' ' && c != '\t' && c != '\n' && c != 13) ret += c; //13 - not know what it is, but required
 	}
 	return ret;
 }

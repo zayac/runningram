@@ -4,19 +4,60 @@
     <df name="runningram" root=".">
       <df name="GNU-i386-Linux">
       </df>
-      <in>Functor.h</in>
-      <in>Init_client.cpp</in>
-      <in>Init_client.h</in>
-      <in>initparser.cpp</in>
-      <in>initparser.h</in>
-      <in>sdltest.cpp</in>
+      <df name="h">
+        <df name=".svn">
+          <df name="prop-base">
+          </df>
+          <df name="props">
+          </df>
+          <df name="text-base">
+          </df>
+          <df name="tmp">
+            <df name="prop-base">
+            </df>
+            <df name="props">
+            </df>
+            <df name="text-base">
+            </df>
+          </df>
+        </df>
+        <in>Eventman.h</in>
+        <in>Functor.h</in>
+        <in>Game_manager.h</in>
+        <in>Graphic_subsystem.h</in>
+        <in>initparser.h</in>
+      </df>
+      <df name="src">
+        <df name=".svn">
+          <df name="prop-base">
+          </df>
+          <df name="props">
+          </df>
+          <df name="text-base">
+          </df>
+          <df name="tmp">
+            <df name="prop-base">
+            </df>
+            <df name="props">
+            </df>
+            <df name="text-base">
+            </df>
+          </df>
+        </df>
+        <in>Eventman.cpp</in>
+        <in>Game_manager.cpp</in>
+        <in>Graphic_subsystem.cpp</in>
+        <in>initparser.cpp</in>
+      </df>
+      <in>main.cpp</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="false">
+      <itemPath>Makefile</itemPath>
       <itemPath>Makefile-runningram.mk</itemPath>
-      <itemPath>oldMakefile</itemPath>
     </logicalFolder>
+    <itemPath>Makefile</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>.</Elem>
@@ -34,19 +75,28 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>$(MAKE) -f Makefile</buildCommand>
           <cleanCommand>$(MAKE) -f Makefile clean</cleanCommand>
-          <executablePath>./sdltest</executablePath>
+          <executablePath>./GNU-i386-Linux/runningram</executablePath>
           <ccTool>
             <incDir>
-              <pElem>/usr/include/SDL</pElem>
+              <pElem>.</pElem>
             </incDir>
-            <preprocessorList>
-              <Elem>PTRACING=1</Elem>
-              <Elem>_GNU_SOURCE=1</Elem>
-              <Elem>_REENTRANT</Elem>
-            </preprocessorList>
           </ccTool>
         </makeTool>
       </makefileType>
+      <folder path="runningram">
+        <ccTool>
+          <incDir>
+            <pElem>h</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <item path="main.cpp" ex="false" tool="1">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/include/SDL</pElem>
+          </incDir>
+        </ccTool>
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
