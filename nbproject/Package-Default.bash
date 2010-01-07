@@ -11,8 +11,8 @@ CND_CONF=Default
 CND_DISTDIR=dist
 TMPDIR=build/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=./sdltest
-OUTPUT_BASENAME=sdltest
+OUTPUT_PATH=./GNU-i386-Linux/runningram
+OUTPUT_BASENAME=runningram
 PACKAGE_TOP_DIR=runningram/
 
 # Functions

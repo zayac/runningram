@@ -1,7 +1,7 @@
 ## -*- Makefile -*-
 ##
 ## User: necto
-## Time: Jan 5, 2010 6:04:22 PM
+## Time: Jan 7, 2010 9:50:40 PM
 ## Makefile created by Sun Studio.
 ##
 ## This file is generated automatically.
@@ -24,13 +24,17 @@ TARGETDIR_runningram=GNU-i386-Linux
 all: $(TARGETDIR_runningram)/runningram
 
 ## Target: runningram
+CPPFLAGS_runningram = \
+	-Ih
 OBJS_runningram =  \
-	$(TARGETDIR_runningram)/sdltest.o \
-	$(TARGETDIR_runningram)/initparser.o \
-	$(TARGETDIR_runningram)/Init_client.o
-SYSLIBS_runningram = -lm 
-USERLIBS_runningram = $(SYSLIBS_runningram) 
-DEPLIBS_runningram =  
+	$(TARGETDIR_runningram)/main.o \
+	$(TARGETDIR_runningram)/Game_manager.o \
+	$(TARGETDIR_runningram)/Graphic_subsystem.o \
+	$(TARGETDIR_runningram)/Eventman.o \
+	$(TARGETDIR_runningram)/initparser.o
+SYSLIBS_runningram = -lm
+USERLIBS_runningram = $(SYSLIBS_runningram)
+DEPLIBS_runningram =
 LDLIBS_runningram = $(USERLIBS_runningram)
 
 
@@ -40,14 +44,20 @@ $(TARGETDIR_runningram)/runningram: $(TARGETDIR_runningram) $(OBJS_runningram) $
 
 
 # Compile source files into .o files
-$(TARGETDIR_runningram)/sdltest.o: $(TARGETDIR_runningram) sdltest.cpp
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ sdltest.cpp
+$(TARGETDIR_runningram)/main.o: $(TARGETDIR_runningram) main.cpp
+	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ main.cpp
 
-$(TARGETDIR_runningram)/initparser.o: $(TARGETDIR_runningram) initparser.cpp
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ initparser.cpp
+$(TARGETDIR_runningram)/Game_manager.o: $(TARGETDIR_runningram) src/Game_manager.cpp
+	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Game_manager.cpp
 
-$(TARGETDIR_runningram)/Init_client.o: $(TARGETDIR_runningram) Init_client.cpp
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ Init_client.cpp
+$(TARGETDIR_runningram)/Graphic_subsystem.o: $(TARGETDIR_runningram) src/Graphic_subsystem.cpp
+	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Graphic_subsystem.cpp
+
+$(TARGETDIR_runningram)/Eventman.o: $(TARGETDIR_runningram) src/Eventman.cpp
+	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Eventman.cpp
+
+$(TARGETDIR_runningram)/initparser.o: $(TARGETDIR_runningram) src/initparser.cpp
+	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/initparser.cpp
 
 
 
@@ -55,9 +65,11 @@ $(TARGETDIR_runningram)/Init_client.o: $(TARGETDIR_runningram) Init_client.cpp
 clean:
 	rm -f \
 		$(TARGETDIR_runningram)/runningram \
-		$(TARGETDIR_runningram)/sdltest.o \
-		$(TARGETDIR_runningram)/initparser.o \
-		$(TARGETDIR_runningram)/Init_client.o
+		$(TARGETDIR_runningram)/main.o \
+		$(TARGETDIR_runningram)/Game_manager.o \
+		$(TARGETDIR_runningram)/Graphic_subsystem.o \
+		$(TARGETDIR_runningram)/Eventman.o \
+		$(TARGETDIR_runningram)/initparser.o
 	$(CCADMIN)
 	rm -f -r $(TARGETDIR_runningram)
 
