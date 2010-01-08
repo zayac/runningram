@@ -12,8 +12,8 @@
 CCC = g++
 CXX = g++
 BASICOPTS = -g
-CCFLAGS = $(BASICOPTS) `sdl-config --cflags --libs`
-CXXFLAGS = $(BASICOPTS) `sdl-config --cflags --libs`
+CCFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf
+CXXFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf
 CCADMIN = 
 
 
@@ -31,6 +31,7 @@ OBJS_runningram =  \
 	$(TARGETDIR_runningram)/Game_manager.o \
 	$(TARGETDIR_runningram)/Battlefield.o \
 	$(TARGETDIR_runningram)/Camera.o \
+	$(TARGETDIR_runningram)/Console.o \
 	$(TARGETDIR_runningram)/Graphic_subsystem.o \
 	$(TARGETDIR_runningram)/Eventman.o \
 	$(TARGETDIR_runningram)/initparser.o
@@ -58,6 +59,9 @@ $(TARGETDIR_runningram)/Battlefield.o: $(TARGETDIR_runningram) src/Battlefield.c
 $(TARGETDIR_runningram)/Camera.o: $(TARGETDIR_runningram) src/Camera.cpp
 	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Camera.cpp
 
+$(TARGETDIR_runningram)/Console.o: $(TARGETDIR_runningram) src/Console.cpp
+	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Console.cpp
+
 $(TARGETDIR_runningram)/Graphic_subsystem.o: $(TARGETDIR_runningram) src/Graphic_subsystem.cpp
 	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Graphic_subsystem.cpp
 
@@ -76,6 +80,8 @@ clean:
 		$(TARGETDIR_runningram)/main.o \
 		$(TARGETDIR_runningram)/Game_manager.o \
 		$(TARGETDIR_runningram)/Battlefield.o \
+		$(TARGETDIR_runningram)/Camera.o \
+		$(TARGETDIR_runningram)/Console.o \
 		$(TARGETDIR_runningram)/Graphic_subsystem.o \
 		$(TARGETDIR_runningram)/Eventman.o \
 		$(TARGETDIR_runningram)/initparser.o
