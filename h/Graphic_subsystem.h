@@ -15,7 +15,6 @@ class Camera;
 class Graphic_subsystem
 {
     SDL_Surface* screen;
-    SDL_Surface* bg;
 
 	class Initialaiser;
 	Initialaiser* parser;
@@ -29,9 +28,12 @@ public:
 	bool Cleanup();
 
 	void Draw (Camera* look) const;
+	SDL_Surface* Get_screen() const {return screen;};
 
 	bool Ok() const;
 };
+
+typedef Graphic_subsystem Canvas;
 
 #endif	/* _GRAPHIC_SUBSYSTEM_H */
 
