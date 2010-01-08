@@ -8,6 +8,7 @@
 #include <SDL/SDL.h>
 #include "Graphic_subsystem.h"
 #include "initparser.h"
+#include "Camera.h"
 
 
 class Graphic_subsystem::Initialaiser :public Sectionp
@@ -64,12 +65,21 @@ bool Graphic_subsystem::Init()
 
     /* free the temp surface */
     SDL_FreeSurface (temp);
+
+	return Ok();
 }
 //--------------------------------------------------------------------------------------------------
-void Graphic_subsystem::Draw() const
+void Graphic_subsystem::Draw (Camera* look) const
 {
     /* draw the background */
     SDL_BlitSurface (bg, NULL, screen, NULL);
+	
+	SDL_Rect simp;
+	simp.x = look->Get_pos ().x;
+	simp.y = look->Get_pos ().y;
+	simp.h = 24;
+	simp.w = 100;
+	SDL_FillRect (screen, &simp, 0);
 
     /* update the screen */
     SDL_UpdateRect (screen, 0, 0, 0, 0);
@@ -87,6 +97,7 @@ bool Graphic_subsystem::Cleanup()
 
     /* cleanup SDL */
     SDL_Quit ();
+	return Ok();
 }
 //--------------------------------------------------------------------------------------------------
 bool Graphic_subsystem::Ok() const

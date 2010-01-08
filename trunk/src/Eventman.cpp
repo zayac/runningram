@@ -11,7 +11,29 @@ Eventman::Eventman () :stop (false)
 {
 }
 //--------------------------------------------------------------------------------------------------
-Eventman::~Eventman () { }
+Eventman::~Eventman ()
+{
+	Clear_actions();
+}
+//--------------------------------------------------------------------------------------------------
+void Eventman::Applay_event (SDL_KeyboardEvent& ev)
+{
+	for (kiter i = kbdacts.begin(); i != kbdacts.end(); ++i)
+		if (ev.keysym.sym == i->key && ev.type == i->event)
+			(*i->fun)();
+}
+//--------------------------------------------------------------------------------------------------
+void Eventman::Clear_actions()
+{
+	for (kiter i = kbdacts.begin(); i != kbdacts.end(); ++i)
+		delete i->fun;
+	kbdacts.clear();
+}
+//--------------------------------------------------------------------------------------------------
+void Eventman::Register_key_action (Functor* fun, Uint8 event, SDLKey key)
+{
+	kbdacts.push_back (Kbd_action {fun, event, key});
+}
 //--------------------------------------------------------------------------------------------------
 void Eventman::Acts()
 {
@@ -29,13 +51,8 @@ void Eventman::Acts()
 
 			/* handle the keyboard */
 		case SDL_KEYDOWN:
-			switch (event.key.keysym.sym)
-			{
-			case SDLK_ESCAPE:
-			case SDLK_q:
-				stop = 1;
-				break;
-			}
+		case SDL_KEYUP:
+			Applay_event (event.key);
 			break;
 		}
 	}

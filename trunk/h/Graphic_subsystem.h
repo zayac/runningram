@@ -10,6 +10,7 @@
 
 struct SDL_Surface;
 class Serializator;
+class Camera;
 
 class Graphic_subsystem
 {
@@ -27,7 +28,7 @@ public:
 	bool Init();
 	bool Cleanup();
 
-	void Draw() const;
+	void Draw (Camera* look) const;
 
 	bool Ok() const;
 };

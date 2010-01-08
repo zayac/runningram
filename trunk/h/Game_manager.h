@@ -10,11 +10,13 @@
 
 class Graphic_subsystem;
 class Eventman;
+class Camera;
 
 class Game_manager
 {
 	Graphic_subsystem *canvas;
 	Eventman *sense;
+	Camera* look;
 
 public:
 	Game_manager (int argc, char *argv[]);
