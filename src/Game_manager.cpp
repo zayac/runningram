@@ -5,22 +5,25 @@
  * Created on January 7, 2010, 8:45 PM
  */
 
+#include <SDL/SDL.h>
 #include "Game_manager.h"
 #include "Graphic_subsystem.h"
 #include "Eventman.h"
 #include "initparser.h"
+#include "Camera.h"
+#include "Functor.h"
 
 Game_manager::Game_manager (int argc, char *argv[])
-:canvas (new Graphic_subsystem), sense (new Eventman)
+:canvas (new Graphic_subsystem), sense (new Eventman), look(new Camera)
 {
 	Init (argc, argv);
 }
 //--------------------------------------------------------------------------------------------------
 Game_manager::~Game_manager()
 {
-	Cleanup();
 	if (!canvas) delete canvas;
 	if (!sense) delete sense;
+	if (!look) delete look;
 }
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Init (int argc, char *argv[])
@@ -31,6 +34,11 @@ bool Game_manager::Init (int argc, char *argv[])
 	gen.Add_param (canvas->Get_parser ());
     File_loader fl ("./settings.cfg");
     fl.Read_sector (&gen);
+
+	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_left), SDL_KEYDOWN, SDLK_LEFT);
+	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_right), SDL_KEYDOWN, SDLK_RIGHT);
+	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_up), SDL_KEYDOWN, SDLK_UP);
+	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_down), SDL_KEYDOWN, SDLK_DOWN);
 
 	canvas->Init();
 	return Ok();
@@ -43,7 +51,7 @@ bool Game_manager::Main_loop()
     while (!sense->Stopped())
     {
 		sense->Acts();
-		canvas->Draw ();
+		canvas->Draw (look);
     }
 	return Ok();
 }

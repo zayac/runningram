@@ -29,6 +29,8 @@ CPPFLAGS_runningram = \
 OBJS_runningram =  \
 	$(TARGETDIR_runningram)/main.o \
 	$(TARGETDIR_runningram)/Game_manager.o \
+	$(TARGETDIR_runningram)/Battlefield.o \
+	$(TARGETDIR_runningram)/Camera.o \
 	$(TARGETDIR_runningram)/Graphic_subsystem.o \
 	$(TARGETDIR_runningram)/Eventman.o \
 	$(TARGETDIR_runningram)/initparser.o
@@ -50,6 +52,12 @@ $(TARGETDIR_runningram)/main.o: $(TARGETDIR_runningram) main.cpp
 $(TARGETDIR_runningram)/Game_manager.o: $(TARGETDIR_runningram) src/Game_manager.cpp
 	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Game_manager.cpp
 
+$(TARGETDIR_runningram)/Battlefield.o: $(TARGETDIR_runningram) src/Battlefield.cpp
+	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Battlefield.cpp
+
+$(TARGETDIR_runningram)/Camera.o: $(TARGETDIR_runningram) src/Camera.cpp
+	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Camera.cpp
+
 $(TARGETDIR_runningram)/Graphic_subsystem.o: $(TARGETDIR_runningram) src/Graphic_subsystem.cpp
 	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Graphic_subsystem.cpp
 
@@ -67,6 +75,7 @@ clean:
 		$(TARGETDIR_runningram)/runningram \
 		$(TARGETDIR_runningram)/main.o \
 		$(TARGETDIR_runningram)/Game_manager.o \
+		$(TARGETDIR_runningram)/Battlefield.o \
 		$(TARGETDIR_runningram)/Graphic_subsystem.o \
 		$(TARGETDIR_runningram)/Eventman.o \
 		$(TARGETDIR_runningram)/initparser.o
