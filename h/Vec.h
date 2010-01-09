@@ -24,4 +24,5 @@
 
 #undef SIMPLE_TYPE
 
-typedef Vec<long, 2> Point;
+typedef Vec<long, 2> Polong;
+typedef Vec<int, 2> Point;//!!! Take attention !!!

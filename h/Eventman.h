@@ -14,6 +14,8 @@
 
 using std::list;
 
+class Console;
+
 class Eventman
 {
 	struct Kbd_action
@@ -27,6 +29,9 @@ class Eventman
 	list <Kbd_action> kbdacts;
 	bool stop;
 
+	bool console_active;
+	Console* cmd;
+
 	void Applay_event (SDL_KeyboardEvent& ev);
 	void Clear_actions();
 
@@ -35,6 +40,10 @@ public:
 	virtual ~Eventman();
 
 	void Register_key_action (Functor* fun, Uint8 event, SDLKey key);
+
+	void Set_console (Console* c);
+	void Switch_console();
+	bool Console_enabled();
 
 	void Acts();
 	bool Stopped() const;
