@@ -48,11 +48,16 @@ bool Game_manager::Init (int argc, char *argv[])
 	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_up), SDL_KEYDOWN, SDLK_UP);
 	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_down), SDL_KEYDOWN, SDLK_DOWN);
 
+	sense->Register_key_action (new Arg_Method<void, void, Eventman> (sense, &Eventman::Switch_console),
+																			SDL_KEYDOWN, SDLK_BACKQUOTE);
+
+	sense->Set_console (cmd);
+	sense->Switch_console ();
 	bool result = true;
 	
 	result = result && canvas->Init();
 	result = result && ground->Init();
-	result = result && cmd->Init();
+	result = result && cmd->Init (canvas);
 	return result && Ok();
 }
 //--------------------------------------------------------------------------------------------------

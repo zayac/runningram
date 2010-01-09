@@ -6,8 +6,9 @@
  */
 #include <SDL/SDL.h>
 #include "Eventman.h"
+#include "Console.h"
 
-Eventman::Eventman () :stop (false)
+Eventman::Eventman () :stop (false), console_active(false)
 {
 }
 //--------------------------------------------------------------------------------------------------
@@ -35,6 +36,24 @@ void Eventman::Register_key_action (Functor* fun, Uint8 event, SDLKey key)
 	kbdacts.push_back (Kbd_action {fun, event, key});
 }
 //--------------------------------------------------------------------------------------------------
+void Eventman::Set_console (Console* c)
+{
+	cmd = c;
+}
+//--------------------------------------------------------------------------------------------------
+void Eventman::Switch_console()
+{
+	console_active = !console_active;
+
+	if (console_active) SDL_EnableKeyRepeat (300, 50);
+	else SDL_EnableKeyRepeat (0, 0);
+}
+//--------------------------------------------------------------------------------------------------
+bool Eventman::Console_enabled()
+{
+	return console_active;
+}
+//--------------------------------------------------------------------------------------------------
 void Eventman::Acts()
 {
     SDL_Event event;
@@ -53,6 +72,7 @@ void Eventman::Acts()
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 			Applay_event (event.key);
+			if (console_active) cmd->Operate (event.key);
 			break;
 		}
 	}

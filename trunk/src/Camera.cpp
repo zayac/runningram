@@ -35,7 +35,7 @@ void Camera::Move_down()
 	pos.y += 10;
 }
 //--------------------------------------------------------------------------------------------------
-Point Camera::Get_pos() const
+Polong Camera::Get_pos() const
 {
 	return pos;
 }

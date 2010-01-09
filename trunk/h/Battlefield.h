@@ -20,7 +20,7 @@ class Battlefield
     SDL_Surface* bg;//deprecated
 
 	char* cells;
-	Point size;
+	Polong size;
 
 	class Initialaiser;
 	Initialaiser* parser;
