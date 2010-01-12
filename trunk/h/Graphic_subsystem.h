@@ -11,10 +11,12 @@
 struct SDL_Surface;
 class Serializator;
 class Camera;
+class Canvas;
 
 class Graphic_subsystem
 {
-    SDL_Surface* screen;
+    Canvas* screen;
+	Canvas* buffer;
 
 	class Initialaiser;
 	Initialaiser* parser;
@@ -25,15 +27,13 @@ public:
 
 	Serializator* Get_parser();
 	bool Init();
-	bool Cleanup();
+	void Cleanup();
 
 	void Draw (Camera* look) const;
-	SDL_Surface* Get_screen() const {return screen;};
+	Canvas* Get_screen() const {return buffer;};
 
 	bool Ok() const;
 };
-
-typedef Graphic_subsystem Canvas;
 
 #endif	/* _GRAPHIC_SUBSYSTEM_H */
 

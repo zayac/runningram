@@ -44,10 +44,11 @@ Console::~Console ()
 //--------------------------------------------------------------------------------------------------
 Serializator* Console::Get_parser()
 {
+	assert(Ok());
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
-bool Console::Init (Canvas* c)
+bool Console::Init (Graphic_subsystem* c)
 {
 	if (!TTF_WasInit () && TTF_Init() == -1) return false;
 
@@ -65,29 +66,41 @@ bool Console::Init (Canvas* c)
 	borders.h = font.Height ();
 	input.Init  (borders, new Arg_Method<void, string*, Console> (this, &Console::On_enter_string), "You:>");
 
+	assert(Ok());
+
 	return success;
 }
 //--------------------------------------------------------------------------------------------------
 void Console::Cleanup()
 {
+	assert(Ok());
 	font.Close_font ();
 	if (TTF_WasInit()) TTF_Quit();
 }
 //--------------------------------------------------------------------------------------------------
 void Console::Operate (SDL_KeyboardEvent ev)
 {
+	assert(Ok());
 	input.Operate (ev);
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Draw (Canvas* c) const
+void Console::Draw (Graphic_subsystem* c) const
 {
+	assert(Ok());
 	history.Draw (c->Get_screen ());
 	input.Draw (c->Get_screen ());
 }
 //--------------------------------------------------------------------------------------------------
 void Console::On_enter_string (string* str)
 {
+	assert(str != 0);
+	assert(Ok());
 	history.Push_string (input.Get_greeting() + *str);
+}
+//--------------------------------------------------------------------------------------------------
+bool Console::Ok() const
+{
+	return font.Ok() && history.Ok() && input.Ok() && parser != 0;
 }
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Init (const Rect& brd, Arg_Functor <void, string*> *enter, string gr)
@@ -105,10 +118,12 @@ void Line_edit::Init (const Rect& brd, Arg_Functor <void, string*> *enter, strin
 	greeting = gr;
 	greeting.Set_font (&font);
 	grsize = greeting.Width();
+	assert(Ok());
 }
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Operate (SDL_KeyboardEvent ev)
 {
+	assert(Ok());
 	if (ev.type == SDL_KEYUP) return;
 
 	last_actiont = SDL_GetTicks();
@@ -154,6 +169,7 @@ void Line_edit::Operate (SDL_KeyboardEvent ev)
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Type_char (SDL_KeyboardEvent& ev)
 {
+	assert(Ok());
 	bool shift = ev.keysym.mod & KMOD_SHIFT;
 	bool up_case = shift != bool (ev.keysym.mod & KMOD_CAPS);
 	char c = 0;
@@ -258,6 +274,7 @@ void Line_edit::Type_char (SDL_KeyboardEvent& ev)
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Insert_symbol (char c)
 {
+	assert(Ok());
 	data.insert (cursor_pos, 1, c);
 	Cursor_right();
 }
@@ -269,6 +286,7 @@ Line_edit::~Line_edit()
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Finish_input ()
 {
+	assert(Ok());
 	cursor_pos = 0;
 	start_view = 0;
 	(*on_enter)(&data);
@@ -277,6 +295,7 @@ void Line_edit::Finish_input ()
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Cursor_left()
 {
+	assert(Ok());
 	if (cursor_pos > 0)
 	{
 		cursor_pos--;
@@ -286,6 +305,7 @@ void Line_edit::Cursor_left()
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Cursor_right()
 {
+	assert(Ok());
 	if (cursor_pos < data.size())
 	{
 		cursor_pos++;
@@ -295,18 +315,21 @@ void Line_edit::Cursor_right()
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Cursor_home()
 {
+	assert(Ok());
 	cursor_pos = 0;
 	if (cursor_pos < start_view) start_view = cursor_pos;
 }
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Cursor_end()
 {
+	assert(Ok());
 	cursor_pos = data.size();
 	while (Cursor_offset() > borders.w) start_view++;
 }
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Delete_left()
 {
+	assert(Ok());
 	if (cursor_pos > 0)
 	{
 		cursor_pos --;
@@ -316,11 +339,13 @@ void Line_edit::Delete_left()
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Delete_right()
 {
+	assert(Ok());
 	if (cursor_pos < data.size()) data.erase (cursor_pos, 1);
 }
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Draw (SDL_Surface* c) const
 {
+	assert(Ok());
 	borders.Draw (c, font.bg);
 	Draw_text (c);
 	Draw_cursor (c);
@@ -328,14 +353,18 @@ void Line_edit::Draw (SDL_Surface* c) const
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Draw_text (SDL_Surface* c) const
 {
-	greeting.Draw (c, &Rect (borders));
+	assert(Ok());
 	Rect brd = borders;
+	greeting.Draw (c, &brd);
+
+	brd = borders;
 	brd.Cut_left (grsize);
 	data.Draw (c, &brd, start_view);
 }
 //--------------------------------------------------------------------------------------------------
 void Line_edit::Draw_cursor (SDL_Surface* c) const
 {
+	assert(Ok());
 	Rect cursor = borders;
 	cursor.x += Cursor_offset() - cursor_width/2;
 	cursor.w = cursor_width;
@@ -350,22 +379,32 @@ void Line_edit::Draw_cursor (SDL_Surface* c) const
 //--------------------------------------------------------------------------------------------------
 int Line_edit::Cursor_offset() const
 {
+	assert(Ok());
 	string before = data.substr (start_view, cursor_pos - start_view);
 	return grsize + font.Str_len (before.c_str());
 }
 //--------------------------------------------------------------------------------------------------
+bool Line_edit::Ok() const
+{
+	return 0 <= cursor_pos && cursor_pos <= data.size() && 0 <= start_view && start_view <= data.size() &&
+		data.Ok() && greeting.Ok() && grsize >= 0 && on_enter != 0;
+}
+//--------------------------------------------------------------------------------------------------
 void Lines_view::Init (const Rect& brd)
 {
+	assert(Ok());
 	borders = brd;
 }
 //--------------------------------------------------------------------------------------------------
 void Lines_view::Push_string (const string &what)
 {
+	assert(Ok());
 	data.push_back (Stringc (what, &font));
 }
 //--------------------------------------------------------------------------------------------------
 int Lines_view::Get_height (const Stringc& what) const
 {
+	assert(Ok());
 	Point size = what.pSize();
 	float nlines = float(size.x)/borders.w;
 
@@ -378,6 +417,7 @@ int Lines_view::Get_height (const Stringc& what) const
 //--------------------------------------------------------------------------------------------------
 int Lines_view::Draw_tolerable_line (SDL_Surface* screen, const Stringc& text, int offset, Rect brd) const
 {
+	assert(Ok());
 	Stringc buf = text.Get_bordered_substring (brd.w, offset);
 	if (buf.Draw (screen, &brd))
 		return buf.size();
@@ -386,6 +426,7 @@ int Lines_view::Draw_tolerable_line (SDL_Surface* screen, const Stringc& text, i
 //--------------------------------------------------------------------------------------------------
 int Lines_view::Draw_text (SDL_Surface* screen, const Stringc& text, int start_offset) const
 {
+	assert(Ok());
 	int result_height = 0;
 	int total_symbols = text.size();
 	int symbols_showed = 0;
@@ -412,6 +453,7 @@ int Lines_view::Draw_text (SDL_Surface* screen, const Stringc& text, int start_o
 //--------------------------------------------------------------------------------------------------
 void Lines_view::Draw (SDL_Surface* c) const
 {
+	assert(Ok());
 	int start_y = 0;
 	list <Stringc>::const_iterator start = data.begin();
 	int height = 0;
@@ -443,6 +485,13 @@ void Lines_view::Draw (SDL_Surface* c) const
 
 }
 //--------------------------------------------------------------------------------------------------
+bool Lines_view::Ok() const
+{
+	for (list<Stringc>::const_iterator i = data.begin(); i != data.end(); ++i)
+		if (!i->Ok ()) return false;
+	return font.Ok();
+}
+//--------------------------------------------------------------------------------------------------
 
 Fontc::Fontc (int height, const char* fname, Color f, Color b)
 	:col (f), bgcol (b), bg (bgcol), fg (col)
@@ -459,11 +508,12 @@ Fontc::~Fontc()
 bool Fontc::Open_font (const char* file, int height)
 {
 	font = TTF_OpenFont (file, height);
-	return font != 0;
+	return Ok();
 }
 //--------------------------------------------------------------------------------------------------
 bool Fontc::Close_font (bool force)
 {
+	assert(Ok());
 	if ((font != 0) && (is_mine || force))
 	{
 		TTF_CloseFont (font);
@@ -474,6 +524,7 @@ bool Fontc::Close_font (bool force)
 //--------------------------------------------------------------------------------------------------
 int Fontc::Draw_line (SDL_Surface* screen, const char* line, Rect* brd, bool color_reverse) const
 {
+	assert(Ok());
     SDL_Surface *text_surface;
 	if (color_reverse)
 		text_surface = TTF_RenderUTF8_Shaded (font, line, bgcol, col);
@@ -501,6 +552,7 @@ int Fontc::Draw_line (SDL_Surface* screen, const char* line, Rect* brd, bool col
 //--------------------------------------------------------------------------------------------------
 Point Fontc::Str_size (const char* str) const
 {
+	assert(Ok());
 	int w = 0, h = 0;
 	TTF_SizeUTF8 (font, str, &w, &h);
 	return Point (w, h);
@@ -508,13 +560,20 @@ Point Fontc::Str_size (const char* str) const
 //--------------------------------------------------------------------------------------------------
 int Fontc::Height() const
 {
+	assert(Ok());
 	return TTF_FontHeight (font);
 }
 //--------------------------------------------------------------------------------------------------
 int Fontc::Approximate_num_symbols (int width) const
 {
+	assert(Ok());
 	int w = Str_len ("-");//Get a size of two typically characters
 	return width/w; //and measure by it
+}
+//--------------------------------------------------------------------------------------------------
+bool Fontc::Ok() const
+{
+	return font != 0 && (is_mine == true || is_mine == false);
 }
 //--------------------------------------------------------------------------------------------------
 Stringc Stringc::Get_bordered_substring (int width, int offset) const
@@ -538,34 +597,5 @@ Stringc Stringc::Get_bordered_substring (int width, int offset) const
 		w = font->Str_len (buf);
 	}
 	return Stringc (buf, font);
-}
-//--------------------------------------------------------------------------------------------------
-Uint32 Color::Toint (SDL_Surface* screen) const
-{
-	return SDL_MapRGB (screen->format, r, g, b);
-}
-//--------------------------------------------------------------------------------------------------
-Rect::Rect (const Rect& that) {x = that.x; y = that.y; w = that.w; h = that.h;}
-//--------------------------------------------------------------------------------------------------
-Rect& Rect::operator = (const Rect& that) {x = that.x; y = that.y; w = that.w; h = that.h; return *this;}
-//--------------------------------------------------------------------------------------------------
-Rect::Rect (const SDL_Rect& that) {x = that.x; y = that.y; w = that.w; h = that.h;}
-//--------------------------------------------------------------------------------------------------
-void Rect::Draw (SDL_Surface* screen, Color c) const
-{
-	Rect copy(*this);
-	SDL_FillRect (screen, &copy, c.Toint (screen));
-}
-//--------------------------------------------------------------------------------------------------
-void Rect::Cut_left (int what)
-{
-	x += what;
-	w -= what;
-}
-//--------------------------------------------------------------------------------------------------
-void Rect::Cut_top (int what)
-{
-	y += what;
-	h -= what;
 }
 //--------------------------------------------------------------------------------------------------

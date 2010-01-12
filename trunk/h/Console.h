@@ -8,7 +8,7 @@
 #ifndef _CONSOLE_H
 #define	_CONSOLE_H
 
-#include <SDL/SDL.h>
+#include <Canvas.h>
 #include <SDL/SDL_ttf.h>
 #include <list>
 #include <string>
@@ -21,28 +21,6 @@ using std::list;
 
 const int cursor_width = 2;
 const int blink_interval = 300;
-
-class Color :public SDL_Color
-{
-public:
-	Color (Uint8 red = 0, Uint8 green = 0, Uint8 blue = 0)
-	 {r =red; g = green; b = blue;}
-	Uint32 Toint (SDL_Surface* screen) const;
-};
-
-class Rect :public SDL_Rect
-{
-public:
-	Rect ():SDL_Rect(){}
-	Rect (const Rect& that);
-	Rect (const SDL_Rect& that);
-	Rect& operator = (const Rect& that);
-
-	void Draw (SDL_Surface* screen, Color c) const;
-
-	void Cut_left (int);
-	void Cut_top (int);
-};
 
 class Fontc
 {
@@ -70,6 +48,8 @@ public:
 	int Height() const;
 	int Approximate_num_symbols (int width) const;
 	int Draw_line (SDL_Surface* screen, const char* line, Rect* brd, bool color_reverse = false) const;
+
+	bool Ok() const;
 };
 
 class Stringc :public string
@@ -95,7 +75,7 @@ public:
 
 	operator string& () {return *(string*)this;}
 
-	bool Ok() {return font != 0;}
+	bool Ok() const {return font != 0 && font->Ok();}
 };
 
 class Lines_view
@@ -116,6 +96,8 @@ public:
 	void Init (const Rect&);
 	void Push_string (const string&);
 	void Draw (SDL_Surface* c) const;
+
+	bool Ok() const;
 };
 
 class Line_edit
@@ -155,6 +137,8 @@ public:
 	void Init (const Rect& brd, Arg_Functor <void, string*> *on_enter, string greeting = "");
 	void Operate (SDL_KeyboardEvent ev);
 	void Draw (SDL_Surface* c) const;
+
+	bool Ok() const;
 };
 
 class Console
@@ -171,12 +155,14 @@ public:
 	virtual ~Console();
 
 	Serializator* Get_parser();
-	bool Init (Canvas* c);
+	bool Init (Graphic_subsystem* c);
 	void Cleanup();
 	void On_enter_string (string* str);
 
 	void Operate (SDL_KeyboardEvent ev);
-	void Draw (Canvas* c) const;
+	void Draw (Graphic_subsystem* c) const;
+
+	bool Ok() const;
 };
 
 

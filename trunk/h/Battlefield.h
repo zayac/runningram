@@ -33,12 +33,12 @@ public:
 
 	Serializator* Get_parser();
 
-	void Draw (Canvas* c) const;
+	void Draw (Graphic_subsystem* c) const;
 
 	bool Init();
 	bool Load_from_file (const char* fname);
-private:
 
+	bool Ok() const;
 };
 
 #endif	/* _BATTLEFIELD_H */

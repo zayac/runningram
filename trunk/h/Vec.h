@@ -26,3 +26,4 @@
 
 typedef Vec<long, 2> Polong;
 typedef Vec<int, 2> Point;//!!! Take attention !!!
+typedef Vec<float, 2> Vector2f;

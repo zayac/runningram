@@ -25,6 +25,8 @@ public:
 
 	Polong Get_pos() const;
 
+	bool Ok() const {return true;}
+
 };
 
 #endif	/* _CAMERA_H */

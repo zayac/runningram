@@ -9,6 +9,7 @@
 #include "Graphic_subsystem.h"
 #include "initparser.h"
 #include "Camera.h"
+#include "Canvas.h"
 
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
@@ -21,7 +22,7 @@ public:
 	string win_name;
 public:
 
-	Initialaiser (string name)
+	Initialaiser (char* name)
 	: Sectionp (name, '='), win_x (640), win_y (480), win_name ("Banzay!")
 	{
 		Add_param (new St_loader<int> ("X size", &win_x));
@@ -36,13 +37,15 @@ public:
 }; // </editor-fold>
 
 
-Graphic_subsystem::Graphic_subsystem () :parser (new Initialaiser ("[Graphics]"))
+Graphic_subsystem::Graphic_subsystem () :parser (new Initialaiser ((char*)"[Graphics]"))
 {
 }
 //--------------------------------------------------------------------------------------------------
 Graphic_subsystem::~Graphic_subsystem ()
 {
 	Cleanup();//!!! It may be need to add if(initialaised) check for avoid fail of cleanup
+	SDL_FreeSurface (buffer);
+	buffer = 0;
 	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
@@ -60,33 +63,31 @@ bool Graphic_subsystem::Init()
     SDL_WM_SetCaption (parser->win_name.c_str (), "name");
 
     /* create window */
-    screen = SDL_SetVideoMode (parser->win_x, parser->win_y, 0, 0);
+    screen = (Canvas*)SDL_SetVideoMode (parser->win_x, parser->win_y, 0, 0);
+	buffer = screen->Create_compatible();
+//	SDL_LockSurface (screen);
 
 	return Ok();
 }
 //--------------------------------------------------------------------------------------------------
 void Graphic_subsystem::Draw (Camera* look) const
 {
-	SDL_Rect simp;
-	simp.x = look->Get_pos().x;
-	simp.y = look->Get_pos().y;
-	simp.h = 24;
-	simp.w = 100;
-	SDL_FillRect (screen, &simp, 0);
-
     /* update the screen */
-    SDL_UpdateRect (screen, 0, 0, 0, 0);
+
+	screen->Copy (buffer);
+//	SDL_UnlockSurface (screen);
+	screen->Update ();
+//	SDL_LockSurface (screen);
 }
 //--------------------------------------------------------------------------------------------------
-bool Graphic_subsystem::Cleanup()
+void Graphic_subsystem::Cleanup()
 {
     /* cleanup SDL */
     SDL_Quit ();
-	return Ok();
 }
 //--------------------------------------------------------------------------------------------------
 bool Graphic_subsystem::Ok() const
 {
-	return true;
+	return parser != 0 && screen != 0 && screen->Ok() && buffer != 0 && buffer->Ok();
 }
 //--------------------------------------------------------------------------------------------------

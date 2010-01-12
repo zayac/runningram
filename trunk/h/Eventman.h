@@ -11,6 +11,7 @@
 #include <SDL/SDL.h>
 #include "Functor.h"
 #include <list>
+#include <assert.h>
 
 using std::list;
 
@@ -23,6 +24,11 @@ class Eventman
 		Functor *fun;
 		Uint8 event;
 		SDLKey key;
+
+		Kbd_action (Functor* f, Uint8 ev, SDLKey k)
+		:fun (f), event (ev), key(k) {assert(Ok());}
+
+		bool Ok() const {return fun != 0;}
 	};
 	typedef list <Kbd_action>::iterator kiter;
 

@@ -5,48 +5,32 @@
       <df name="GNU-i386-Linux">
       </df>
       <df name="h">
-        <df name=".svn">
-          <df name="prop-base">
-          </df>
-          <df name="props">
-          </df>
-          <df name="text-base">
-          </df>
-          <df name="tmp">
-            <df name="prop-base">
-            </df>
-            <df name="props">
-            </df>
-            <df name="text-base">
-            </df>
-          </df>
-        </df>
+        <in>Activeman.h</in>
+        <in>Battlefield.h</in>
+        <in>Camera.h</in>
+        <in>Canvas.h</in>
+        <in>Car.h</in>
+        <in>Console.h</in>
         <in>Eventman.h</in>
         <in>Functor.h</in>
         <in>Game_manager.h</in>
         <in>Graphic_subsystem.h</in>
+        <in>Orient.h</in>
+        <in>Vec.h</in>
+        <in>Vec_spec.h</in>
         <in>initparser.h</in>
       </df>
       <df name="src">
-        <df name=".svn">
-          <df name="prop-base">
-          </df>
-          <df name="props">
-          </df>
-          <df name="text-base">
-          </df>
-          <df name="tmp">
-            <df name="prop-base">
-            </df>
-            <df name="props">
-            </df>
-            <df name="text-base">
-            </df>
-          </df>
-        </df>
+        <in>Activeman.cpp</in>
+        <in>Battlefield.cpp</in>
+        <in>Camera.cpp</in>
+        <in>Canvas.cpp</in>
+        <in>Car.cpp</in>
+        <in>Console.cpp</in>
         <in>Eventman.cpp</in>
         <in>Game_manager.cpp</in>
         <in>Graphic_subsystem.cpp</in>
+        <in>Orient.cpp</in>
         <in>initparser.cpp</in>
       </df>
       <in>main.cpp</in>
