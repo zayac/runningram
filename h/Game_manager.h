@@ -13,14 +13,16 @@ class Eventman;
 class Camera;
 class Battlefield;
 class Console;
+class Activeman;
 
 class Game_manager
 {
-	Graphic_subsystem *canvas;
+	Graphic_subsystem *pic;
 	Eventman *sense;
 	Camera* look;
 	Battlefield* ground;
 	Console* cmd;
+	Activeman* cars;
 
 public:
 	Game_manager (int argc, char *argv[]);

@@ -51,14 +51,17 @@ public:
 	inline Vec (Type coors_[dim]) {memcpy (coor, coors_, dim*sizeof(Type));}
 	inline Vec (const Vec& that) {memcpy (coor, that.coor, dim*sizeof(Type));}
 
-	inline Type& operator[] (int i)		{assert (0 <= i || i < dim); return coor[i];}
-	inline Type operator[] (int i) const	{assert (0 <= i || i < dim); return coor[i];}
+	inline Type& operator[] (int i)		{assert(0 <= i || i < dim); return coor[i];}
+	inline Type operator[] (int i) const	{assert(0 <= i || i < dim); return coor[i];}
 	inline const Type* Data() const {return coor;}
 	inline Type* Data() {return coor;}
 
 	Type Lensq() const;
 	inline Type Len() const {return sqrt (Lensq());}
-	
+
+	template <typename Target>
+		Vec<Target, dim> To() const;
+
 	Vec operator + (const Vec& that) const;
 	Vec operator - (const Vec& that) const;
 	Vec operator - () const;
@@ -68,7 +71,7 @@ public:
 #if NUMBER_DIMENSIONS == 3
 	Vec operator * (const Vec& that) const;
 #endif
-	
+
 	Vec& operator += (const Vec& that);
 	Vec& operator -= (const Vec& that);
 	Vec& operator *= (Typical_arg that);
@@ -115,6 +118,17 @@ Type Vec<Type, dim>::Lensq() const
 #define PLUSSQ(my_coor, that_coor, ret_coor) ret += my_coor*my_coor;
 	REPEAT(PLUSSQ)
 #undef PLUSSQ
+	return ret;
+}
+//-----------------------------------------------------------------------------------------------
+FUN_SPEC_HEADLINE
+template <typename Target>
+Vec<Target, dim> Vec<Type, dim>::To() const
+{
+	Vec<Target, dim> ret;
+#define CONVERT(my_coor, that_coor, ret_coor) ret_coor = Target (my_coor);
+	REPEAT(CONVERT)
+#undef CONVERT
 	return ret;
 }
 //-----------------------------------------------------------------------------------------------
@@ -171,7 +185,7 @@ Vec<Type, dim> Vec<Type, dim>::operator / (Typical_arg that) const
 FUN_SPEC_HEADLINE
 Type Vec<Type, dim>::operator ^ (const Vec<Type, dim>& that) const
 {
-	Type ret();
+	Type ret;
 #define PLUS_MUL(my_coor, that_coor, ret_coor) ret += my_coor*that_coor;
 	REPEAT(PLUS_MUL)
 #undef PLUS_MUL
