@@ -12,7 +12,7 @@
 
 class Camera
 {
-	Polong pos;
+	Point pos;
 
 public:
 	Camera();
@@ -23,7 +23,7 @@ public:
 	void Move_up();
 	void Move_down();
 
-	Polong Get_pos() const;
+	Point Get_pos() const;
 
 	bool Ok() const {return true;}
 

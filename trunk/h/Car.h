@@ -13,21 +13,35 @@
 
 const float VeryBigMass = 1e10;
 
-class Active
+class Limited
+{
+protected:
+	Vector2f pos;
+	float r;
+public:
+	Limited (Vector2f position, float r_):pos(position), r(r_){}
+	
+	inline float Get_r() const {return r;}
+	inline Vector2f Get_pos() const {return pos;}
+	
+	virtual bool Ok() const {return r >= 0;}
+};
+
+class Active :public Limited
 {
 public:
+	Active (Vector2f position, float r_):Limited (position, r_){}
 	virtual void Actions (float dt) = 0;
 	virtual void Draw (Canvas*) = 0;
+	virtual Vector2f Collis_brd (Rect width) = 0;
 
 	virtual bool Ok() const = 0;
 };
 
-class Body
+class Body :public Limited
 {
 protected:
-	float r;
 	float rev_mass;
-	Vector2f pos;
 	Vector2f vel;
 	Vector2f force;
 
@@ -37,7 +51,7 @@ protected:
 
 public:
 	Body (float rmass, float r_, Vector2f position)
-	:r(r_), rev_mass (rmass), pos (position){}
+	:Limited (position, r_), rev_mass (rmass){}
 	virtual ~Body();
 
 
@@ -73,8 +87,8 @@ protected:
 		Appl_force (-fric[0]*proj - fric[1]*(Get_vel() - proj));
 	}
 public:
-	Dir_body (float rmass, float r, Vector2f coor, Vector2f friction, Orient start_orient)
-		:Body (rmass, r, coor), orient (start_orient), fric (friction) {}
+	Dir_body (float rmass, float r_, Vector2f coor, Vector2f friction, Orient start_orient)
+		:Body (rmass, r_, coor), orient (start_orient), fric (friction) {}
 
 	inline bool Ok() const {return Body::Ok() && fric.x > 0 && fric.y > 0 && orient.Ok();}
 };
@@ -93,7 +107,6 @@ class Car :public Active
 	Dir_body back;
 	Dir_body front;
 
-	Vector2f pos;
 	float rmass;
 
 	float lenght;
@@ -109,6 +122,9 @@ public:
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);
+	virtual Vector2f Collis_brd (Rect with);
+
+//	Vector2f Collis_rectangle (Vector2f one, Vector2f two, Vector2f three, Vector2f four);
 
 	void Turn_rights()	{rp = true;}
 	void Turn_lefts()	{lp = true;}

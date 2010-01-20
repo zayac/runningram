@@ -17,10 +17,9 @@ class SDL_Surface;
 
 class Battlefield
 {
-    SDL_Surface* bg;//deprecated
-
 	char* cells;
-	Polong size;
+	Point size;
+	int csize;
 
 	class Initialaiser;
 	Initialaiser* parser;
@@ -34,6 +33,10 @@ public:
 	Serializator* Get_parser();
 
 	void Draw (Graphic_subsystem* c) const;
+
+	const char* Get_cells() const {return cells;}
+	Point Get_size() const {return size;}
+	int Get_cell_size() const {return csize;}
 
 	bool Init();
 	bool Load_from_file (const char* fname);

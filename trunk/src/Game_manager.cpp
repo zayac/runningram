@@ -62,7 +62,6 @@ bool Game_manager::Init (int argc, char *argv[])
 	result = result && cmd->Init (pic);
 	
 	sense->Set_console (cmd);
-	sense->Switch_console ();
 
 	return result && Ok();
 }
@@ -75,12 +74,13 @@ bool Game_manager::Main_loop()
     {
 		sense->Acts();
 		dt = 0.001*(SDL_GetTicks() - last_time);
-		cars->Activate (dt);//;
+		cars->Activate (dt);
+		cars->Collis_brd (ground);
 		last_time = SDL_GetTicks();
 		ground->Draw (pic);
-		cmd->Draw (pic);
 		cars->Draw (pic->Get_screen ());
 		pic->Draw (look);
+		if (sense->Console_enabled ()) cmd->Draw (pic);
     }
 	return Ok();
 }

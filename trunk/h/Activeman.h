@@ -13,6 +13,7 @@ using std::list;
 
 class Canvas;
 class Active;
+class Battlefield;
 
 class Activeman :public list <Active*>
 {
@@ -23,6 +24,7 @@ public:
 
 	void Activate (double dt);
 	void Draw (Canvas*);
+	void Collis_brd (const Battlefield* bf);
 
 	bool Ok() const;
 };
