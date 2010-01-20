@@ -51,6 +51,11 @@ void Canvas::Line (Point start, Point finish, Color c)
 	else return Line (finish, start, c);
 }
 //--------------------------------------------------------------------------------------------------
+void Canvas::Fill_rect (Rect r, Color col)
+{
+	SDL_FillRect (this, &r, col.Toint (this));
+}
+//--------------------------------------------------------------------------------------------------
 void Canvas::Copy (Canvas* from, Rect src_brd, Point to)
 {
 	Rect* src_brdp = &src_brd;

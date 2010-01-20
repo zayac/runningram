@@ -77,6 +77,7 @@ void Graphic_subsystem::Draw (Camera* look) const
 	screen->Copy (buffer);
 //	SDL_UnlockSurface (screen);
 	screen->Update ();
+	buffer->Fill (Color(0, 0,0));
 //	SDL_LockSurface (screen);
 }
 //--------------------------------------------------------------------------------------------------
