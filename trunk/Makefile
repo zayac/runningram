@@ -12,8 +12,8 @@
 CCC = g++
 CXX = g++
 BASICOPTS = -g
-CCFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf
-CXXFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf
+CCFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx
+CXXFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx
 CCADMIN = 
 
 
