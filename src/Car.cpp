@@ -14,7 +14,7 @@
 inline float max (float a, float b) {return a < b ? b : a;}
 #endif
 
-float aboutnull = 0.000001;
+float aboutnull = 0.0000001;
 Vector2f Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recalled = false);
 
 //
@@ -101,15 +101,14 @@ Vector2f Car::Collis_brd (Rect with)
 	Vector2f rb = Vector2f (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + back.pos;
 	Vector2f rf = Vector2f (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + front.pos;
 
-	Vector2f one[4] = {lu, ru, rd, ld};
-	Vector2f two[4] = {lb, rb, rf, lf};
+	Vector2f one[4] = {lb, rb, rf, lf};
+	Vector2f two[4] = {lu, ru, rd, ld};
 
 	Vector2f delta = Collis_rectangles (one, two);
 	if (delta.Lensq () > aboutnull)
 	{
-		std::cout << "collised" <<std::endl;
-		back.pos -= delta;
-		front.pos -= delta;
+		back.pos += delta;
+		front.pos += delta;
 	}
 
 	return Vector2f();//abc*+*+*Collis_rectangle (lu, ru, rd, ld);//!?!?!?
@@ -117,16 +116,11 @@ Vector2f Car::Collis_brd (Rect with)
 //--------------------------------------------------------------------------------------------------
 inline Vector2f From_point_to_stline (Vector2f end, Vector2f delta, Vector2f p)
 {
-	Vector2f proj = (delta^(p-end))*delta/delta.Lensq();
-	Vector2f rez = (delta^(p-end))*delta/delta.Lensq() - (p - end);
-	rez = (delta^(p-end))*delta/delta.Lensq() - (p - end);
-	return rez;
+	return (delta^(p-end))*delta/delta.Lensq() - (p - end);
 }
 inline bool Same_sign (float a, float b) {return a==0 ? b==0 : (a>0 ? b>0 : b<0);}
 inline bool Same_side (Vector2f end, Vector2f delta, Vector2f a, Vector2f b)
 {
-	bool ret = Same_sign (delta.x*(a.y - end.y) - delta.y*(a.x- end.x),
-					  delta.x*(b.y - end.y) - delta.y*(b.x- end.x));
 	return Same_sign (delta.x*(a.y - end.y) - delta.y*(a.x- end.x),
 					  delta.x*(b.y - end.y) - delta.y*(b.x- end.x));
 }
@@ -139,14 +133,14 @@ inline Vector2f Get_depth (Vector2f rect[4], Vector2f centre, Vector2f p, Vector
 	Vector2f ret;
 	if (Same_side (rect[3], rect[0] - rect[3], centre, p))
 		ret = From_point_to_stline (rect[3], rect[0] - rect[3], p);
-	if ((ret^(p-hiscentre)) < 0) ret = Vector2f();//depth only from centre
+	if ((ret^(p-hiscentre)) > 0) ret = Vector2f();//depth only from centre
 
 	for (int i = 0; i < 3; ++i)
 		if (Same_side (rect[i], rect[i + 1] - rect[i], centre, p))
 		{
 			Vector2f cur = From_point_to_stline (rect[i], rect[i + 1] - rect[i], p);
-			if ((cur^(p-hiscentre)) > 0) cur = Vector2f();//depth only from centre
-			if (cur.Lensq() < ret.Lensq() || ret.Lensq() < aboutnull) ret = cur;
+			if ((cur^(p-hiscentre)) < 0 &&   //depth only from centre
+			   (cur.Lensq() < ret.Lensq() || ret.Lensq() < aboutnull)) ret = cur;
 		}
 	return ret;
 }
@@ -157,19 +151,10 @@ Vector2f Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recalled)
 
 	Vector2f max_depth;
 	Vector2f applic_p;
-	
-	
+
 	for (int i = 0; i < 4; ++i)
-		if (IN(two[0], two[1], two[2], two[3], cent2, one[i]))
-		{
-			Vector2f depth = Get_depth (two, cent2, one[i], cent1);
-			if (depth.Lensq() > max_depth.Lensq())
-			{
-				max_depth = depth;
-				applic_p = one[i];
-			}
-		}
-	max_depth = Vector2f();
+		for (int j = 0; j < 4; ++j)
+			if ((one[i] - two[j]).Lensq () < aboutnull) return Vector2f();
 
 	for (int i = 0; i < 4; ++i)
 		if (IN(two[0], two[1], two[2], two[3], cent2, one[i]))
@@ -181,12 +166,15 @@ Vector2f Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recalled)
 				applic_p = one[i];
 			}
 		}
-	for (int j = 0; j < 4; ++j)
-		if (IN(one[0], one[1], one[2], one[3], cent1, two[j]))
-			if (Get_depth (one, cent1, two[j], cent2).Lensq() > max_depth.Lensq() && !recalled)
-			{
-				return -Collis_rectangles (two, one, true);
-			}
+	if (!recalled)
+		for (int j = 0; j < 4; ++j)
+			if (IN(one[0], one[1], one[2], one[3], cent1, two[j]))
+				if (Get_depth (one, cent1, two[j], cent2).Lensq() > max_depth.Lensq())
+				{
+					Vector2f cur_depth = -Collis_rectangles (two, one, true);
+					if (true)
+						max_depth = cur_depth;
+				}
 	return max_depth;
 }
 //Vector2f Car::Collis_rectangle (Vector2f one, Vector2f two, Vector2f three, Vector2f four)
