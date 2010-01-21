@@ -16,7 +16,7 @@
 //Activeman::~Activeman () { }
 
 //--------------------------------------------------------------------------------------------------
-void Activeman::Activate (double dt)
+void Activeman::Activate (float dt)
 {
 	assert(Ok());
 	for (iterator i = begin(); i != end(); ++i)

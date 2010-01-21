@@ -145,6 +145,15 @@ bool St_loader<double>::Read_frag (ifstream &file)
 }
 //-------------------------------------------------------------------
 template <>
+bool St_loader<float>::Read_frag (ifstream &file)
+{
+	char istr[1024] = "wrong value";
+	file.getline (istr, 1024);
+	*_val = atof (istr);
+	return true;
+}
+//-------------------------------------------------------------------
+template <>
 bool St_loader<string>::Read_frag (ifstream &file)
 {
 	No_spaces_begin (file);

@@ -185,7 +185,7 @@ Vec<Type, dim> Vec<Type, dim>::operator / (Typical_arg that) const
 FUN_SPEC_HEADLINE
 Type Vec<Type, dim>::operator ^ (const Vec<Type, dim>& that) const
 {
-	Type ret;
+	Type ret = Type();
 #define PLUS_MUL(my_coor, that_coor, ret_coor) ret += my_coor*that_coor;
 	REPEAT(PLUS_MUL)
 #undef PLUS_MUL

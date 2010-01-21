@@ -22,7 +22,7 @@ public:
 //	Activeman(const Activeman& orig);
 //	virtual ~Activeman();
 
-	void Activate (double dt);
+	void Activate (float dt);
 	void Draw (Canvas*);
 	void Collis_brd (const Battlefield* bf);
 
