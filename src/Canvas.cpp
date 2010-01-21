@@ -8,52 +8,20 @@
 #include <assert.h>
 #include "Canvas.h"
 
+
 Canvas::Canvas () { }
 //--------------------------------------------------------------------------------------------------
 //Canvas::~Canvas () { }
 //--------------------------------------------------------------------------------------------------
 inline int To_int (float a) {return (int)(a + 0.5);}
 void Canvas::Line (Point start, Point finish, Color c)
-{
-	Point delta;
-	if (!In_brd (start, finish, delta)) return;
-
-	assert(0 <= start.y && start.y < h);
-	assert(0 <= finish.y && finish.y < h);
-	assert(0 <= start.x && start.x < w);
-	assert(0 <= finish.x && finish.x < w);
-
-	Uint32 col = c.Toint (this);
-	if (delta.x >= abs(delta.y))
-	{
-		int x = start.x;
-		float y = start.y;
-		float inc = ((float)delta.y)/delta.x;
-		for (; x <= finish.x; ++x, y += inc)
-			Set_pixel (x, To_int (y), col);
-
-		if (finish.y > start.y)
-			 SDL_UpdateRect (this, start.x, start.y, finish.x - start.x, finish.y - start.y);
-		else SDL_UpdateRect (this, start.x, finish.y, finish.x - start.x, start.y - finish.y);
-	}
-	else if (delta.y >= abs(delta.x))
-	{
-		float x = start.x;
-		int y = start.y;
-		float inc = ((float)delta.x)/delta.y;
-		for (; y <= finish.y; ++y, x += inc)
-			Set_pixel ((int)x, To_int (y), col);
-
-		if (finish.x > start.x)
-			 SDL_UpdateRect (this, start.x, start.y, finish.x - start.x, finish.y - start.y);
-		else SDL_UpdateRect (this, finish.x, start.y, start.x - finish.x, finish.y - start.y);
-	}
-	else return Line (finish, start, c);
+{   int a = c.Toint(this);
+    lineColor(this, start.x, start.y, finish.x, finish.y, c.Toint(this));
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::Fill_rect (Rect r, Color col)
 {
-	SDL_FillRect (this, &r, col.Toint (this));
+    SDL_FillRect (this, &r, col.Toint (this));
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::Copy (Canvas* from, Rect src_brd, Point to)
@@ -120,7 +88,8 @@ bool Canvas::Ok() const
 //--------------------------------------------------------------------------------------------------
 Uint32 Color::Toint (SDL_Surface* screen) const
 {
-	return SDL_MapRGB (screen->format, r, g, b);
+
+	return SDL_MapRGBA (screen->format, r,g,b,unused);
 }
 //--------------------------------------------------------------------------------------------------
 Rect::Rect (int _x, int _y, int _w, int _h) {x = _x; y = _y; w = _w; h = _h;}

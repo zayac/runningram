@@ -8,6 +8,7 @@
 #ifndef _CANVAS_H
 #define	_CANVAS_H
 #include <SDL/SDL.h>
+#include <SDL/SDL_gfxPrimitives.h>
 #include "Vec.h"
 
 class Canvas;
@@ -15,8 +16,8 @@ class Canvas;
 class Color :public SDL_Color
 {
 public:
-	Color (Uint8 red = 0, Uint8 green = 0, Uint8 blue = 0)
-	 {r =red; g = green; b = blue;}
+	Color (Uint8 red = 0, Uint8 green = 0, Uint8 blue = 0, Uint8 alpha = 255)
+	 {r =red; g = green; b = blue; unused = alpha; }
 	Uint32 Toint (SDL_Surface* screen) const;
 };
 
