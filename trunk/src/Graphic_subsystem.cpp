@@ -66,9 +66,9 @@ bool Graphic_subsystem::Init()
     screen = (Canvas*)SDL_SetVideoMode (parser->win_x, parser->win_y, 0, 0);
     buffer = screen->Create_compatible();
 
-    buffer->format->Amask = 0xff000000;
+    /*buffer->format->Amask = 0xff000000;
     buffer->format->Ashift = 24;
-    buffer->format->Aloss = 0;
+    buffer->format->Aloss = 0;*/
 //	SDL_LockSurface (screen);
 
 	return Ok();

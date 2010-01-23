@@ -15,8 +15,13 @@ Canvas::Canvas () { }
 //--------------------------------------------------------------------------------------------------
 inline int To_int (float a) {return (int)(a + 0.5);}
 void Canvas::Line (Point start, Point finish, Color c)
-{   int a = c.Toint(this);
-    lineColor(this, start.x, start.y, finish.x, finish.y, c.Toint(this));
+{   
+    lineRGBA(this, start.x, start.y, finish.x, finish.y, c.r, c.g, c.b, c.unused);
+}
+
+void Canvas::Sprite(SDL_Surface *img, Rect *src, Rect *dst)
+{
+    SDL_BlitSurface(img, src, this, dst);
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::Fill_rect (Rect r, Color col)

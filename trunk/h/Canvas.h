@@ -48,6 +48,7 @@ public:
 //	virtual ~Canvas();
 
 	void Line (Point start, Point finish, Color c);
+        void Sprite(SDL_Surface *img, Rect *src, Rect *dst);
 	inline void Set_pixel (const Point& p, const Uint32& c) {((Uint32*)pixels)[p.x + p.y*w] = c;}
 	inline void Set_pixel (const int &x, const int &y, const Uint32& c) {((Uint32*)pixels)[x + y*w] = c;}
 	void Fill_rect (Rect r, Color col);
