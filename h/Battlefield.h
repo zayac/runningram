@@ -10,7 +10,7 @@
 
 #include "Vec.h"
 #include "Graphic_subsystem.h"
-
+//#include <vector>
 class Serializator;
 
 class SDL_Surface;
@@ -21,6 +21,8 @@ class Battlefield
 	Point size;
 	int csize;
 
+        /* Vector for keeping ground textures */
+        vector<SDL_Surface*> ground_texture;
 	class Initialaiser;
 	Initialaiser* parser;
 
