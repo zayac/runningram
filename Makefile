@@ -4,7 +4,7 @@
 ## Time: Jan 7, 2010 9:50:40 PM
 ## Makefile created by Sun Studio.
 ##
-## This file is generated automatically.
+## This file is generated automatically, but edited manually.
 ##
 
 
@@ -16,101 +16,55 @@ CCFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx
 CXXFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx
 CCADMIN = 
 
+# Define a lookup dir
+
+vpath %.cpp .:src
 
 # Define the target directories.
-TARGETDIR_runningram=GNU-i386-Linux
-
-
-all: $(TARGETDIR_runningram)/runningram
-
+TARGETDIR=GNU-i386-Linux
 ## Target: runningram
-CPPFLAGS_runningram = \
-	-Ih
-OBJS_runningram =  \
-	$(TARGETDIR_runningram)/main.o \
-	$(TARGETDIR_runningram)/Game_manager.o \
-	$(TARGETDIR_runningram)/Battlefield.o \
-	$(TARGETDIR_runningram)/Camera.o \
-	$(TARGETDIR_runningram)/Orient.o \
-	$(TARGETDIR_runningram)/Car.o \
-	$(TARGETDIR_runningram)/Activeman.o \
-	$(TARGETDIR_runningram)/Canvas.o \
-	$(TARGETDIR_runningram)/Console.o \
-	$(TARGETDIR_runningram)/Graphic_subsystem.o \
-	$(TARGETDIR_runningram)/Eventman.o \
-	$(TARGETDIR_runningram)/initparser.o
+CPPFLAGS_runningram = -Ih
+OBJS =  $(patsubst src/%.cpp,$(TARGETDIR)/%.o,$(wildcard src/*.cpp)) \
+	$(patsubst %.cpp, $(TARGETDIR)/%.o, $(wildcard *.cpp))
+
 SYSLIBS_runningram = -lm
 USERLIBS_runningram = $(SYSLIBS_runningram)
 DEPLIBS_runningram =
 LDLIBS_runningram = $(USERLIBS_runningram)
 
 
-# Link or archive
-$(TARGETDIR_runningram)/runningram: $(TARGETDIR_runningram) $(OBJS_runningram) $(DEPLIBS_runningram)
-	$(LINK.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ $(OBJS_runningram) $(LDLIBS_runningram)
+install: all
+	cp $(TARGETDIR)/runningram .
+run: install
+	./runningram
+
+all: $(TARGETDIR)/runningram
+
+
+# Link
+$(TARGETDIR)/runningram: $(TARGETDIR) $(OBJS) $(DEPLIBS_runningram)
+	$(LINK.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ $(OBJS) $(LDLIBS_runningram)
 
 
 # Compile source files into .o files
-$(TARGETDIR_runningram)/main.o: main.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ main.cpp
 
-$(TARGETDIR_runningram)/Game_manager.o: src/Game_manager.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Game_manager.cpp
+$(TARGETDIR)/%.o: %.cpp
+	$(COMPILE.cc) -MMD $(CCFLAGS_runningram) $(CPPFLAGS_runningram) $< -o $@
 
-$(TARGETDIR_runningram)/Battlefield.o: src/Battlefield.cpp # $(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Battlefield.cpp
-
-$(TARGETDIR_runningram)/Camera.o: src/Camera.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Camera.cpp
-
-$(TARGETDIR_runningram)/Orient.o: src/Orient.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Orient.cpp
-
-$(TARGETDIR_runningram)/Car.o: src/Car.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Car.cpp
-
-$(TARGETDIR_runningram)/Activeman.o: src/Activeman.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Activeman.cpp
-
-$(TARGETDIR_runningram)/Canvas.o: src/Canvas.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Canvas.cpp
-
-$(TARGETDIR_runningram)/Console.o: src/Console.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Console.cpp
-
-$(TARGETDIR_runningram)/Graphic_subsystem.o: src/Graphic_subsystem.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Graphic_subsystem.cpp
-
-$(TARGETDIR_runningram)/Eventman.o: src/Eventman.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/Eventman.cpp
-
-$(TARGETDIR_runningram)/initparser.o: src/initparser.cpp #$(TARGETDIR_runningram)
-	$(COMPILE.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ src/initparser.cpp
-
+include $(wildcard $(TARGETDIR)/*.d)
 
 #### Clean target deletes all generated files ####
-clean:
-	rm -f \
-		$(TARGETDIR_runningram)/runningram \
-		$(TARGETDIR_runningram)/main.o \
-		$(TARGETDIR_runningram)/Game_manager.o \
-		$(TARGETDIR_runningram)/Battlefield.o \
-		$(TARGETDIR_runningram)/Camera.o \
-		$(TARGETDIR_runningram)/Orient.o \
-		$(TARGETDIR_runningram)/Car.o \
-		$(TARGETDIR_runningram)/Activeman.o \
-		$(TARGETDIR_runningram)/Canvas.o \
-		$(TARGETDIR_runningram)/Console.o \
-		$(TARGETDIR_runningram)/Graphic_subsystem.o \
-		$(TARGETDIR_runningram)/Eventman.o \
-		$(TARGETDIR_runningram)/initparser.o
+clean: clean_obj
+	rm -f runningram $(TARGETDIR)/runningram
 	$(CCADMIN)
-	rm -f -r $(TARGETDIR_runningram)
+	rm -rf $(TARGETDIR)
 
+clean_obj:
+	rm -f $(OBJS)
 
 # Create the target directory (if needed)
-$(TARGETDIR_runningram):
-	mkdir -p $(TARGETDIR_runningram)
+$(TARGETDIR):
+	mkdir -p $(TARGETDIR)
 
 
 # Enable dependency checking
