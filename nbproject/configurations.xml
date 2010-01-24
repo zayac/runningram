@@ -16,6 +16,7 @@
         <in>Game_manager.h</in>
         <in>Graphic_subsystem.h</in>
         <in>Orient.h</in>
+        <in>Sprite.h</in>
         <in>Vec.h</in>
         <in>Vec_spec.h</in>
         <in>initparser.h</in>
@@ -31,7 +32,10 @@
         <in>Game_manager.cpp</in>
         <in>Graphic_subsystem.cpp</in>
         <in>Orient.cpp</in>
+        <in>Sprite.cpp</in>
         <in>initparser.cpp</in>
+      </df>
+      <df name="textures">
       </df>
       <in>main.cpp</in>
     </df>
