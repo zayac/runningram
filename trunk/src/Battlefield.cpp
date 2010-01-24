@@ -81,8 +81,11 @@ void Battlefield::Draw (Graphic_subsystem* c) const
         {
             Draw_cage (c->Get_screen(), Point(i, j)*csize, Point (csize, csize),
                                 Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), Color (80, 80, 80));
-             c->Get_screen()->Sprite(ground_texture[CELL(i, j) - 48], new Rect(0, 0, csize, csize), new Rect(i * csize, j * csize, 0, 0));
+            ground_texture[CELL(i, j) - 48]->draw(c->Get_screen(), i * csize, j * csize, csize, csize);
         }
+
+    ground_texture[8]->draw(c->Get_screen(), 40, 40);
+    ground_texture[8]->animate();
    // Draw_cage (c->Get_screen (), Point(), csize*size, size, Color (150, 150, 150));
 }
 //--------------------------------------------------------------------------------------------------
@@ -115,14 +118,25 @@ bool Battlefield::Load_from_file (const char* fname)
 	}
 
         /* Texture Loader */
-        char* texture_name;
-        do
+        string texture_name;
+        //file >> texture_name;
+        int n;
+        file >> n;
+
+        for(int i = 0; i < n; i++)
         {
             file >> texture_name;
-            this->ground_texture.push_back(SDL_LoadBMP(texture_name));
-        }while(!file.eof());
+            this->ground_texture.push_back(new Sprite(SDL_LoadBMP(texture_name.c_str()), 1, 1));
+        }
 
 	file.close();
+
+
+        Sprite* spr = new Sprite(SDL_LoadBMP("textures/tommy.bmp"), 13, 50);
+        spr->rotate90();
+        spr->setTransparency(97,68,43);
+        this->ground_texture.push_back(spr);
+
 	return Ok();
 }
 //--------------------------------------------------------------------------------------------------

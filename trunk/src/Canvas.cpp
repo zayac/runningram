@@ -19,10 +19,6 @@ void Canvas::Line (Point start, Point finish, Color c)
     lineRGBA(this, start.x, start.y, finish.x, finish.y, c.r, c.g, c.b, c.unused);
 }
 
-void Canvas::Sprite(SDL_Surface *img, Rect *src, Rect *dst)
-{
-    SDL_BlitSurface(img, src, this, dst);
-}
 //--------------------------------------------------------------------------------------------------
 void Canvas::Fill_rect (Rect r, Color col)
 {

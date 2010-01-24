@@ -10,6 +10,7 @@
 
 #include "Vec.h"
 #include "Graphic_subsystem.h"
+#include "Sprite.h"
 #include <vector>
 class Serializator;
 
@@ -22,7 +23,7 @@ class Battlefield
 	int csize;
 
         /* Vector for keeping ground textures */
-	std::vector<SDL_Surface*> ground_texture;
+	std::vector<Sprite*> ground_texture;
 	class Initialaiser;
 	Initialaiser* parser;
 
