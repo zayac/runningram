@@ -17,15 +17,16 @@
 #include <SDL/SDL.h>
 #include <iostream>
 #include <string>
+#include "Vec.h"
 using namespace std;
 
 class Sprite
 {
 private:
     /* static helper functions */
-    static SDL_Surface* getRect(Sprite &sprite, int x, int y, int width, int height);
-    static bool rectCollide(Sprite &spriteA, int x1, int y1, Sprite &spriteB, int x2, int y2);
-    static bool pixelCollide(Sprite &spriteA, int x1, int y1, Sprite &spriteB, int x2, int y2);
+    static SDL_Surface* getRect(Sprite &sprite, Point point, int width, int height);
+    static bool rectCollide(Sprite &spriteA, Point pointA, Sprite &spriteB, Point pointB);
+    static bool pixelCollide(Sprite &spriteA, Point pointA, Sprite &spriteB, Point pointB);
     static void rotate90(Sprite &sprite);
     static void rotate180(Sprite &sprite);
     static void rotate270(Sprite &sprite);
@@ -41,16 +42,16 @@ private:
     static void stretchY(Sprite &sprite, float y);  // percentage to stretchwidth
     static void stretch(Sprite &sprite, float x,float y); // percentage to strech X and Y
 
-    static Uint32 getPixel(SDL_Surface* sprite, int x, int y);
-    static void setPixel(SDL_Surface* sprite, int x, int y, Uint32 color);
+    static Uint32 getPixel(SDL_Surface* sprite, Point point);
+    static void setPixel(SDL_Surface* sprite, Point point, Uint32 color);
 public:
     Sprite();
     ~Sprite();
     Sprite(string fileName, int maxFrames, int animationSpeed);
     Sprite(SDL_Surface* surface, int maxFrames,int animationSpeed);
 
-    void draw(SDL_Surface* buffer, int x, int y, int w, int h);
-    void draw(SDL_Surface* buffer, int x, int y);
+    void draw(SDL_Surface* buffer, Point point, int w, int h);
+    void draw(SDL_Surface* buffer, Point point);
     void setTransparency(Uint32 color);
     void setTransparency(int red, int green, int blue);
     void setSpeed(int animationSpeed);
@@ -73,21 +74,21 @@ public:
     void setSurface(SDL_Surface* surface);
     void destroy();
 
-    bool isTransparentPixel(int x, int y);
-    void setTransparentPixel(int x, int y);
-    Uint32 getPixel(int x, int y);
-    void setPixel(int x, int y, Uint32 color);
-    void setPixel(int x, int y, int red, int green, int blue);
-    Uint8 getPixel8(int x, int y);
-    void setPixel8(int x, int y, Uint8 color);
-    Uint16 getPixel16(int x, int y);
-    void setPixel16(int x, int y, Uint16 color);
-    Uint32 getPixel32(int x, int y);
-    void setPixel32(int x, int y, Uint32 color);
+    bool isTransparentPixel(Point point);
+    void setTransparentPixel(Point point);
+    Uint32 getPixel(Point point);
+    void setPixel(Point point, Uint32 color);
+    void setPixel(Point point, int red, int green, int blue);
+    Uint8 getPixel8(Point point);
+    void setPixel8(Point point, Uint8 color);
+    Uint16 getPixel16(Point point);
+    void setPixel16(Point point, Uint16 color);
+    Uint32 getPixel32(Point point);
+    void setPixel32(Point point, Uint32 color);
 
-    SDL_Surface* getRect(int x, int y, int width, int height);
-    bool rectCollide(int x1, int y1, Sprite &spriteB, int x2, int y2);
-    bool pixelCollide(int x1, int y1, Sprite &spriteB, int x2, int y2);
+    SDL_Surface* getRect(Point point, int width, int height);
+    bool rectCollide(Point point1, Sprite &spriteB, Point point2);
+    bool pixelCollide(Point point1, Sprite &spriteB, Point point2);
     void rotate90();
     void rotate180();
     void rotate270();
