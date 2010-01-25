@@ -87,14 +87,14 @@ Sprite::Sprite(SDL_Surface* surface, int frames, int speed) {
     loopToBeginning = true;
 }
 
-void Sprite::draw(SDL_Surface* buffer, int x, int y, int w, int h) {
+void Sprite::draw(SDL_Surface* buffer, Point point, int w, int h) {
      if(!isSprite()) {
          cout << "Failed to draw, Sprite not initialized!"<< endl;
          return;
      }
     SDL_Rect dstrect;
-    dstrect.x = x;
-    dstrect.y = y;
+    dstrect.x = point.x;
+    dstrect.y = point.y;
     // this blits the current frame from the sprite sheet
     SDL_Rect animRect;
     animRect.x = width*index;
@@ -104,9 +104,9 @@ void Sprite::draw(SDL_Surface* buffer, int x, int y, int w, int h) {
     SDL_BlitSurface(sprite, &animRect, buffer,&dstrect);
 }
 
-void Sprite::draw(SDL_Surface* buffer, int x, int y)
+void Sprite::draw(SDL_Surface* buffer, Point point)
 {
-    draw(buffer, x, y, width, height);
+    draw(buffer, point, width, height);
 }
 
 Sprite::~Sprite() {
@@ -185,84 +185,84 @@ bool Sprite::isSprite() {
 }
 
 
-void Sprite::setTransparentPixel(int x, int y) {
-    setPixel(x, y, sprite->format->colorkey);
+void Sprite::setTransparentPixel(Point point) {
+    setPixel(point, sprite->format->colorkey);
 }
 
-bool Sprite::isTransparentPixel(int x, int y) {
-    Uint32 pixelcolor = getPixel(x, y);
+bool Sprite::isTransparentPixel(Point point) {
+    Uint32 pixelcolor = getPixel(point);
 	//test whether pixels color == color of transparent pixels for that surface
 	return (pixelcolor == sprite->format->colorkey);
 }
 
-void Sprite::setPixel(int x, int y, int r, int g, int b) {
+void Sprite::setPixel(Point point, int r, int g, int b) {
     Uint32 color;
     color += b*256*256;
     color += g*256;
     color += r;
-    setPixel(x,y,color);
+    setPixel(point, color);
 }
 
-void Sprite::setPixel(int x, int y, Uint32 pixel) {
-    setPixel(sprite, x, y, pixel);
+void Sprite::setPixel(Point point, Uint32 pixel) {
+    setPixel(sprite, point, pixel);
 }
 
-Uint32 Sprite::getPixel(int x, int y) {
-   return getPixel(sprite, x, y);
+Uint32 Sprite::getPixel(Point point) {
+   return getPixel(sprite, point);
 }
 
-Uint8 Sprite::getPixel8(int x, int y) {
+Uint8 Sprite::getPixel8(Point point) {
     if(!isSprite()) {
          cout << "Failed to get pixel, Sprite not initialized!"<< endl;
          return -1;
      }
     Uint8* pixels = (Uint8*)sprite->pixels;
-    return pixels[y * sprite->w + x];
+    return pixels[point.y * sprite->w + point.x];
 }
 
-void Sprite::setPixel8(int x, int y, Uint8 pixel) {
+void Sprite::setPixel8(Point point, Uint8 pixel) {
     if(!isSprite()) {
          cout << "Failed to set pixel, Sprite not initialized!"<< endl;
          return;
      }
     Uint8* pixels = (Uint8*)sprite->pixels;
-    pixels[y * sprite->w + x] = pixel;
+    pixels[point.y * sprite->w + point.x] = pixel;
 }
 
-Uint16 Sprite::getPixel16(int x, int y) {
+Uint16 Sprite::getPixel16(Point point) {
     if(!isSprite()) {
          cout << "Failed to get pixel, Sprite not initialized!"<< endl;
          return -1;
      }
     Uint16* pixels = (Uint16*)sprite->pixels;
-    return pixels[y * sprite->w + x];
+    return pixels[point.y * sprite->w + point.x];
 }
 
-void Sprite::setPixel16(int x, int y, Uint16 pixel) {
+void Sprite::setPixel16(Point point, Uint16 pixel) {
     if(!isSprite()) {
          cout << "Failed to set pixel, Sprite not initialized!"<< endl;
          return;
      }
     Uint16* pixels = (Uint16*)sprite->pixels;
-    pixels[y * sprite->w + x] = pixel;
+    pixels[point.y * sprite->w + point.x] = pixel;
 }
 
-Uint32 Sprite::getPixel32(int x, int y) {
+Uint32 Sprite::getPixel32(Point point) {
     if(!isSprite()) {
          cout << "Failed to get pixel, Sprite not initialized!"<< endl;
          return -1;
      }
     Uint32* pixels = (Uint32*)sprite->pixels;
-    return pixels[y * sprite->w + x];
+    return pixels[point.y * sprite->w + point.x];
 }
 
-void Sprite::setPixel32(int x, int y, Uint32 pixel) {
+void Sprite::setPixel32(Point point, Uint32 pixel) {
     if(!isSprite()) {
          cout << "Failed to set pixel, Sprite not initialized!"<< endl;
          return;
      }
     Uint32* pixels = (Uint32*)sprite->pixels;
-    pixels[y * sprite->w + x] = pixel;
+    pixels[point.y * sprite->w + point.x] = pixel;
 }
 
 
@@ -309,16 +309,16 @@ void Sprite::setSurface(SDL_Surface* surface) {
     sprite = surface;
 }
 
-SDL_Surface* Sprite::getRect(int x, int y, int width, int height) {
-    return getRect(*this, x, y, width, height);
+SDL_Surface* Sprite::getRect(Point point, int width, int height) {
+    return getRect(*this, point, width, height);
 }
 
-bool Sprite::rectCollide(int x1, int y1, Sprite &spriteB, int x2, int y2) {
-    return rectCollide(*this, x1, y1, spriteB, x2, y2);
+bool Sprite::rectCollide(Point point1, Sprite &spriteB, Point point2) {
+    return rectCollide(*this, point2, spriteB, point2);
 }
 
-bool Sprite::pixelCollide(int x1, int y1, Sprite &spriteB, int x2, int y2) {
-    return pixelCollide(*this, x1, y1, spriteB, x2, y2);
+bool Sprite::pixelCollide(Point point1, Sprite &spriteB, Point point2) {
+    return pixelCollide(*this, point1, spriteB, point2);
 }
 
 void Sprite::rotate90() {
@@ -378,7 +378,7 @@ void Sprite::destroy() {
  *********************************************************** */
 
 
-SDL_Surface* Sprite::getRect(Sprite &sprite, int x, int y, int w, int h) {
+SDL_Surface* Sprite::getRect(Sprite &sprite, Point point, int w, int h) {
     if(!sprite.isSprite()) {
          cout << "Failed to get Rectangle, Sprite not initialized!"<< endl;
          return NULL;
@@ -395,7 +395,7 @@ SDL_Surface* Sprite::getRect(Sprite &sprite, int x, int y, int w, int h) {
 
     for(int j = 0; j < h; j++) {
         for(int i = 0; i < w; i++) {
-            setPixel(newrect, i, j, sprite.getPixel(x+i,y+j));
+            setPixel(newrect, Point(i, j), sprite.getPixel(Point (point.x + i,point.y + j)));
         }
     }
     //Copy color key
@@ -418,38 +418,38 @@ SDL_Surface* Sprite::getRect(Sprite &sprite, int x, int y, int w, int h) {
 			|_____________|
 			thisY+height
     */
-bool Sprite::rectCollide(Sprite &spriteA, int aX, int aY, Sprite &spriteB, int bX, int bY) {
+bool Sprite::rectCollide(Sprite &spriteA, Point pointA, Sprite &spriteB, Point pointB) {
     if(!spriteA.isSprite() || !spriteB.isSprite()) {
          cout << "Failed to perfrom Rectangle Collision test, Sprite not initialized!"<< endl;
          return false;
     }
-	if((aX + spriteA.getWidth() < bX) || (bX + spriteB.getWidth() < aX)) {
+	if((pointA.x + spriteA.getWidth() < pointB.x) || (pointB.x + spriteB.getWidth() < pointA.x)) {
 		return false;
 	}
-	if((aY + spriteA.getHeight() < bY) || (bY + spriteB.getHeight() < aY)) {
+	if((pointA.y + spriteA.getHeight() < pointB.y) || (pointB.y + spriteB.getHeight() < pointA.y)) {
 		return false;
 	}
     return true;
 }
 
-bool Sprite::pixelCollide(Sprite &spriteA, int aX, int aY, Sprite &spriteB, int bX, int bY) {
+bool Sprite::pixelCollide(Sprite &spriteA, Point pointA, Sprite &spriteB, Point pointB) {
 	/*check if bounding boxes intersect*/
-	if(!rectCollide(spriteA, aX, aY, spriteB, bX, bY)) {
+	if(!rectCollide(spriteA, pointA, spriteB, pointB)) {
          return false;
     }
 
     // get the overlaping box
-	int inter_x0 = SPRITE_MAX(bX,aX);
-	int inter_x1 = SPRITE_MIN(bX+spriteB.getWidth(),aX+spriteA.getWidth());
+	int inter_x0 = SPRITE_MAX(pointB.x, pointA.x);
+	int inter_x1 = SPRITE_MIN(pointB.x + spriteB.getWidth(),pointA.x + spriteA.getWidth());
 
-	int inter_y0 = SPRITE_MAX(bY,aY);
-	int inter_y1 = SPRITE_MIN(bY+spriteB.getHeight(),aY+spriteA.getHeight());
+	int inter_y0 = SPRITE_MAX(pointB.y, pointA.y);
+	int inter_y1 = SPRITE_MIN(pointB.y + spriteB.getHeight(),pointA.y+spriteA.getHeight());
 
 	for(int y = inter_y0 ; y <= inter_y1 ; y++) {
 		for(int x = inter_x0 ; x <= inter_x1 ; x++) {
 		    /*compute offsets for surface, but dont forget to account for the current animation*/
-            if((!spriteB.isTransparentPixel(x-aX + spriteB.index * spriteB.getWidth() , y-bY))
-			&& (!spriteA.isTransparentPixel(x-aX + spriteA.index * spriteA.getWidth(), y-aY))) {/*before pass to isTransparentPixel*/
+            if((!spriteB.isTransparentPixel(Point (x-pointA.x + spriteB.index * spriteB.getWidth() , y-pointB.y))
+			&& (!spriteA.isTransparentPixel(Point (x-pointA.x + spriteA.index * spriteA.getWidth(), y-pointA.y))))) {/*before pass to isTransparentPixel*/
 				return true;
 			}
 		}
@@ -478,9 +478,9 @@ void Sprite::flip(Sprite &sprite, int val) {
     for(int y = 0; y < sprite.getSurface()->h; y++) {
         for(int x = 0; x < sprite.getSurface()->w; x++) {
             if(val == FLIP_HORIZONTAL) {
-                setPixel(flipped, sprite.getSurface()->w - 1 - x, y, sprite.getPixel(x,y));
+                setPixel(flipped, Point ( sprite.getSurface()->w - 1 - x, y), sprite.getPixel(Point (x, y)));
             } else if(val == FLIP_VERTICAL) {
-                setPixel(flipped, x, sprite.getSurface()->h - 1 - y, sprite.getPixel(x,y));
+                setPixel(flipped, Point ( x, sprite.getSurface()->h - 1 - y), sprite.getPixel(Point (x, y)));
             }
         }
     }
@@ -549,11 +549,11 @@ void Sprite::rotate(Sprite &sprite, int deg) {
         for(int y = 0; y < sprite.getHeight(); y++) {
             for(int x = 0; x < sprite.getWidth(); x++) {
                 if(deg == 90) {
-                    setPixel(rotated, sprite.getHeight() * i + sprite.getHeight() - y - 1, x, sprite.getPixel((i * sprite.getWidth()) + x,y));
+                    setPixel(rotated, Point (sprite.getHeight() * i + sprite.getHeight() - y - 1, x), sprite.getPixel(Point ((i * sprite.getWidth()) + x,y)));
                 } else if(deg == 180) {
-                    setPixel(rotated, sprite.getWidth() * i + sprite.getWidth() - x - 1, rotated->h - y - 1, sprite.getPixel((i * sprite.getWidth()) + x,y));
+                    setPixel(rotated, Point (sprite.getWidth() * i + sprite.getWidth() - x - 1, rotated->h - y - 1), sprite.getPixel(Point ((i * sprite.getWidth()) + x,y)));
                 } else if(deg == 270) {
-                    setPixel(rotated, sprite.getHeight() * i + y, rotated->h - x - 1, sprite.getPixel((i * sprite.getWidth()) + x,y));
+                    setPixel(rotated, Point (sprite.getHeight() * i + y, rotated->h - x - 1), sprite.getPixel(Point ((i * sprite.getWidth()) + x,y)));
                 } else {
                     return;
                 }
@@ -600,7 +600,7 @@ void Sprite::reverseAnimation(Sprite &sprite) {
     for(int f = 0; f < sprite.maxFrames; f++) {
         for(int y = 0; y < sprite.getSurface()->h; y++) {
             for(int x = 0; x < sprite.getWidth(); x++) {
-                setPixel(reversed, (sprite.maxFrames - f - 1)*sprite.getWidth() + x , y, sprite.getPixel(f*sprite.getWidth()+x,y));
+                setPixel(reversed, Point ((sprite.maxFrames - f - 1)*sprite.getWidth() + x , y), sprite.getPixel(Point (f*sprite.getWidth()+x,y)));
             }
         }
     }
@@ -659,7 +659,7 @@ void Sprite::stretch(Sprite &sprite, float stretchX, float stretchY) {
         for(int x = 0; x < zoomedWidth; x++) {
             // iterate over each animation as opposed to the whole sprite, to ensure that each animation is resized properly
             for(int i = 0; i < sprite.maxFrames; i++) {
-                setPixel(zoomed, (zoomedWidth * i) + x, y, sprite.getPixel((sprite.getWidth() * i) + (int)(x/stretchX),(int)(y/stretchY) ));
+                setPixel(zoomed, Point ((zoomedWidth * i) + x, y), sprite.getPixel(Point ((sprite.getWidth() * i) + (int)(x/stretchX),(int)(y/stretchY) )));
             }
         }
     }
@@ -678,14 +678,14 @@ void Sprite::stretch(Sprite &sprite, float stretchX, float stretchY) {
 
 
 
-void Sprite::setPixel(SDL_Surface* sprite, int x, int y, Uint32 pixel) {
+void Sprite::setPixel(SDL_Surface* sprite, Point point, Uint32 pixel) {
     if(sprite == NULL) {
          cout << "Failed to set pixel, Sprite not initialized!"<< endl;
          return;
      }
     int bpp = sprite->format->BytesPerPixel;
     /* p is the address to the pixel we want to set */
-    Uint8 *p = (Uint8 *)sprite->pixels + y * sprite->pitch + x * bpp;
+    Uint8 *p = (Uint8 *)sprite->pixels + point.y * sprite->pitch + point.x * bpp;
     switch(bpp) {
         case 1:
             *p = pixel;
@@ -710,14 +710,14 @@ void Sprite::setPixel(SDL_Surface* sprite, int x, int y, Uint32 pixel) {
     }
 }
 
-Uint32 Sprite::getPixel(SDL_Surface* sprite, int x, int y) {
+Uint32 Sprite::getPixel(SDL_Surface* sprite, Point point) {
     if(sprite == NULL) {
          cout << "Failed to get pixel, Sprite not initialized!"<< endl;
          return -1;
     }
     int bpp = sprite->format->BytesPerPixel;
     /* p is the address to the pixel we want to retrieve */
-    Uint8 *p = (Uint8 *)sprite->pixels + y * sprite->pitch + x * bpp;
+    Uint8 *p = (Uint8 *)sprite->pixels + point.y * sprite->pitch + point.x * bpp;
     switch(bpp) {
         case 1:
             return *p;
