@@ -79,8 +79,9 @@ bool Game_manager::Main_loop()
 		last_time = SDL_GetTicks();
 		ground->Draw (pic);
 		cars->Draw (pic->Get_screen ());
-		pic->Draw (look);
 		if (sense->Console_enabled ()) cmd->Draw (pic);
+
+		pic->Draw (look);
     }
 	return Ok();
 }

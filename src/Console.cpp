@@ -52,12 +52,12 @@ bool Console::Init (Graphic_subsystem* c)
 {
 	if (!TTF_WasInit () && TTF_Init() == -1) return false;
 
-	bool success = font.Open_font (parser->font_fname.c_str(), parser->height);
+	font.Open_font (parser->font_fname.c_str(), parser->height);
 
 	font.Set_fg (Color(10, 200, 20));
 	font.Set_bg (Color(10, 20, 20));
 
-	Rect borders = c->Get_screen()->clip_rect;
+	Rect borders = c->Get_screen()->Get_clip_rect ();
 	borders.h = 210;
 	history.Init (borders);
 	history.Push_string ("You are welcome!");
@@ -68,13 +68,12 @@ bool Console::Init (Graphic_subsystem* c)
 
 	assert(Ok());
 
-	return success;
+	return true;
 }
 //--------------------------------------------------------------------------------------------------
 void Console::Cleanup()
 {
-	assert(Ok());
-	font.Close_font ();
+	assert(Ok());//!!! It may be needed to close opend font
 	if (TTF_WasInit()) TTF_Quit();
 }
 //--------------------------------------------------------------------------------------------------
@@ -110,13 +109,13 @@ void Line_edit::Init (const Rect& brd, Arg_Functor <void, string*> *enter, strin
 		   "Very very very long  long test edit string for test drawing of text A same characters other"
 		   "Very very very long  long test edit string for test drawing of text A same characters other"
 		   "Very very very long  long test edit string for test drawing of text A same characters other";
-	data.Set_font (&font);
+	data.Set_font (font);
 	cursor_pos = 0;
 	start_view = 0;
 	borders = brd;
 	last_actiont = SDL_GetTicks();
 	greeting = gr;
-	greeting.Set_font (&font);
+	greeting.Set_font (font);
 	grsize = greeting.Width();
 	assert(Ok());
 }
@@ -343,7 +342,7 @@ void Line_edit::Delete_right()
 	if (cursor_pos < data.size()) data.erase (cursor_pos, 1);
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Draw (SDL_Surface* c) const
+void Line_edit::Draw (Canvas* c) const
 {
 	assert(Ok());
 	borders.Draw (c, font.bg);
@@ -351,7 +350,7 @@ void Line_edit::Draw (SDL_Surface* c) const
 	Draw_cursor (c);
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Draw_text (SDL_Surface* c) const
+void Line_edit::Draw_text (Canvas* c) const
 {
 	assert(Ok());
 	Rect brd = borders;
@@ -362,7 +361,7 @@ void Line_edit::Draw_text (SDL_Surface* c) const
 	data.Draw (c, &brd, start_view);
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Draw_cursor (SDL_Surface* c) const
+void Line_edit::Draw_cursor (Canvas* c) const
 {
 	assert(Ok());
 	Rect cursor = borders;
@@ -399,7 +398,7 @@ void Lines_view::Init (const Rect& brd)
 void Lines_view::Push_string (const string &what)
 {
 	assert(Ok());
-	data.push_back (Stringc (what, &font));
+	data.push_back (Stringc (what, font));
 }
 //--------------------------------------------------------------------------------------------------
 int Lines_view::Get_height (const Stringc& what) const
@@ -415,7 +414,7 @@ int Lines_view::Get_height (const Stringc& what) const
 	return size.y*num_lines;
 }
 //--------------------------------------------------------------------------------------------------
-int Lines_view::Draw_tolerable_line (SDL_Surface* screen, const Stringc& text, int offset, Rect brd) const
+int Lines_view::Draw_tolerable_line (Canvas* screen, const Stringc& text, int offset, Rect brd) const
 {
 	assert(Ok());
 	Stringc buf = text.Get_bordered_substring (brd.w, offset);
@@ -424,7 +423,7 @@ int Lines_view::Draw_tolerable_line (SDL_Surface* screen, const Stringc& text, i
 	return false;
 }
 //--------------------------------------------------------------------------------------------------
-int Lines_view::Draw_text (SDL_Surface* screen, const Stringc& text, int start_offset) const
+int Lines_view::Draw_text (Canvas* screen, const Stringc& text, int start_offset) const
 {
 	assert(Ok());
 	int result_height = 0;
@@ -451,7 +450,7 @@ int Lines_view::Draw_text (SDL_Surface* screen, const Stringc& text, int start_o
     return result_height;
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::Draw (SDL_Surface* c) const
+void Lines_view::Draw (Canvas* c) const
 {
 	assert(Ok());
 	int start_y = 0;
@@ -493,43 +492,51 @@ bool Lines_view::Ok() const
 }
 //--------------------------------------------------------------------------------------------------
 
-Fontc::Fontc (int height, const char* fname, Color f, Color b)
-	:col (f), bgcol (b), bg (bgcol), fg (col)
+Fontc::Fontc():UniId<TTF_Font> (0, 0), col (Color()), bgcol (Color()), bg (bgcol), fg (col)
 {
-	if (height)
-		Open_font (fname, height);
+}
+//--------------------------------------------------------------------------------------------------
+Fontc::Fontc (int height, const char* fname, Color f, Color b)
+	:UniId<TTF_Font>(TTF_OpenFont (fname, height), 0), col (f), bgcol (b), bg (bgcol), fg (col)
+{
+	assert (Ok());
+}
+//--------------------------------------------------------------------------------------------------
+Fontc::Fontc (const Fontc& orig):UniId<TTF_Font> (orig), bgcol (orig.bgcol), col (orig.col), bg(bgcol), fg (col)
+{
+	assert (Ok());
 }
 //--------------------------------------------------------------------------------------------------
 Fontc::~Fontc()
 {
-	Close_font();
 }
 //--------------------------------------------------------------------------------------------------
-bool Fontc::Open_font (const char* file, int height)
+void Fontc::Delete_data()
 {
-	font = TTF_OpenFont (file, height);
-	return Ok();
+	if (data)
+		TTF_CloseFont (data);
 }
 //--------------------------------------------------------------------------------------------------
-bool Fontc::Close_font (bool force)
+void Fontc::Open_font (const char* fname, int height)
 {
-	assert(Ok());
-	if ((font != 0) && (is_mine || force))
-	{
-		TTF_CloseFont (font);
-		return true;
-	}
-	return 0;
+	Reinit (TTF_OpenFont (fname, height), 0);
 }
 //--------------------------------------------------------------------------------------------------
-int Fontc::Draw_line (SDL_Surface* screen, const char* line, Rect* brd, bool color_reverse) const
+Fontc& Fontc::operator= (const Fontc& orig)
+{
+	UniId<TTF_Font>::operator = (orig);
+	col = orig.col;
+	bgcol = orig.bgcol;
+}
+//--------------------------------------------------------------------------------------------------
+int Fontc::Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_reverse) const
 {
 	assert(Ok());
     SDL_Surface *text_surface;
 	if (color_reverse)
-		text_surface = TTF_RenderUTF8_Shaded (font, line, bgcol, col);
+		text_surface = TTF_RenderUTF8_Shaded (data, line, bgcol, col);
 	else
-		text_surface = TTF_RenderUTF8_Shaded (font, line, col, bgcol);
+		text_surface = TTF_RenderUTF8_Shaded (data, line, col, bgcol);
 
 	Point size;
     if (text_surface != NULL)
@@ -542,7 +549,7 @@ int Fontc::Draw_line (SDL_Surface* screen, const char* line, Rect* brd, bool col
 		if (src_brd.w > size.x) src_brd.w = size.x;
 		if (src_brd.h > size.y) src_brd.h = size.y;
 
-        SDL_BlitSurface (text_surface, &src_brd, screen, brd);
+        SDL_BlitSurface (text_surface, &src_brd, screen->data, brd);
         SDL_FreeSurface (text_surface);
 
         return size.y;
@@ -554,14 +561,14 @@ Point Fontc::Str_size (const char* str) const
 {
 	assert(Ok());
 	int w = 0, h = 0;
-	TTF_SizeUTF8 (font, str, &w, &h);
+	TTF_SizeUTF8 (data, str, &w, &h);
 	return Point (w, h);
 }
 //--------------------------------------------------------------------------------------------------
 int Fontc::Height() const
 {
 	assert(Ok());
-	return TTF_FontHeight (font);
+	return TTF_FontHeight (data);
 }
 //--------------------------------------------------------------------------------------------------
 int Fontc::Approximate_num_symbols (int width) const
@@ -573,12 +580,12 @@ int Fontc::Approximate_num_symbols (int width) const
 //--------------------------------------------------------------------------------------------------
 bool Fontc::Ok() const
 {
-	return font != 0 && (is_mine == true || is_mine == false);
+	return UniId<TTF_Font>::Ok();
 }
 //--------------------------------------------------------------------------------------------------
 Stringc Stringc::Get_bordered_substring (int width, int offset) const
 {
-	int ret = font->Approximate_num_symbols (width);
+	int ret = font.Approximate_num_symbols (width);
 	if (0 >= ret || ret > size()) ret = size();
 	if (ret > 500) ret = 500;
 
@@ -586,7 +593,7 @@ Stringc Stringc::Get_bordered_substring (int width, int offset) const
 	strncpy (buf, data() + offset, ret);
 	buf[ret] = 0;
 
-	int w = font->Str_len (buf);
+	int w = font.Str_len (buf);
 
 	while (w > width)
 	{
@@ -594,7 +601,7 @@ Stringc Stringc::Get_bordered_substring (int width, int offset) const
 		ret -= (w - width)/std_w + 0.5;
 		ret -= ret%2; //for double char symbols
 		buf[ret] = 0;//cut string
-		w = font->Str_len (buf);
+		w = font.Str_len (buf);
 	}
 	return Stringc (buf, font);
 }

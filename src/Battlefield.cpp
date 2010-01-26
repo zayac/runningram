@@ -81,11 +81,11 @@ void Battlefield::Draw (Graphic_subsystem* c) const
         {
             Draw_cage (c->Get_screen(), Point(i, j)*csize, Point (csize, csize),
                                 Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), Color (80, 80, 80));
-            ground_texture[CELL(i, j) - 48]->draw(c->Get_screen(), Point (i * csize, j * csize), csize, csize);
+//            ground_texture[CELL(i, j) - 48]->draw(c->Get_screen(), Point (i * csize, j * csize), csize, csize);
         }
 
-    ground_texture[8]->draw(c->Get_screen(), Point(40, 40));
-    ground_texture[8]->animate();
+//    ground_texture[8]->draw(c->Get_screen(), Point(40, 40));
+//    ground_texture[8]->animate();
    // Draw_cage (c->Get_screen (), Point(), csize*size, size, Color (150, 150, 150));
 }
 //--------------------------------------------------------------------------------------------------

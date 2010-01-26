@@ -15,6 +15,7 @@
 #include "Vec.h"
 #include "Graphic_subsystem.h"
 #include "Functor.h"
+#include "UniId.h"
 
 using std::string;
 using std::list;
@@ -22,23 +23,28 @@ using std::list;
 const int cursor_width = 2;
 const int blink_interval = 300;
 
-class Fontc
+class Fontc :public UniId<TTF_Font>
 {
-	TTF_Font* font;
-	bool is_mine;
+//	TTF_Font* font;
+//	bool is_mine;
 	Color col;
 	Color bgcol;
+	
+	virtual void Delete_data();
 
 public:
-	Fontc (int height = 0, const char* fname = 0, Color fg = Color(), Color bg = Color());
+	Fontc ();
+	Fontc (int height, const char* fname, Color fg = Color(), Color bg = Color());
+	Fontc (const Fontc& orig);
 	~Fontc();
 
-	bool Open_font (const char* file, int height);
-	bool Close_font (bool force = false);
+	Fontc& operator= (const Fontc& orig);
+	void Open_font (const char* fname, int height);
 
 	void Set_bg (const Color& b) {bgcol = b;}
 	void Set_fg (const Color& f) {col = f;}
 
+	
 	const Color& bg;
 	const Color& fg;
 
@@ -47,26 +53,26 @@ public:
 	inline int Str_len (const char* str) const    {return Str_size (str).x;}
 	int Height() const;
 	int Approximate_num_symbols (int width) const;
-	int Draw_line (SDL_Surface* screen, const char* line, Rect* brd, bool color_reverse = false) const;
+	int Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_reverse = false) const;
 
 	bool Ok() const;
 };
 
 class Stringc :public string
 {
-	Fontc* font;
+	Fontc font;
 
 public:
-	Stringc ():font(0){}
-	Stringc (const string& str, Fontc* f) :string(str), font(f) {}
+	Stringc (){}//:font(){}
+	Stringc (const string& str, Fontc f) :string(str), font(f) {}
 
 	Stringc& operator = (const string& str) {string::operator =(str);}
-	void Set_font (Fontc* f) {font = f;}
+	void Set_font (Fontc f) {font = f;}
 
-	inline int Draw (SDL_Surface* screen, Rect* brd, int offset = 0, bool color_reverse = false) const//!!!??? Offset may be is tooish
-		{return font->Draw_line (screen, c_str() + offset, brd, color_reverse);}
+	inline int Draw (Canvas* screen, Rect* brd, int offset = 0, bool color_reverse = false) const//!!!??? Offset may be is tooish
+		{return font.Draw_line (screen, c_str() + offset, brd, color_reverse);}
 
-	inline Point pSize (int offset = 0) const {return font->Str_size (c_str() + offset);}
+	inline Point pSize (int offset = 0) const {return font.Str_size (c_str() + offset);}
 	inline int Height (int offset = 0) const {return pSize (offset).y;}
 	inline int Width (int offset = 0) const {return pSize (offset).x;}
 
@@ -75,7 +81,7 @@ public:
 
 	operator string& () {return *(string*)this;}
 
-	bool Ok() const {return font != 0 && font->Ok();}
+	bool Ok() const {return font.Ok();}
 };
 
 class Lines_view
@@ -84,8 +90,8 @@ class Lines_view
 	Rect borders;
 	list <Stringc> data;
 
-	int Draw_text (SDL_Surface* screen, const Stringc&, int start_offset) const;
-	int Draw_tolerable_line (SDL_Surface* screen, const Stringc&, int offset, Rect brd) const;
+	int Draw_text (Canvas* screen, const Stringc&, int start_offset) const;
+	int Draw_tolerable_line (Canvas* screen, const Stringc&, int offset, Rect brd) const;
 		
 
 	int Get_height (const Stringc& what) const;
@@ -95,7 +101,7 @@ public:
 
 	void Init (const Rect&);
 	void Push_string (const string&);
-	void Draw (SDL_Surface* c) const;
+	void Draw (Canvas* c) const;
 
 	bool Ok() const;
 };
@@ -113,8 +119,8 @@ class Line_edit
 
 	Uint32 last_actiont;
 
-	void Draw_text (SDL_Surface* c) const;
-	void Draw_cursor (SDL_Surface* c) const;
+	void Draw_text (Canvas* c) const;
+	void Draw_cursor (Canvas* c) const;
 
 	void Cursor_left();
 	void Cursor_right();
@@ -136,7 +142,7 @@ public:
 	
 	void Init (const Rect& brd, Arg_Functor <void, string*> *on_enter, string greeting = "");
 	void Operate (SDL_KeyboardEvent ev);
-	void Draw (SDL_Surface* c) const;
+	void Draw (Canvas* c) const;
 
 	bool Ok() const;
 };
