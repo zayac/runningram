@@ -8,15 +8,16 @@
 #ifndef _GRAPHIC_SUBSYSTEM_H
 #define	_GRAPHIC_SUBSYSTEM_H
 
-struct SDL_Surface;
+#include "Canvas.h"
+
+//struct SDL_Surface;
 class Serializator;
 class Camera;
-class Canvas;
 
 class Graphic_subsystem
 {
-    Canvas* screen;
-	Canvas* buffer;
+	Canvas screen;
+	Canvas buffer;
 
 	class Initialaiser;
 	Initialaiser* parser;
@@ -29,8 +30,8 @@ public:
 	bool Init();
 	void Cleanup();
 
-	void Draw (Camera* look) const;
-	Canvas* Get_screen() const {return buffer;};
+	void Draw (Camera* look);
+	Canvas* Get_screen() {return &buffer;};
 
 	bool Ok() const;
 };

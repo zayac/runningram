@@ -44,8 +44,8 @@ Graphic_subsystem::Graphic_subsystem () :parser (new Initialaiser ((char*)"[Grap
 Graphic_subsystem::~Graphic_subsystem ()
 {
 	Cleanup();//!!! It may be need to add if(initialaised) check for avoid fail of cleanup
-	SDL_FreeSurface (buffer);
-	buffer = 0;
+//	SDL_FreeSurface (buffer);
+//	buffer = 0;
 	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
@@ -63,8 +63,8 @@ bool Graphic_subsystem::Init()
     SDL_WM_SetCaption (parser->win_name.c_str (), "name");
 
     /* create window */
-    screen = (Canvas*)SDL_SetVideoMode (parser->win_x, parser->win_y, 0, 0);
-    buffer = screen->Create_compatible();
+    screen.Get_from_screen (Point (parser->win_x, parser->win_y));
+    buffer = screen.Create_compatible();
 
     /*buffer->format->Amask = 0xff000000;
     buffer->format->Ashift = 24;
@@ -74,14 +74,14 @@ bool Graphic_subsystem::Init()
 	return Ok();
 }
 //--------------------------------------------------------------------------------------------------
-void Graphic_subsystem::Draw (Camera* look) const
+void Graphic_subsystem::Draw (Camera* look)
 {
     /* update the screen */
 
-	screen->Copy (buffer);
+	screen.Copy (buffer);
 //	SDL_UnlockSurface (screen);
-	screen->Update ();
-	buffer->Fill (Color(0, 0,0));
+	screen.Update ();
+	buffer.Fill (Color(0, 0,0));
 //	SDL_LockSurface (screen);
 }
 //--------------------------------------------------------------------------------------------------
@@ -93,6 +93,6 @@ void Graphic_subsystem::Cleanup()
 //--------------------------------------------------------------------------------------------------
 bool Graphic_subsystem::Ok() const
 {
-	return parser != 0 && screen != 0 && screen->Ok() && buffer != 0 && buffer->Ok();
+	return parser != 0 && screen.Ok() && buffer.Ok();
 }
 //--------------------------------------------------------------------------------------------------

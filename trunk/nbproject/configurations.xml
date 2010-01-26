@@ -17,6 +17,7 @@
         <in>Graphic_subsystem.h</in>
         <in>Orient.h</in>
         <in>Sprite.h</in>
+        <in>UniId.h</in>
         <in>Vec.h</in>
         <in>Vec_spec.h</in>
         <in>initparser.h</in>
