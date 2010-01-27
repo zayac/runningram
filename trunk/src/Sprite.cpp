@@ -674,7 +674,7 @@ void Sprite::stretch(Sprite &sprite, float stretchX, float stretchY) {
     }
     SDL_FreeSurface(sprite.getSurface());
     sprite.setSurface(zoomed);
-}
+    }
 
 
 

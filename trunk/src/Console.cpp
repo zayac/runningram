@@ -57,7 +57,7 @@ bool Console::Init (Graphic_subsystem* c)
 	font.Set_fg (Color(10, 200, 20));
 	font.Set_bg (Color(10, 20, 20));
 
-	Rect borders = c->Get_screen()->Get_clip_rect ();
+	Rect borders = c->Get_screen()->getClipRect ();
 	borders.h = 210;
 	history.Init (borders);
 	history.Push_string ("You are welcome!");
