@@ -10,6 +10,7 @@
 
 #include "Vec.h"
 #include "Graphic_subsystem.h"
+#include "IsometricField.h"
 #include "Sprite.h"
 #include <vector>
 class Serializator;
@@ -23,10 +24,10 @@ class Battlefield
 	int csize;
 
         /* Vector for keeping ground textures */
-	std::vector<Sprite*> ground_texture;
+	std::vector<Canvas*> sprites;
 	class Initialaiser;
 	Initialaiser* parser;
-
+        IsometricField* test;
 	void Clean_field (char fill_cell);
 
 public:

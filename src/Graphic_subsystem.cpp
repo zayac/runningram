@@ -63,8 +63,8 @@ bool Graphic_subsystem::Init()
     SDL_WM_SetCaption (parser->win_name.c_str (), "name");
 
     /* create window */
-    screen.Get_from_screen (Point (parser->win_x, parser->win_y));
-    buffer = screen.Create_compatible();
+    screen.getFromScreen (Point (parser->win_x, parser->win_y));
+    buffer = screen.createCompatible();
 
     /*buffer->format->Amask = 0xff000000;
     buffer->format->Ashift = 24;
@@ -78,10 +78,10 @@ void Graphic_subsystem::Draw (Camera* look)
 {
     /* update the screen */
 
-	screen.Copy (buffer);
+	screen.copy (buffer);
 //	SDL_UnlockSurface (screen);
-	screen.Update ();
-	buffer.Fill (Color(0, 0,0));
+	screen.update ();
+	buffer.fill (Color(0, 0,0));
 //	SDL_LockSurface (screen);
 }
 //--------------------------------------------------------------------------------------------------

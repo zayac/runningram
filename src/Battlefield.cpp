@@ -48,6 +48,11 @@ Battlefield::~Battlefield ()
 
 	if (cells) delete [] cells;
 	delete parser;
+        for(int i = 0; !sprites.empty(); i++)
+        {
+            delete sprites[i];
+        }
+        delete &sprites;
 }
 //--------------------------------------------------------------------------------------------------
 Serializator* Battlefield::Get_parser()
@@ -62,20 +67,20 @@ void Draw_cage (Canvas* c, Point start, Point full_size, Point num_cells, Color 
 	{
 		Point begin = start + Point (size.x*i, 0);
 		Point end = start + Point (size.x*i, full_size.y);
-		c->Line (begin, end, col);
+		c->line (begin, end, col);
 	}
 	for (int i = 0; i <= num_cells.y; ++i)
 	{
 		Point begin = start + Point (0, size.y*i);
 		Point end = start + Point (full_size.x, size.y*i);
-		c->Line (begin, end, col);
+		c->line (begin, end, col);
 	}
 }
 //----------------------------------------
 void Battlefield::Draw (Graphic_subsystem* c) const
 {
     assert(Ok());
-    
+
     for (int i = 0; i < size.x; ++i)
         for (int j = 0; j < size.y; ++j)
         {
@@ -83,7 +88,8 @@ void Battlefield::Draw (Graphic_subsystem* c) const
                                 Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), Color (80, 80, 80));
 //            ground_texture[CELL(i, j) - 48]->draw(c->Get_screen(), Point (i * csize, j * csize), csize, csize);
         }
-
+     //sprites[0]->getRect(Point (0,0), 10, 10).draw(c->Get_screen(), Point (20, 20));
+    //test->draw(c->Get_screen(), Point (100, 100));
 //    ground_texture[8]->draw(c->Get_screen(), Point(40, 40));
 //    ground_texture[8]->animate();
    // Draw_cage (c->Get_screen (), Point(), csize*size, size, Color (150, 150, 150));
@@ -118,7 +124,7 @@ bool Battlefield::Load_from_file (const char* fname)
 	}
 
         /* Texture Loader */
-        string texture_name;
+        /*string texture_name;
         //file >> texture_name;
         int n;
         file >> n;
@@ -127,16 +133,8 @@ bool Battlefield::Load_from_file (const char* fname)
         {
             file >> texture_name;
             this->ground_texture.push_back(new Sprite(SDL_LoadBMP(texture_name.c_str()), 1, 1));
-        }
-
+        }*/
 	file.close();
-
-
-        Sprite* spr = new Sprite(SDL_LoadBMP("textures/tommy.bmp"), 13, 50);
-        spr->rotate90();
-        spr->setTransparency(97,68,43);
-        this->ground_texture.push_back(spr);
-
 	return Ok();
 }
 //--------------------------------------------------------------------------------------------------

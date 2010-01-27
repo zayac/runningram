@@ -77,15 +77,15 @@ void Car::Draw (Canvas* c)
 	Point two_trg = (front.r*(front.orient + Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
 	Point three_trg = (front.r*(front.orient - Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
 
-	c->Line (leftback, leftfront, Color (150, 200, 200));
-	c->Line (leftfront, rightfront, Color (150, 200, 200));
-	c->Line (rightfront, rightback, Color (150, 200, 200));
-	c->Line (rightback, leftback, Color (150, 200, 200));
+	c->line (leftback, leftfront, Color (150, 200, 200));
+	c->line (leftfront, rightfront, Color (150, 200, 200));
+	c->line (rightfront, rightback, Color (150, 200, 200));
+	c->line (rightback, leftback, Color (150, 200, 200));
 
-	c->Line (one_trg, two_trg, Color (200, 150, 150));
-	c->Line (two_trg, three_trg, Color (200, 150, 150));
-	c->Line (three_trg, one_trg, Color (200, 150, 150));
-	c->Line (end, one_trg, Color (200, 150, 150));
+	c->line (one_trg, two_trg, Color (200, 150, 150));
+	c->line (two_trg, three_trg, Color (200, 150, 150));
+	c->line (three_trg, one_trg, Color (200, 150, 150));
+	c->line (end, one_trg, Color (200, 150, 150));
 }
 //--------------------------------------------------------------------------------------------------
 #include <iostream>
