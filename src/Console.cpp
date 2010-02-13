@@ -549,7 +549,7 @@ int Fontc::Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_re
 		if (src_brd.w > size.x) src_brd.w = size.x;
 		if (src_brd.h > size.y) src_brd.h = size.y;
 
-        SDL_BlitSurface (text_surface, &src_brd, screen->data, brd);
+        SDL_BlitSurface (text_surface, addSdl (&src_brd), screen->data, addSdl (brd));
         SDL_FreeSurface (text_surface);
 
         return size.y;
