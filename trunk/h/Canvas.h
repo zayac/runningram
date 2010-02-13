@@ -7,43 +7,80 @@
 
 #ifndef _CANVAS_H
 #define	_CANVAS_H
-#include <SDL/SDL.h>
-#include <SDL/SDL_gfxPrimitives.h>
-#include <SDL/SDL_rotozoom.h>
+#include <stdint.h>
 #include "Vec.h"
 #include "UniId.h"
 #include <string>
 class Canvas;
+class SDL_Surface;
 
-class Color :public SDL_Color
+#ifndef _SDL_H
+
+typedef int8_t		Sint8;
+typedef uint8_t		Uint8;
+typedef int16_t		Sint16;
+typedef uint16_t	Uint16;
+typedef int32_t		Sint32;
+typedef uint32_t	Uint32;
+
+#endif
+
+class Color// :public SDL_Color
 {
+public:
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
+	Uint8 unused;
+
 public:
 	Color (Uint8 red = 0, Uint8 green = 0, Uint8 blue = 0, Uint8 alpha = 255)
-	 {r =red; g = green; b = blue; unused = alpha; }
+	 :r(red), g(green), b(blue), unused(alpha) {}
 	Uint32 Toint (Canvas* screen) const;
+
+	#ifdef _SDL_H
+	operator SDL_Color() const;
+	Color (const SDL_Color& src);
+
 	Uint32 Toint (SDL_Surface* screen) const;
+	#endif
 };
 
-class Rect :public SDL_Rect
+class Rect// :public SDL_Rect
 {
 public:
-	Rect ():SDL_Rect(){}
+	Sint16 x, y;
+	Uint16 w, h;
+
+public:
+	Rect ():x(), y(), w(), h(){}
 	Rect (int x, int y, int w, int h);
 	Rect (const Rect& that);
-	Rect (const SDL_Rect& that);
 	Rect& operator = (const Rect& that);
 
 	void Draw (Canvas* screen, Color c) const;
 
 	void Cut_left (int);
 	void Cut_top (int);
+
+	#ifdef _SDL_H
+	Rect (const SDL_Rect& that);
+	operator SDL_Rect() const;
+	#endif
 };
+
+#ifdef _SDL_H
+inline SDL_Rect*		addSdl (Rect* p) {return (SDL_Rect*)p;}
+inline const SDL_Rect*	addSdl (const Rect* p) {return (const SDL_Rect*)p;}
+inline Rect*			cutSdl (SDL_Rect* p) {return (Rect*)p;}
+inline const Rect*		cutSdl (const SDL_Rect* p) {return (const Rect*)p;}
+#endif
 
 class Canvas :public UniId<SDL_Surface>
 {
 	static base* screen_t;
 	static SDL_Surface* screen_p;
-        Canvas (SDL_Surface* d);
+	Canvas (SDL_Surface* d);
 
 	friend class Rect;
 	friend class Color;
@@ -54,39 +91,40 @@ protected:
 public:
 	Canvas();
 	Canvas (const Canvas& orig);
-        Canvas(char* file);
+	Canvas(char* file);
 //	virtual ~Canvas();
 
-        /* helper methods */
-        Canvas getRect(Point point, int width, int height);
-        void rotate(double angle) { data = rotozoomSurface(data, angle, 1, 1); }
-        void rotate90() { rotate(90); }
-        void rotate180() { rotate(180); };
-        void rotate270() { rotate(270);}
-        void flipHorizontal()  { data = zoomSurface(data, 1, -1, SMOOTHING_ON); }
-        void flipVertical() { data = zoomSurface(data, -1, 1, SMOOTHING_ON); }
-        void setTransparency(Color colorkey);
-        Color getTransparency();
-        void zoom(double zoomx, double zoomy) { data = zoomSurface (data, zoomx, zoomy, SMOOTHING_ON);}  // percentage to zoom in
+	/* helper methods */
+	Canvas getRect(Point point, int width, int height);
+	void rotate (double angle);
+	void rotate90() { rotate(90); }
+	void rotate180() { rotate(180); };
+	void rotate270() { rotate(270);}
+	void flipHorizontal();
+	void flipVertical();
+	void setTransparency (Color colorkey);
+	Color getTransparency();
+	void zoom(double zoomx, double zoomy); // percentage to zoom in
 	void line (Point start, Point finish, Color c);
-        inline Color getPixel(Point point);
-        void setPixel(Point point, Color color);
-        bool isTransparentPixel(Point point);
-        void setTransparentPixel(Point point);
+	inline Color getPixel (Point point);
+	void setPixel (Point point, Color color);
+	bool isTransparentPixel (Point point);
+	void setTransparentPixel (Point point);
 
-        void draw(Canvas* sprite, Point pos);
-        void fillRect (Rect r, Color col);
-	inline void fill (Color col) {fillRect (Rect (0, 0, data->w, data->h), col);}
+	void draw (Canvas* sprite, Point pos);
+	void fillRect (Rect r, Color col);
+	void fill (Color col);
 
-        void copy (Canvas from, Rect src_brd = Rect (0, 0, 0, 0), Point to = Point());
+	void copy (Canvas from, Rect src_brd = Rect (0, 0, 0, 0), Point to = Point());
 	void update();
 	
-        inline Rect getClipRect() const {return data->clip_rect;}
-        int getWidth() { return data->w; }
-        int getHeight() { return data->h; }
-        SDL_Surface* getSurface() { return data; }
-        void setSurface(SDL_Surface* surf) {};
-        Canvas createCompatible (Point size = Point()) const;
+	Rect getClipRect() const;
+	int getWidth();
+	int getHeight();
+	SDL_Surface* getSurface() { return data; }
+	//void setSurface (SDL_Surface* surf) {data = surf};
+	Canvas createCompatible (Point size = Point()) const;
+
 	bool getFromScreen (Point size);//Run once!!!
 	bool Ok() const;
 };

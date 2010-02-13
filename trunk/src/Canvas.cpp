@@ -6,7 +6,9 @@
  */
 
 #include <assert.h>
-//#include <SDL/SDL_gfx.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_gfxPrimitives.h>
+#include <SDL/SDL_rotozoom.h>
 #include "Canvas.h"
 #include "Battlefield.h"
 
@@ -46,21 +48,41 @@ void Canvas::deleteData()
 inline int toInt (float a) {return (int)(a + 0.5);}
 void Canvas::line (Point start, Point finish, Color c)
 {   
-    lineRGBA(data, start.x, start.y, finish.x, finish.y, c.r, c.g, c.b, c.unused);
+    lineRGBA (data, start.x, start.y, finish.x, finish.y, c.r, c.g, c.b, c.unused);
 }
 
 //--------------------------------------------------------------------------------------------------
 void Canvas::fillRect (Rect r, Color col)
 {
-    SDL_FillRect (data, &r, col.Toint (data));
+    SDL_FillRect (data, addSdl (&r), col.Toint (data));
+}
+//--------------------------------------------------------------------------------------------------
+void Canvas::fill (Color col)
+{
+	fillRect (Rect (0, 0, data->w, data->h), col);
+}
+//--------------------------------------------------------------------------------------------------
+Rect Canvas::getClipRect() const
+{
+	return data->clip_rect;
+}
+//--------------------------------------------------------------------------------------------------
+int Canvas::getWidth()
+{
+	return data->w;
+}
+//--------------------------------------------------------------------------------------------------
+int Canvas::getHeight()
+{
+	return data->h;
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::copy (Canvas from, Rect src_brd, Point to)
 {
-	Rect* src_brdp = &src_brd;
+	SDL_Rect* src_brdp = addSdl (&src_brd);
 	if (src_brd.w == 0 && src_brd.h == 0) src_brdp = 0;
 	Rect my_brd (to.x, to.y, data->w - to.x, data->h - to.y);
-	SDL_BlitSurface (from.data, src_brdp, data, &my_brd);
+	SDL_BlitSurface (from.data, src_brdp, data, addSdl (&my_brd));
 }
 //--------------------------------------------------------------------------------------------------
 Canvas Canvas::createCompatible (Point size) const
@@ -133,6 +155,13 @@ bool Canvas::Ok() const
 	return UniId<SDL_Surface>::Ok();
 }
 //--------------------------------------------------------------------------------------------------
+Color::operator SDL_Color() const
+{
+	return SDL_Color {r, g, b, unused};
+}
+//--------------------------------------------------------------------------------------------------
+Color::Color (const SDL_Color& src) :r (src.r), g (src.g), b (src.b), unused (src.unused){}
+//--------------------------------------------------------------------------------------------------
 Uint32 Color::Toint (Canvas* screen) const
 {
 	return SDL_MapRGBA (screen->data->format, r,g,b,unused);
@@ -143,17 +172,19 @@ Uint32 Color::Toint (SDL_Surface* screen) const
 	return SDL_MapRGBA (screen->format, r,g,b,unused);
 }
 //--------------------------------------------------------------------------------------------------
-Rect::Rect (int _x, int _y, int _w, int _h) {x = _x; y = _y; w = _w; h = _h;}
+Rect::Rect (int _x, int _y, int _w, int _h) :x(_x), y(_y), w(_w), h(_h){}
 
-Rect::Rect (const Rect& that) {x = that.x; y = that.y; w = that.w; h = that.h;}
+Rect::Rect (const Rect& that):x(that.x), y(that.y), w(that.w), h(that.h){}
 //--------------------------------------------------------------------------------------------------
 Rect& Rect::operator = (const Rect& that) {x = that.x; y = that.y; w = that.w; h = that.h; return *this;}
 //--------------------------------------------------------------------------------------------------
-Rect::Rect (const SDL_Rect& that) {x = that.x; y = that.y; w = that.w; h = that.h;}
+Rect::Rect (const SDL_Rect& that):x(that.x), y(that.y), w(that.w), h(that.h){}
+//--------------------------------------------------------------------------------------------------
+Rect::operator SDL_Rect() const {return SDL_Rect {x, y, w, h};}
 //--------------------------------------------------------------------------------------------------
 void Rect::Draw (Canvas* screen, Color c) const
 {
-	Rect copy(*this);
+	SDL_Rect copy(*this);
 	SDL_FillRect (screen->getSurface(), &copy, c.Toint (screen->getSurface()));
 }
 //--------------------------------------------------------------------------------------------------
@@ -169,25 +200,46 @@ void Rect::Cut_top (int what)
 	h -= what;
 }
 //--------------------------------------------------------------------------------------------------
-
-inline Color Canvas::getPixel(Point point)
+Color Canvas::getPixel(Point point)
 {
     Uint32* pixels = (Uint32*)data->pixels;
     Uint8 r, g, b, a;
     SDL_GetRGBA(pixels[point.y * data->w + point.x], data->format, &r, &g, &b, &a);
     return Color (r, g, b, a);
 }
-
-inline void Canvas::setPixel(Point point, Color pixel) {
+//--------------------------------------------------------------------------------------------------
+void Canvas::setPixel(Point point, Color pixel)
+{
     Uint32* pixels = (Uint32*)data->pixels;
     pixels[point.y * data->w + point.x] = pixel.Toint(data);
 }
-
-
-Canvas Canvas::getRect(Point point, int w, int h) {
+//--------------------------------------------------------------------------------------------------
+void Canvas::rotate(double angle)
+{
+	data = rotozoomSurface(data, angle, 1, 1);
+}
+//--------------------------------------------------------------------------------------------------
+void Canvas::flipHorizontal()
+{
+	data = zoomSurface(data, 1, -1, SMOOTHING_ON);
+}
+//--------------------------------------------------------------------------------------------------
+void Canvas::flipVertical()
+{
+	data = zoomSurface(data, -1, 1, SMOOTHING_ON);
+}
+//--------------------------------------------------------------------------------------------------
+void Canvas::zoom(double zoomx, double zoomy)  // percentage to zoom in
+{
+	data = zoomSurface (data, zoomx, zoomy, SMOOTHING_ON);
+}
+//--------------------------------------------------------------------------------------------------
+Canvas Canvas::getRect(Point point, int w, int h)
+{
     // create a new surface
     int amask = 0;
-    if(data->flags & SDL_SRCCOLORKEY) {
+    if(data->flags & SDL_SRCCOLORKEY)
+	{
         amask = data->format->Amask;
     }
     Canvas newrect ( SDL_CreateRGBSurface(  SDL_SWSURFACE,
@@ -199,32 +251,38 @@ Canvas Canvas::getRect(Point point, int w, int h) {
                                             data->format->Bmask,
                                             amask ));
 
-    for(int j = 0; j < h; j++) {
-        for(int i = 0; i < w; i++) {
+    for(int j = 0; j < h; j++)
+	{
+        for(int i = 0; i < w; i++)
+		{
             newrect.setPixel(Point(i, j), this->getPixel(Point (point.x + i,point.y + j)));
         }
     }
     //Copy color key
-    if(data->flags & SDL_SRCCOLORKEY) {
+    if(data->flags & SDL_SRCCOLORKEY)
+	{
         SDL_SetColorKey(newrect.getSurface(), SDL_RLEACCEL|SDL_SRCCOLORKEY, data->format->colorkey );
     }
     return newrect;
 }
-
-void Canvas::setTransparency(Color colorkey) {
+//--------------------------------------------------------------------------------------------------
+void Canvas::setTransparency(Color colorkey)
+{
     SDL_SetColorKey(data, SDL_SRCCOLORKEY, colorkey.Toint(data) );
 }
-
-void Canvas::setTransparentPixel(Point point) {
+//--------------------------------------------------------------------------------------------------
+void Canvas::setTransparentPixel(Point point)
+{
     setPixel(point, data->format->colorkey);
 }
-
-bool Canvas::isTransparentPixel(Point point) {
+//--------------------------------------------------------------------------------------------------
+bool Canvas::isTransparentPixel(Point point)
+{
     Uint32 pixelcolor = getPixel(point).Toint(this);
 	//test whether pixels color == color of transparent pixels for that surface
 	return (pixelcolor == data->format->colorkey);
 }
-
+//--------------------------------------------------------------------------------------------------
 void Canvas::draw(Canvas* buffer, Point pos)
 {
     SDL_Rect dstrect;
@@ -238,7 +296,7 @@ void Canvas::draw(Canvas* buffer, Point pos)
     srcRect.h = getHeight();
     SDL_BlitSurface(data, &srcRect, buffer->getSurface(), &dstrect);
 }
-
+//--------------------------------------------------------------------------------------------------
 Color Canvas::getTransparency()
 {
     Uint8 r, g, b, a;
