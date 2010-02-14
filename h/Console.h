@@ -8,55 +8,20 @@
 #ifndef _CONSOLE_H
 #define	_CONSOLE_H
 
-#include <Canvas.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL/SDL_events.h>
 #include <list>
 #include <string>
+#include "Canvas.h"
 #include "Vec.h"
 #include "Graphic_subsystem.h"
 #include "Functor.h"
-#include "UniId.h"
+#include "Fontc.h"
 
 using std::string;
 using std::list;
 
 const int cursor_width = 2;
 const int blink_interval = 300;
-
-class Fontc :public UniId<TTF_Font>
-{
-//	TTF_Font* font;
-//	bool is_mine;
-	Color col;
-	Color bgcol;
-	
-	virtual void Delete_data();
-
-public:
-	Fontc ();
-	Fontc (int height, const char* fname, Color fg = Color(), Color bg = Color());
-	Fontc (const Fontc& orig);
-	~Fontc();
-
-	Fontc& operator= (const Fontc& orig);
-	void Open_font (const char* fname, int height);
-
-	void Set_bg (const Color& b) {bgcol = b;}
-	void Set_fg (const Color& f) {col = f;}
-
-	
-	const Color& bg;
-	const Color& fg;
-
-	Point Str_size (const char* str) const;
-	inline int Str_height (const char* str) const {return Str_size (str).y;}
-	inline int Str_len (const char* str) const    {return Str_size (str).x;}
-	int Height() const;
-	int Approximate_num_symbols (int width) const;
-	int Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_reverse = false) const;
-
-	bool Ok() const;
-};
 
 class Stringc :public string
 {

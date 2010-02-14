@@ -5,8 +5,7 @@
  * Created on January 8, 2010, 12:58 PM
  */
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <time.h>
 #include "initparser.h"
 #include "Console.h"
 #include "Graphic_subsystem.h"
@@ -33,6 +32,8 @@ public:
 	}
 }; // </editor-fold>
 
+#define MSECS (clock()*1000/CLOCKS_PER_SEC)
+
 Console::Console () :parser (new Initialaiser ("[Console]")), history (font), input (font)
 {
 }
@@ -50,8 +51,6 @@ Serializator* Console::Get_parser()
 //--------------------------------------------------------------------------------------------------
 bool Console::Init (Graphic_subsystem* c)
 {
-	if (!TTF_WasInit () && TTF_Init() == -1) return false;
-
 	font.Open_font (parser->font_fname.c_str(), parser->height);
 
 	font.Set_fg (Color(10, 200, 20));
@@ -74,7 +73,7 @@ bool Console::Init (Graphic_subsystem* c)
 void Console::Cleanup()
 {
 	assert(Ok());//!!! It may be needed to close opend font
-	if (TTF_WasInit()) TTF_Quit();
+        FontcCleanUp();
 }
 //--------------------------------------------------------------------------------------------------
 void Console::Operate (SDL_KeyboardEvent ev)
@@ -113,7 +112,7 @@ void Line_edit::Init (const Rect& brd, Arg_Functor <void, string*> *enter, strin
 	cursor_pos = 0;
 	start_view = 0;
 	borders = brd;
-	last_actiont = SDL_GetTicks();
+	last_actiont = MSECS;
 	greeting = gr;
 	greeting.Set_font (font);
 	grsize = greeting.Width();
@@ -125,7 +124,7 @@ void Line_edit::Operate (SDL_KeyboardEvent ev)
 	assert(Ok());
 	if (ev.type == SDL_KEYUP) return;
 
-	last_actiont = SDL_GetTicks();
+	last_actiont = MSECS;
 
 	bool num_lock = ev.keysym.mod & KMOD_NUM;
 
@@ -133,20 +132,20 @@ void Line_edit::Operate (SDL_KeyboardEvent ev)
 		switch (ev.keysym.sym)
 		{
 		case SDLK_KP1:			Cursor_end();		return;
-		case SDLK_KP2:								return;
-		case SDLK_KP3:								return;
+		case SDLK_KP2:						return;
+		case SDLK_KP3:						return;
 		case SDLK_KP4:			Cursor_left();		return;
-		case SDLK_KP5:								return;
+		case SDLK_KP5:						return;
 		case SDLK_KP6:			Cursor_right();		return;
 		case SDLK_KP7:			Cursor_home();		return;
-		case SDLK_KP8:								return;
-		case SDLK_KP9:								return;
-		case SDLK_KP_PERIOD:						return;
-		case SDLK_KP_DIVIDE:						return;
-		case SDLK_KP_MULTIPLY:						return;
-		case SDLK_KP_MINUS:							return;
-		case SDLK_KP_PLUS:							return;
-		case SDLK_KP_EQUALS:						return;
+		case SDLK_KP8:						return;
+		case SDLK_KP9:						return;
+		case SDLK_KP_PERIOD:					return;
+		case SDLK_KP_DIVIDE:					return;
+		case SDLK_KP_MULTIPLY:					return;
+		case SDLK_KP_MINUS:					return;
+		case SDLK_KP_PLUS:					return;
+		case SDLK_KP_EQUALS:					return;
 		}
 
 	switch (ev.keysym.sym)
@@ -156,7 +155,7 @@ void Line_edit::Operate (SDL_KeyboardEvent ev)
 	case SDLK_HOME:			Cursor_home();		break;
 	case SDLK_END:			Cursor_end();		break;
 
-	case SDLK_BACKSPACE:	Delete_left();		break;
+	case SDLK_BACKSPACE:            Delete_left();		break;
 	case SDLK_DELETE:		Delete_right();		break;
 
 	case SDLK_RETURN:		Finish_input();		break;
@@ -369,7 +368,7 @@ void Line_edit::Draw_cursor (Canvas* c) const
 	cursor.w = cursor_width;
 
 	Color colour = 0;
-	Uint32 time = SDL_GetTicks () - last_actiont;
+	Uint32 time = MSECS - last_actiont;
 	if ((time/blink_interval) % 2) colour = font.bg;
 	else colour = font.fg;
 
@@ -489,98 +488,6 @@ bool Lines_view::Ok() const
 	for (list<Stringc>::const_iterator i = data.begin(); i != data.end(); ++i)
 		if (!i->Ok ()) return false;
 	return font.Ok();
-}
-//--------------------------------------------------------------------------------------------------
-
-Fontc::Fontc():UniId<TTF_Font> (0, 0), col (Color()), bgcol (Color()), bg (bgcol), fg (col)
-{
-}
-//--------------------------------------------------------------------------------------------------
-Fontc::Fontc (int height, const char* fname, Color f, Color b)
-	:UniId<TTF_Font>(TTF_OpenFont (fname, height), 0), col (f), bgcol (b), bg (bgcol), fg (col)
-{
-	assert (Ok());
-}
-//--------------------------------------------------------------------------------------------------
-Fontc::Fontc (const Fontc& orig):UniId<TTF_Font> (orig), bgcol (orig.bgcol), col (orig.col), bg(bgcol), fg (col)
-{
-	assert (Ok());
-}
-//--------------------------------------------------------------------------------------------------
-Fontc::~Fontc()
-{
-}
-//--------------------------------------------------------------------------------------------------
-void Fontc::Delete_data()
-{
-	if (data)
-		TTF_CloseFont (data);
-}
-//--------------------------------------------------------------------------------------------------
-void Fontc::Open_font (const char* fname, int height)
-{
-	Reinit (TTF_OpenFont (fname, height), 0);
-}
-//--------------------------------------------------------------------------------------------------
-Fontc& Fontc::operator= (const Fontc& orig)
-{
-	UniId<TTF_Font>::operator = (orig);
-	col = orig.col;
-	bgcol = orig.bgcol;
-}
-//--------------------------------------------------------------------------------------------------
-int Fontc::Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_reverse) const
-{
-	assert(Ok());
-    SDL_Surface *text_surface;
-	if (color_reverse)
-		text_surface = TTF_RenderUTF8_Shaded (data, line, bgcol, col);
-	else
-		text_surface = TTF_RenderUTF8_Shaded (data, line, col, bgcol);
-
-	Point size;
-    if (text_surface != NULL)
-    {
-		size = Str_size (line);
-
-		Rect src_brd = *brd;
-		src_brd.x = 0;
-		src_brd.y = 0;
-		if (src_brd.w > size.x) src_brd.w = size.x;
-		if (src_brd.h > size.y) src_brd.h = size.y;
-
-        SDL_BlitSurface (text_surface, addSdl (&src_brd), screen->data, addSdl (brd));
-        SDL_FreeSurface (text_surface);
-
-        return size.y;
-    }
-	return 0;
-}
-//--------------------------------------------------------------------------------------------------
-Point Fontc::Str_size (const char* str) const
-{
-	assert(Ok());
-	int w = 0, h = 0;
-	TTF_SizeUTF8 (data, str, &w, &h);
-	return Point (w, h);
-}
-//--------------------------------------------------------------------------------------------------
-int Fontc::Height() const
-{
-	assert(Ok());
-	return TTF_FontHeight (data);
-}
-//--------------------------------------------------------------------------------------------------
-int Fontc::Approximate_num_symbols (int width) const
-{
-	assert(Ok());
-	int w = Str_len ("-");//Get a size of two typically characters
-	return width/w; //and measure by it
-}
-//--------------------------------------------------------------------------------------------------
-bool Fontc::Ok() const
-{
-	return UniId<TTF_Font>::Ok();
 }
 //--------------------------------------------------------------------------------------------------
 Stringc Stringc::Get_bordered_substring (int width, int offset) const
