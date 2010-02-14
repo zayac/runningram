@@ -18,6 +18,11 @@ Sprite::Sprite() {
     index = 0;
 }
 
+Sprite::~Sprite()
+{
+
+}
+
 void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
 {
     if(surface == NULL) {
@@ -35,7 +40,7 @@ void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
             temp = surface->cropRect(Point (i * width, 0), width, height);
             sprites.push_back(temp);
         }
-        this->speed = speed;
+        this->speed = animationSpeed;
     }
     this->maxFrames = maxFrames;
     if(maxFrames > 1) {
@@ -97,3 +102,78 @@ void Sprite::draw(Canvas* buffer, Point point) {
     sprites[index].draw(buffer, point);
 }
 
+
+void Sprite::start() {
+    run = true;
+}
+
+void Sprite::restart() {
+    if(run) {
+        index = 0;
+        lastAnimated = SDL_GetTicks();
+    }
+}
+
+void Sprite::setSpeed(int i) {
+    speed = i;
+}
+
+int Sprite::getSpeed()
+{
+    return speed;
+}
+
+void Sprite::rotate (double angle)
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].rotate(angle);
+}
+
+void Sprite::rotate90()
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].rotate90();
+}
+
+void Sprite::rotate180()
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].rotate180();
+}
+
+
+void Sprite::rotate270()
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].rotate270();
+}
+
+void Sprite::flipHorizontal()
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].flipHorizontal();
+}
+
+void Sprite::flipVertical()
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].flipVertical();
+}
+
+void Sprite::setTransparency (Color colorkey)
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].setTransparency(colorkey);
+}
+
+Color Sprite::getTransparency()
+{
+    return sprites[index].getTransparency();
+}
+
+void Sprite::zoom(double zoomx, double zoomy)
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].zoom(zoomx, zoomy);
+
+}

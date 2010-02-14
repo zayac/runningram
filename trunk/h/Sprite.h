@@ -40,11 +40,28 @@ public:
     Sprite(char* fileName, int maxFrames, int animationSpeed);
     Sprite(Canvas* canvas, int maxFrames,int animationSpeed);
 
+    void rotate (double angle);
+    void rotate90();
+    void rotate180();
+    void rotate270();
+    void flipHorizontal();
+    void flipVertical();
+    void setTransparency (Color colorkey);
+    Color getTransparency();
+    void zoom(double zoomx, double zoomy); // percentage to zoom in
+
     bool running();
     void stop();
     int getFrame();
+    int getWidth();
+    int getHeight();
     void animate();
     void draw(Canvas* buffer, Point point);
+    void start();
+    void restart();
+    void setSpeed(int i);
+    int getSpeed();
+
 };
 
 #endif	/* _SPRITE_H */
