@@ -92,10 +92,10 @@ public:
 	Canvas();
 	Canvas (const Canvas& orig);
 	Canvas(char* file);
-//	virtual ~Canvas();
+	//virtual ~Canvas();
 
 	/* helper methods */
-	Canvas getRect(Point point, int width, int height);
+	Canvas* getRect(Point point, int width, int height);
 	void rotate (double angle);
 	void rotate90() { rotate(90); }
 	void rotate180() { rotate(180); };

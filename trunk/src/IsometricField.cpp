@@ -4,7 +4,7 @@
  * 
  * Created on January 25, 2010, 4:04 PM
  */
-
+/*
 #include "IsometricField.h"
 #include <math.h>
 #include <SDL/SDL_rotozoom.h>
@@ -102,3 +102,4 @@ Uint32 IsometricField::getPixel(SDL_Surface* src, Point point)
 IsometricField::~IsometricField() {
 }
 
+*/

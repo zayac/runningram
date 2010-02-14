@@ -234,7 +234,7 @@ void Canvas::zoom(double zoomx, double zoomy)  // percentage to zoom in
 	data = zoomSurface (data, zoomx, zoomy, SMOOTHING_ON);
 }
 //--------------------------------------------------------------------------------------------------
-Canvas Canvas::getRect(Point point, int w, int h)
+Canvas* Canvas::getRect(Point point, int w, int h)
 {
     // create a new surface
     int amask = 0;
@@ -242,7 +242,7 @@ Canvas Canvas::getRect(Point point, int w, int h)
 	{
         amask = data->format->Amask;
     }
-    Canvas newrect ( SDL_CreateRGBSurface(  SDL_SWSURFACE,
+    Canvas* newrect = new Canvas ( SDL_CreateRGBSurface(  SDL_SWSURFACE,
                                             w,
                                             h,
                                             data->format->BitsPerPixel,
@@ -254,14 +254,14 @@ Canvas Canvas::getRect(Point point, int w, int h)
     for(int j = 0; j < h; j++)
 	{
         for(int i = 0; i < w; i++)
-		{
-            newrect.setPixel(Point(i, j), this->getPixel(Point (point.x + i,point.y + j)));
+        {
+            newrect->setPixel(Point(i, j), this->getPixel(Point (point.x + i,point.y + j)));
         }
     }
     //Copy color key
     if(data->flags & SDL_SRCCOLORKEY)
 	{
-        SDL_SetColorKey(newrect.getSurface(), SDL_RLEACCEL|SDL_SRCCOLORKEY, data->format->colorkey );
+        SDL_SetColorKey(newrect->getSurface(), SDL_RLEACCEL|SDL_SRCCOLORKEY, data->format->colorkey );
     }
     return newrect;
 }
