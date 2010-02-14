@@ -31,7 +31,9 @@ void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
 
         for(int i = 0; i <  surface->getWidth(); i++)
         {
-            sprites.push_back(surface->getRect( Point (i * width, 0), width, height));
+            Canvas temp = surface->createCompatible(Point (width, height));
+            temp = surface->cropRect(Point (i * width, 0), width, height);
+            sprites.push_back(temp);
         }
         this->speed = speed;
     }
@@ -92,6 +94,6 @@ void Sprite::animate() {
 }
 
 void Sprite::draw(Canvas* buffer, Point point) {
-    sprites[index]->draw(buffer, point);
+    sprites[index].draw(buffer, point);
 }
 
