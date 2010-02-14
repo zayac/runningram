@@ -12,6 +12,7 @@
         <in>Car.h</in>
         <in>Console.h</in>
         <in>Eventman.h</in>
+        <in>Fontc.h</in>
         <in>Functor.h</in>
         <in>Game_manager.h</in>
         <in>Graphic_subsystem.h</in>
@@ -31,6 +32,7 @@
         <in>Car.cpp</in>
         <in>Console.cpp</in>
         <in>Eventman.cpp</in>
+        <in>Fontc.cpp</in>
         <in>Game_manager.cpp</in>
         <in>Graphic_subsystem.cpp</in>
         <in>IsometricField.cpp</in>
@@ -87,6 +89,32 @@
             <pElem>/usr/include/SDL</pElem>
           </incDir>
         </ccTool>
+      </item>
+      <item path="src/Activeman.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Battlefield.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Camera.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Canvas.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Car.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Console.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Eventman.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Game_manager.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Graphic_subsystem.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/IsometricField.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Orient.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/Sprite.cpp" ex="false" tool="1">
+      </item>
+      <item path="src/initparser.cpp" ex="false" tool="1">
       </item>
     </conf>
   </confs>

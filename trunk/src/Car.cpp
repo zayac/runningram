@@ -106,7 +106,7 @@ void Car::Draw (Canvas* c)
 #include <iostream>
 void Car::Collis_brd (Rect with)
 {
-	if (!process_collisions) return Vector2f();
+	if (!process_collisions) return;
 
 	Vector2f lu (with.x, with.y);//left-up
 	Vector2f ru (with.x + with.w, with.y);//right-up
