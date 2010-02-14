@@ -91,7 +91,7 @@ protected:
 public:
 	Canvas();
 	Canvas (const Canvas& orig);
-	Canvas(char* file);
+	Canvas (char* file);
 	//virtual ~Canvas();
 
 	/* helper methods */
@@ -104,7 +104,7 @@ public:
 	void flipVertical();
 	void setTransparency (Color colorkey);
 	Color getTransparency();
-	void zoom(double zoomx, double zoomy); // percentage to zoom in
+	void zoom (double zoomx, double zoomy); // percentage to zoom in
 	void line (Point start, Point finish, Color c);
 	inline Color getPixel (Point point);
 	void setPixel (Point point, Color color);

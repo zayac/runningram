@@ -33,7 +33,7 @@ public:
 	Active (Vector2f position, float r_):Limited (position, r_){}
 	virtual void Actions (float dt) = 0;
 	virtual void Draw (Canvas*) = 0;
-	virtual Vector2f Collis_brd (Rect width) = 0;
+	virtual void Collis_brd (Rect width) = 0;
 
 	virtual bool Ok() const = 0;
 };
@@ -122,7 +122,7 @@ public:
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);
-	virtual Vector2f Collis_brd (Rect with);
+	virtual void Collis_brd (Rect with);
 
 //	Vector2f Collis_rectangle (Vector2f one, Vector2f two, Vector2f three, Vector2f four);
 
@@ -135,6 +135,9 @@ public:
 	void Turn_leftf()	{lp = false;}
 	void Forwardf()		{fp = false;}
 	void Backwardf()	{bp = false;}
+
+	bool process_collisions;//fro debug only
+	void SwitchPC() {process_collisions = !process_collisions;}
 
 //	void Applay_force (Vector2d f, Vector2d papp);
 
