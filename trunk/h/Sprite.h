@@ -31,7 +31,7 @@ private:
     int maxFrames;
     int lastAnimated;
 
-    vector<Canvas*> sprites;
+    vector<Canvas> sprites;
 
     void init(Canvas* canvas, int maxFrames, int animationSpeed);
 public:
