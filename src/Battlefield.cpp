@@ -48,11 +48,6 @@ Battlefield::~Battlefield ()
 
 	if (cells) delete [] cells;
 	delete parser;
-        for(int i = 0; !sprites.empty(); i++)
-        {
-            delete sprites[i];
-        }
-        delete &sprites;
 }
 //--------------------------------------------------------------------------------------------------
 Serializator* Battlefield::Get_parser()
@@ -88,11 +83,10 @@ void Battlefield::Draw (Graphic_subsystem* c) const
                                 Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), Color (80, 80, 80));
 //            ground_texture[CELL(i, j) - 48]->draw(c->Get_screen(), Point (i * csize, j * csize), csize, csize);
         }
-     //sprites[0]->getRect(Point (0,0), 10, 10).draw(c->Get_screen(), Point (20, 20));
-    //test->draw(c->Get_screen(), Point (100, 100));
-//    ground_texture[8]->draw(c->Get_screen(), Point(40, 40));
-//    ground_texture[8]->animate();
-   // Draw_cage (c->Get_screen (), Point(), csize*size, size, Color (150, 150, 150));
+    /*
+    sprites[0]->draw(c->Get_screen(), Point(40, 40));
+    sprites[0]->animate();*/
+
 }
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::Init()
@@ -123,17 +117,10 @@ bool Battlefield::Load_from_file (const char* fname)
 		if (file.eof()) return false;
 	}
 
-        /* Texture Loader */
-        /*string texture_name;
-        //file >> texture_name;
-        int n;
-        file >> n;
-
-        for(int i = 0; i < n; i++)
-        {
-            file >> texture_name;
-            this->ground_texture.push_back(new Sprite(SDL_LoadBMP(texture_name.c_str()), 1, 1));
-        }*/
+        /*this->sprites.push_back(new Sprite("textures/tommy.bmp", 13, 100));
+        this->sprites[0]->rotate270();
+        this->sprites[0]->setTransparency(Color (97,68,43));
+        this->sprites[0]->animate();*/
 	file.close();
 	return Ok();
 }

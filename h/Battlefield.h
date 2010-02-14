@@ -24,7 +24,7 @@ class Battlefield
 	int csize;
 
         /* Vector for keeping ground textures */
-	std::vector<Canvas*> sprites;
+	std::vector<Sprite*> sprites;
 	class Initialaiser;
 	Initialaiser* parser;
         IsometricField* test;
