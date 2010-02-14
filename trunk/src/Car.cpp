@@ -14,8 +14,17 @@
 inline float max (float a, float b) {return a < b ? b : a;}
 #endif
 
-float aboutnull = 0.0000001;
-Vector2f Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recalled = false);
+float aboutnull = 0.000000001;
+
+struct Collision_vector
+{
+	Vector2f papp;
+	Vector2f depth;
+
+	inline float Weight() {return depth.Lensq();}
+	inline bool Vital() {return Weight() > aboutnull;}
+};
+Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recalled = false);
 
 //
 //Body::Body () { }
@@ -38,6 +47,9 @@ front (rmass2, r2, coor + start_orient.Get_dir()*len/(1 + rmass2/rmass1), fric, 
 	sense->Register_key_action (new Arg_Method<void, void, Car> (this, &Car::Turn_leftf), SDL_KEYUP, SDLK_LEFT);
 	sense->Register_key_action (new Arg_Method<void, void, Car> (this, &Car::Turn_rights), SDL_KEYDOWN, SDLK_RIGHT);
 	sense->Register_key_action (new Arg_Method<void, void, Car> (this, &Car::Turn_rightf), SDL_KEYUP, SDLK_RIGHT);
+
+	process_collisions = true;
+	sense->Register_key_action (new Arg_Method<void, void, Car> (this, &Car::SwitchPC), SDL_KEYUP, SDLK_c);
 
 	assert(Ok());
 }
@@ -82,15 +94,20 @@ void Car::Draw (Canvas* c)
 	c->line (rightfront, rightback, Color (150, 200, 200));
 	c->line (rightback, leftback, Color (150, 200, 200));
 
-	c->line (one_trg, two_trg, Color (200, 150, 150));
-	c->line (two_trg, three_trg, Color (200, 150, 150));
-	c->line (three_trg, one_trg, Color (200, 150, 150));
-	c->line (end, one_trg, Color (200, 150, 150));
+	Color headc (200, 150, 150);
+	if (!process_collisions) headc = Color (150, 200, 250);
+
+	c->line (one_trg, two_trg, headc);
+	c->line (two_trg, three_trg, headc);
+	c->line (three_trg, one_trg, headc);
+	c->line (end, one_trg, headc);
 }
 //--------------------------------------------------------------------------------------------------
 #include <iostream>
-Vector2f Car::Collis_brd (Rect with)
+void Car::Collis_brd (Rect with)
 {
+	if (!process_collisions) return Vector2f();
+
 	Vector2f lu (with.x, with.y);//left-up
 	Vector2f ru (with.x + with.w, with.y);//right-up
 	Vector2f ld (with.x, with.y + with.h);//left-down
@@ -104,14 +121,26 @@ Vector2f Car::Collis_brd (Rect with)
 	Vector2f one[4] = {lb, rb, rf, lf};
 	Vector2f two[4] = {lu, ru, rd, ld};
 
-	Vector2f delta = Collis_rectangles (one, two);
-	if (delta.Lensq () > aboutnull)
-	{
-		back.pos += delta;
-		front.pos += delta;
-	}
+	Collision_vector curv = Collis_rectangles (one, two);
+	float papp_weight = curv.Weight();
+	Vector2f rez_papp = curv.papp;
 
-	return Vector2f();//abc*+*+*Collis_rectangle (lu, ru, rd, ld);//!?!?!?
+	int num_iters = 20;
+
+	while (num_iters-- > 0 && curv.Vital())
+	{
+		back.pos += curv.depth;
+		front.pos += curv.depth;
+
+		one[0] = Vector2f (back.r*back.orient.Get_dir().y, -back.r*back.orient.Get_dir().x) + back.pos;
+		one[1] = Vector2f (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + back.pos;
+		one[2] = Vector2f (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + front.pos;
+		one[3] = Vector2f (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + front.pos;
+		
+		curv = Collis_rectangles (one, two);
+		rez_papp = (rez_papp*papp_weight + curv.papp*curv.Weight())/(papp_weight + curv.Weight()); //averaging point of application
+		papp_weight += curv.Weight();
+	}
 }
 //--------------------------------------------------------------------------------------------------
 inline Vector2f From_point_to_stline (Vector2f end, Vector2f delta, Vector2f p)
@@ -128,88 +157,60 @@ inline bool Same_side (Vector2f end, Vector2f delta, Vector2f a, Vector2f b)
 												Same_side (two, three-two, centre, what) &&		\
 												Same_side (three, four-three, centre, what) &&	\
 												Same_side (four, one-four, centre, what)
+//-------------
 inline Vector2f Get_depth (Vector2f rect[4], Vector2f centre, Vector2f p, Vector2f hiscentre)
 {
-	Vector2f ret;
+	Vector2f ret (1/aboutnull, 1/aboutnull);
+
 	if (Same_side (rect[3], rect[0] - rect[3], centre, p))
 		ret = From_point_to_stline (rect[3], rect[0] - rect[3], p);
-	if ((ret^(p-hiscentre)) > 0) ret = Vector2f();//depth only from centre
+//	if ((ret^(p-hiscentre)) > 0) ret = Vector2f();//depth only from centre
 
 	for (int i = 0; i < 3; ++i)
 		if (Same_side (rect[i], rect[i + 1] - rect[i], centre, p))
 		{
 			Vector2f cur = From_point_to_stline (rect[i], rect[i + 1] - rect[i], p);
-			if ((cur^(p-hiscentre)) < 0 &&   //depth only from centre
-			   (cur.Lensq() < ret.Lensq() || ret.Lensq() < aboutnull)) ret = cur;
+			if (/*(cur^(p-hiscentre)) < 0 &&   */ //depth only from centre
+			    cur.Lensq() < ret.Lensq()) ret = cur;
 		}
 	return ret;
 }
-Vector2f Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recalled)
+//-------------
+Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recalled)
 {
 	Vector2f cent1 = (one[0] + one[1] + one[2] + one[3])/4;
 	Vector2f cent2 = (two[0] + two[1] + two[2] + two[3])/4;
 
-	Vector2f max_depth;
-	Vector2f applic_p;
+	Collision_vector ret;
 
-	for (int i = 0; i < 4; ++i)
-		for (int j = 0; j < 4; ++j)
-			if ((one[i] - two[j]).Lensq () < aboutnull) return Vector2f();
+//	for (int i = 0; i < 4; ++i)
+//		for (int j = 0; j < 4; ++j)
+//			if ((one[i] - two[j]).Lensq () < aboutnull) return Vector2f();
 
 	for (int i = 0; i < 4; ++i)
 		if (IN(two[0], two[1], two[2], two[3], cent2, one[i]))
 		{
 			Vector2f depth = Get_depth (two, cent2, one[i], cent1);
-			if (depth.Lensq() > max_depth.Lensq())
+			if (depth.Lensq() > ret.depth.Lensq())
 			{
-				max_depth = depth;
-				applic_p = one[i];
+				ret.depth = depth;
+				ret.papp = one[i];
 			}
 		}
+
 	if (!recalled)
 		for (int j = 0; j < 4; ++j)
 			if (IN(one[0], one[1], one[2], one[3], cent1, two[j]))
-				if (Get_depth (one, cent1, two[j], cent2).Lensq() > max_depth.Lensq())
+				if (Get_depth (one, cent1, two[j], cent2).Lensq() > ret.depth.Lensq())
 				{
-					Vector2f cur_depth = -Collis_rectangles (two, one, true);
-					if (true)
-						max_depth = cur_depth;
+					ret = Collis_rectangles (two, one, true);
+					ret.depth = -ret.depth;
+//					Vector2f cur_depth = -Collis_rectangles (two, one, true);
+//					if (true)
+//						max_depth = cur_depth;
 				}
-	return max_depth;
+	return ret;
 }
-//Vector2f Car::Collis_rectangle (Vector2f one, Vector2f two, Vector2f three, Vector2f four)
-//{
-//	Vector2f centre = (one + two + three + four)/4;
-//
-//	Vector2f lb = Vector2f (back.r*back.orient.Get_dir().y, -back.r*back.orient.Get_dir().x) + back.pos;
-//	Vector2f lf = Vector2f (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + front.pos;
-//	Vector2f rb = Vector2f (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + back.pos;
-//	Vector2f rf = Vector2f (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + front.pos;
-//
-//	Vector2f crns1[4] = {lb, lf, rb, rf};
-//	Vector2f crns2[4] = {one, two, three, four};
-//	Vector2f centre1 = pos;
-//	Vector2f centre2 = centre;
-//
-//
-//#define defIN(name) bool name##in = IN(one, two, three, four, centre, name);
-//	defIN(lb);
-//	defIN(lf);
-//	defIN(rb);
-//	defIN(rf);
-//#undef defIN
-//	assert((int)lbin + (int)rbin + (int)lfin + (int)rfin <= 2);//It's needed to doing something!!!
-//
-//	if (!(lbin || lfin || rbin || rfin))
-//	{
-//		IN(lb, lf, rb, rf, pos, one);//...
-//	}
-//	if (lbin)
-//	{
-//	}
-//
-//
-//}
 #undef IN
 //--------------------------------------------------------------------------------------------------
 void Car::Process_gestures (float dt)

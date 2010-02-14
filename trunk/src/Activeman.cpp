@@ -23,8 +23,11 @@ void Activeman::Activate (float dt)
 		(**i).Actions (dt);
 }
 //--------------------------------------------------------------------------------------------------
+Canvas* globb = 0;//!!! deprecated, must be deleted
 void Activeman::Draw (Canvas* c)
 {
+	globb = c;
+
 	assert(Ok());
 	for (iterator i = begin(); i != end(); ++i)
 		(**i).Draw (c);
@@ -39,7 +42,9 @@ void Activeman::Collis_brd (const Battlefield* bf)
 	const char* cells = bf->Get_cells ();
 	Point size = bf->Get_size ();
 	int csize = bf->Get_cell_size();
+
 	Point full_size = csize*size;
+
 	for (iterator i = begin(); i != end(); ++i)
 	{
 		float r = (**i).Get_r();
@@ -61,13 +66,60 @@ void Activeman::Collis_brd (const Battlefield* bf)
 			for (int y = 0; y < size.y; ++y)
 				if (CELL(x, y) != '1')
 				{
-					if (x == 6 && y == 0)//!!!deprecated
+					int left = x*csize;
+					int right = left + csize;//cell borders
+					int up = y*csize;
+					int down = up + csize;
+
+					if (right < lup.x) continue;
+					if (left > rdown.x) continue;//necessary conditions
+					if (up > rdown.y) continue;
+					if (down < lup.y) continue;
+
+					if (pos.y < up || pos.y > down)//we need a horisontal full lenght wall
 					{
-						int a = 3;
-						a++;
-						a-= 3;
+						int nx = x;
+						while (++nx < size.x && right <= rdown.x)
+						{
+							if (CELL(nx, y) != '1'||
+								(pos.y < up && y - 1 >=  0 && CELL(nx, y-1) != '1') ||	//for gnawed corners
+								(pos.y > down && y + 1 < size.y && CELL(nx, y+1) != '1'))
+								right += csize;			//cell alliance expansion
+							else break;
+						}
+						nx = x;
+						while (--nx >= 0 && left > lup.x)
+						{
+							if (CELL(nx, y) != '1'||
+								(pos.y < up && y - 1 >=  0 && CELL(nx, y-1) != '1') ||	//for gnawed corners
+								(pos.y > down && y + 1 < size.y && CELL(nx, y+1) != '1'))
+								left -= csize;			//cell alliance expansion
+							else break;
+						}
 					}
-					Rect cell(x*csize, y*csize, csize, csize);//Can to check condition p(cell, i) < i->r
+					else // we need a vertical full lenght wall
+					{
+						int ny = y;
+						while (++ny < size.y && down <= rdown.y)
+						{
+							if (CELL(x, ny) != '1'||
+								(pos.x < left && x - 1 >=  0 && CELL(x-1, ny) != '1') ||	//for gnawed corners
+								(pos.x > right && x + 1 < size.x && CELL(x+1, ny) != '1'))
+								down += csize;			//cell alliance expansion
+							else break;
+						}
+						ny = y;
+						while (--ny >= 0 && up > lup.y)
+						{
+							if (CELL(x, ny) != '1' ||
+								(pos.x < left && x - 1 >=  0 && CELL(x-1, ny) != '1') ||	//for gnawed corners
+								(pos.x > right && x + 1 < size.x && CELL(x+1, ny) != '1'))
+								up -= csize;			//cell alliance expansion
+							else break;
+						}
+					}
+					Rect cell (left, up, right - left, down - up);//Can to check condition p(cell, i) < i->r
+					if (globb) cell.Draw (globb, Color (200, 0, 124));
 					(**i).Collis_brd (cell);
 				}
 	}
