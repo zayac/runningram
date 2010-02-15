@@ -79,6 +79,7 @@ void Activeman::Collis_brd (const Battlefield* bf)
 					if (pos.y < up || pos.y > down)//we need a horisontal full lenght wall
 					{
 						int nx = x;
+
 						while (++nx < size.x && right <= rdown.x)
 						{
 							if (CELL(nx, y) != '1'||
@@ -118,8 +119,8 @@ void Activeman::Collis_brd (const Battlefield* bf)
 							else break;
 						}
 					}
-					Rect cell (left, up, right - left, down - up);//Can to check condition p(cell, i) < i->r
-					if (globb) cell.Draw (globb, Color (200, 0, 124));
+					Rect cell (left, up, right - left, down - up);
+					if (globb) cell.Draw (globb, Color (200, 0, 124));//!!! deprecated
 					(**i).Collis_brd (cell);
 				}
 	}

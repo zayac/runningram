@@ -50,6 +50,8 @@ public:
 	inline bool operator > (float that) const {return ang > that;}
 	inline bool operator > (const Orient& that) const {return ang > that.ang;}
 
+	Vector2f Rotate (Vector2f what);
+
 	bool Ok() const;
 };
 

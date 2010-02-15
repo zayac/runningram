@@ -55,7 +55,7 @@ bool Game_manager::Init (int argc, char *argv[])
 
 	bool result = true;
 
-	cars->push_back (new Car (sense, Vector2f (50, 50), 40, 40, 30, 10, 10, Vector2f (0.01, 1.00), 0));
+	cars->push_back (new Car (sense, Vector2f (50, 50), 40, 40, 30, 10, 10, Vector2f (0.01, 1.0), 0));
 	
 	result = result && pic->Init();
 	result = result && ground->Init();

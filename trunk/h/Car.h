@@ -69,6 +69,7 @@ public:
 	}
 
 	inline void Appl_force (Vector2f f) {force += f;}
+	inline void Appl_impulse (Vector2f imp) {vel += imp*rev_mass;}
 
 	inline bool Ok() const {return rev_mass > 0;}
 };
@@ -97,6 +98,18 @@ const float Motor_force = 10.;
 const float Angular_vel = 5;
 const float Max_ang_dev = 1.;
 const float Rudder_spring = 8;
+const float Bouncy = 0.5;
+
+const float aboutnull = 0.000000001;
+
+struct Collision_vector
+{
+	Vector2f papp;
+	Vector2f depth;
+
+	inline float Weight() {return depth.Lensq();}
+	inline bool Vital() {return Weight() > aboutnull;}
+};
 
 class Eventman;
 
@@ -117,12 +130,19 @@ class Car :public Active
 	void Normalise_front_orient();
 	void Rudder_correction (float dt);
 
+	void Set_my_verticies (Vector2f* four);
+
+	void Applay_brd_collision (Collision_vector cv);
+
 public:
 	Car (Eventman* sense, Vector2f pos, float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient);
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);
 	virtual void Collis_brd (Rect with);
+
+	Vector2f Get_vel (Vector2f papp);
+	void Appl_impulse (Vector2f imp, Vector2f papp);
 
 //	Vector2f Collis_rectangle (Vector2f one, Vector2f two, Vector2f three, Vector2f four);
 
@@ -136,10 +156,8 @@ public:
 	void Forwardf()		{fp = false;}
 	void Backwardf()	{bp = false;}
 
-	bool process_collisions;//fro debug only
+	bool process_collisions;//for debug only
 	void SwitchPC() {process_collisions = !process_collisions;}
-
-//	void Applay_force (Vector2d f, Vector2d papp);
 
 	bool Ok() const;
 };

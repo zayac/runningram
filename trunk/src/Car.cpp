@@ -14,16 +14,6 @@
 inline float max (float a, float b) {return a < b ? b : a;}
 #endif
 
-float aboutnull = 0.000000001;
-
-struct Collision_vector
-{
-	Vector2f papp;
-	Vector2f depth;
-
-	inline float Weight() {return depth.Lensq();}
-	inline bool Vital() {return Weight() > aboutnull;}
-};
 Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recalled = false);
 
 //
@@ -103,7 +93,6 @@ void Car::Draw (Canvas* c)
 	c->line (end, one_trg, headc);
 }
 //--------------------------------------------------------------------------------------------------
-#include <iostream>
 void Car::Collis_brd (Rect with)
 {
 	if (!process_collisions) return;
@@ -113,17 +102,14 @@ void Car::Collis_brd (Rect with)
 	Vector2f ld (with.x, with.y + with.h);//left-down
 	Vector2f rd (with.x + with.w, with.y + with.h);//right-down
 
-	Vector2f lb = Vector2f (back.r*back.orient.Get_dir().y, -back.r*back.orient.Get_dir().x) + back.pos;
-	Vector2f lf = Vector2f (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + front.pos;
-	Vector2f rb = Vector2f (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + back.pos;
-	Vector2f rf = Vector2f (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + front.pos;
-
-	Vector2f one[4] = {lb, rb, rf, lf};
+	Vector2f one[4];
+        Set_my_verticies (one);
 	Vector2f two[4] = {lu, ru, rd, ld};
 
 	Collision_vector curv = Collis_rectangles (one, two);
-	float papp_weight = curv.Weight();
-	Vector2f rez_papp = curv.papp;
+	Collision_vector rez;
+        rez.papp = curv.papp;
+        rez.depth = curv.depth;
 
 	int num_iters = 20;
 
@@ -132,15 +118,22 @@ void Car::Collis_brd (Rect with)
 		back.pos += curv.depth;
 		front.pos += curv.depth;
 
-		one[0] = Vector2f (back.r*back.orient.Get_dir().y, -back.r*back.orient.Get_dir().x) + back.pos;
-		one[1] = Vector2f (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + back.pos;
-		one[2] = Vector2f (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + front.pos;
-		one[3] = Vector2f (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + front.pos;
+                Set_my_verticies (one);
 		
 		curv = Collis_rectangles (one, two);
-		rez_papp = (rez_papp*papp_weight + curv.papp*curv.Weight())/(papp_weight + curv.Weight()); //averaging point of application
-		papp_weight += curv.Weight();
+		rez.papp = (rez.papp*rez.Weight() + curv.papp*curv.Weight())/(rez.Weight() + curv.Weight()); //averaging point of application
+                rez.depth += curv.depth;
 	}
+
+        if (rez.Vital()) Applay_brd_collision (rez);
+}
+//--------------------------------------------------------------------------------------------------
+void Car::Set_my_verticies (Vector2f* four)
+{
+	four[0] = Vector2f (back.r*back.orient.Get_dir().y, -back.r*back.orient.Get_dir().x) + back.pos;
+	four[1] = Vector2f (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + back.pos;
+	four[2] = Vector2f (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + front.pos;
+	four[3] = Vector2f (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + front.pos;
 }
 //--------------------------------------------------------------------------------------------------
 inline Vector2f From_point_to_stline (Vector2f end, Vector2f delta, Vector2f p)
@@ -164,14 +157,12 @@ inline Vector2f Get_depth (Vector2f rect[4], Vector2f centre, Vector2f p, Vector
 
 	if (Same_side (rect[3], rect[0] - rect[3], centre, p))
 		ret = From_point_to_stline (rect[3], rect[0] - rect[3], p);
-//	if ((ret^(p-hiscentre)) > 0) ret = Vector2f();//depth only from centre
 
 	for (int i = 0; i < 3; ++i)
 		if (Same_side (rect[i], rect[i + 1] - rect[i], centre, p))
 		{
 			Vector2f cur = From_point_to_stline (rect[i], rect[i + 1] - rect[i], p);
-			if (/*(cur^(p-hiscentre)) < 0 &&   */ //depth only from centre
-			    cur.Lensq() < ret.Lensq()) ret = cur;
+			if (cur.Lensq() < ret.Lensq()) ret = cur;
 		}
 	return ret;
 }
@@ -182,10 +173,6 @@ Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recal
 	Vector2f cent2 = (two[0] + two[1] + two[2] + two[3])/4;
 
 	Collision_vector ret;
-
-//	for (int i = 0; i < 4; ++i)
-//		for (int j = 0; j < 4; ++j)
-//			if ((one[i] - two[j]).Lensq () < aboutnull) return Vector2f();
 
 	for (int i = 0; i < 4; ++i)
 		if (IN(two[0], two[1], two[2], two[3], cent2, one[i]))
@@ -205,13 +192,64 @@ Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool recal
 				{
 					ret = Collis_rectangles (two, one, true);
 					ret.depth = -ret.depth;
-//					Vector2f cur_depth = -Collis_rectangles (two, one, true);
-//					if (true)
-//						max_depth = cur_depth;
 				}
 	return ret;
 }
 #undef IN
+//--------------------------------------------------------------------------------------------------
+void Car::Applay_brd_collision (Collision_vector cv)
+{
+    Vector2f imp_along = (Get_vel (cv.papp)/rmass).Proj (cv.depth);
+    if ((imp_along^cv.depth) < 0)
+        Appl_impulse (imp_along*(-1 - Bouncy), cv.papp);
+}
+//--------------------------------------------------------------------------------------------------
+Vector2f Car::Get_vel (Vector2f papp)
+{
+    Vector2f trans = back.vel;
+
+    Vector2f axis = (front.pos - back.pos)/lenght;//normalize
+    Vector2f dir = papp - back.pos;
+    float distance = dir.Len();
+    dir /= distance;                            //normalize
+
+    Orient alfa = Orient (dir, true) - Orient (axis, true);
+
+    Vector2f rotary = alfa.Rotate (front.vel - back.vel)*distance/lenght;
+
+    return trans + rotary;
+}
+//--------------------------------------------------------------------------------------------------
+void Car::Appl_impulse (Vector2f imp, Vector2f papp)
+{
+    Vector2f to_back = papp - back.pos;
+    Vector2f to_front = papp - front.pos;
+    float det = to_back.x*to_front.y - to_back.y*to_front.x;
+
+    if (-aboutnull < det && det < aboutnull) //impulse along the cardan shaft
+    {
+	Vector2f dvel = imp*rmass;
+	back.Appl_impulse (dvel/back.rev_mass);
+	front.Appl_impulse (dvel/front.rev_mass);
+        return;
+    }
+
+    Vector2f back_proj = to_back * (imp.x*to_front.y - imp.y*to_front.x)/det;
+    Vector2f front_proj = to_front * (imp.y*to_back.x - imp.x*to_back.y)/det;// oblique projections
+
+    Vector2f axis = front.pos - back.pos;
+    Vector2f axis_bproj = (back_proj^axis)*axis/axis.Lensq();
+    Vector2f axis_fproj = (front_proj^axis)*axis/axis.Lensq();
+
+    Vector2f ortho_bproj = back_proj - axis_bproj;//this part takes only front
+    Vector2f ortho_fproj = front_proj - axis_fproj;//this part takes only back
+
+
+    Vector2f dvel_axis = (axis_bproj + axis_fproj)*rmass;//this part of impulse take both front and back
+
+    back.Appl_impulse (dvel_axis/back.rev_mass + ortho_bproj);
+    front.Appl_impulse (dvel_axis/front.rev_mass + ortho_fproj);
+}
 //--------------------------------------------------------------------------------------------------
 void Car::Process_gestures (float dt)
 {

@@ -133,8 +133,13 @@ public:
 	void Operate (SDL_KeyboardEvent ev);
 	void Draw (Graphic_subsystem* c) const;
 
+	void Out (const string& str);
+
 	bool Ok() const;
 };
+
+//!!! only for debug
+extern Console* interface;
 
 
 #endif	/* _CONSOLE_H */
