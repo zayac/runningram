@@ -55,8 +55,28 @@ bool Game_manager::Init (int argc, char *argv[])
 
 	bool result = true;
 
-	cars->push_back (new Car (sense, Vector2f (50, 50), 40, 40, 30, 10, 10, Vector2f (0.01, 1.0), 0));
-	
+	Car* ncar = new Car (sense, Vector2f (50, 50), 40, 40, 30, 10, 10, Vector2f (0.01, 1.0), 0);
+	cars->push_back (ncar);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwards), SDL_KEYDOWN, SDLK_UP);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwardf), SDL_KEYUP, SDLK_UP);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwards), SDL_KEYDOWN, SDLK_DOWN);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwardf), SDL_KEYUP, SDLK_DOWN);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_lefts), SDL_KEYDOWN, SDLK_LEFT);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_leftf), SDL_KEYUP, SDLK_LEFT);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rights), SDL_KEYDOWN, SDLK_RIGHT);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rightf), SDL_KEYUP, SDLK_RIGHT);
+
+	ncar = new Car (sense, Vector2f (50, 150), 40, 40, 30, 10, 10, Vector2f (0.01, 1.0), 0);
+	cars->push_back (ncar);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwards), SDL_KEYDOWN, SDLK_w);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwardf), SDL_KEYUP, SDLK_w);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwards), SDL_KEYDOWN, SDLK_s);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwardf), SDL_KEYUP, SDLK_s);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_lefts), SDL_KEYDOWN, SDLK_a);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_leftf), SDL_KEYUP, SDLK_a);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rights), SDL_KEYDOWN, SDLK_d);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rightf), SDL_KEYUP, SDLK_d);
+
 	result = result && pic->Init();
 	result = result && ground->Init();
 	result = result && cmd->Init (pic);
@@ -76,6 +96,7 @@ bool Game_manager::Main_loop()
 		dt = 0.001*(SDL_GetTicks() - last_time);
 		cars->Activate (dt);
 		cars->Collis_brd (ground);
+                cars->Process_collisions();
 		last_time = SDL_GetTicks();
 		ground->Draw (pic);
 		cars->Draw (pic->Get_screen ());

@@ -25,6 +25,7 @@ public:
 	void Activate (float dt);
 	void Draw (Canvas*);
 	void Collis_brd (const Battlefield* bf);
+	void Process_collisions();
 
 	bool Ok() const;
 };
