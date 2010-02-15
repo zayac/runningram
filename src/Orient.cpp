@@ -121,6 +121,15 @@ Orient& Orient::operator += (const Orient& that)
 	return *this;
 }
 //--------------------------------------------------------------------------------------------------
+Vector2f Orient::Rotate (Vector2f what)
+{
+    if (!updated) Update();
+    Vector2f ret;
+    ret.x = what.x*dir.x - what.y*dir.y;
+    ret.y = what.x*dir.y + what.y*dir.x;
+    return ret;
+}
+//--------------------------------------------------------------------------------------------------
 bool Orient::Ok() const
 {
 	return -PI <= ang && ang <= PI && (updated == true || updated == false) &&

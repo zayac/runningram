@@ -1,11 +1,12 @@
 #include <assert.h>
+#include <math.h>
 #include <string.h> //for memcpy function
 
 #undef Typical_arg
-#ifdef SIMPLE_TYPE			//if type is a simple, it's cheaper to take it by value,
+#ifdef SIMPLE_TYPE			/*if type is a simple, it's cheaper to take it by value,*/
 #define Typical_arg Type
 #else
-#define Typical_arg const Type& //but reference
+#define Typical_arg const Type& /*but reference*/
 #endif
 
 //===============================================================================================
@@ -80,6 +81,8 @@ public:
 
 	bool operator == (const Vec& that) const;
 	bool operator != (const Vec& that) const;
+
+	Vec Proj (const Vec& direction) const;
 };
 //===============================================================================================
 //===============================================================================================
@@ -261,6 +264,12 @@ bool Vec<Type, dim>::operator != (const Vec<Type, dim>& that) const
 	REPEAT(EQUAL)
 #undef EQUAL
 	return false;
+}
+//-----------------------------------------------------------------------------------------------
+FUN_SPEC_HEADLINE
+inline Vec<Type, dim> Vec<Type, dim>::Proj (const Vec<Type, dim>& direction) const
+{
+	return (operator^(direction))*direction/direction.Lensq();
 }
 //-----------------------------------------------------------------------------------------------
 FUN_SPEC_HEADLINE

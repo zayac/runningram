@@ -34,8 +34,14 @@ public:
 
 #define MSECS (clock()*1000/CLOCKS_PER_SEC)
 
+
+//!!! only for debug
+Console* interface = 0;
+
 Console::Console () :parser (new Initialaiser ("[Console]")), history (font), input (font)
 {
+    //!!! only for debug
+    interface = this;
 }
 //--------------------------------------------------------------------------------------------------
 Console::~Console ()
@@ -87,6 +93,11 @@ void Console::Draw (Graphic_subsystem* c) const
 	assert(Ok());
 	history.Draw (c->Get_screen ());
 	input.Draw (c->Get_screen ());
+}
+//--------------------------------------------------------------------------------------------------
+void Console::Out (const string& str)
+{
+    history.Push_string (str);
 }
 //--------------------------------------------------------------------------------------------------
 void Console::On_enter_string (string* str)
