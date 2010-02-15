@@ -127,6 +127,18 @@ void Activeman::Collis_brd (const Battlefield* bf)
 #undef CELL
 }
 //--------------------------------------------------------------------------------------------------
+void Activeman::Process_collisions()
+{
+    for (iterator i = begin(); i != end(); ++i)
+        for (iterator j = begin(); j != i; ++j)
+        {
+            float r = (**i).Get_r() + (**j).Get_r();
+            Vector2f disp = (**i).Get_pos() - (**j).Get_pos();
+            if (disp.Lensq() < r*r)
+                (**i).Collis_obj (*j);
+        }
+}
+//--------------------------------------------------------------------------------------------------
 bool Activeman::Ok() const
 {
 	for (const_iterator i = begin(); i != end(); ++i)

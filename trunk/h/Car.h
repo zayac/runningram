@@ -13,6 +13,12 @@
 
 const float VeryBigMass = 1e10;
 
+enum Active_objs
+{
+	No_type = 0,
+	Car_type
+};
+
 class Limited
 {
 protected:
@@ -34,6 +40,9 @@ public:
 	virtual void Actions (float dt) = 0;
 	virtual void Draw (Canvas*) = 0;
 	virtual void Collis_brd (Rect width) = 0;
+	virtual void Collis_obj (Active* that) = 0;
+	
+	virtual int My_type() const {return No_type;}
 
 	virtual bool Ok() const = 0;
 };
@@ -121,7 +130,6 @@ class Car :public Active
 	Dir_body front;
 
 	float rmass;
-
 	float lenght;
 
 	void Process_gestures (float dt);
@@ -130,19 +138,24 @@ class Car :public Active
 	void Normalise_front_orient();
 	void Rudder_correction (float dt);
 
-	void Set_my_verticies (Vector2f* four);
-
 	void Applay_brd_collision (Collision_vector cv);
+	void Applay_obj_collision (Car* with, Collision_vector cv);
+
+	void Move (Vector2f disp) {back.pos += disp; front.pos += disp;}
 
 public:
 	Car (Eventman* sense, Vector2f pos, float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient);
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);
+	virtual void Collis_obj (Active* that);
 	virtual void Collis_brd (Rect with);
 
+	void Get_my_verticies (Vector2f* four);
 	Vector2f Get_vel (Vector2f papp);
 	void Appl_impulse (Vector2f imp, Vector2f papp);
+	
+	virtual int My_type() const {return Car_type;}
 
 //	Vector2f Collis_rectangle (Vector2f one, Vector2f two, Vector2f three, Vector2f four);
 
