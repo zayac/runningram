@@ -8,12 +8,14 @@
 #include "Activeman.h"
 #include "Car.h"
 #include "Battlefield.h"
+#include "initparser.h"
 //
 //Activeman::Activeman () { }
 //
 //Activeman::Activeman (const Activeman& orig) { }
 //
 //Activeman::~Activeman () { }
+
 
 //--------------------------------------------------------------------------------------------------
 void Activeman::Activate (float dt)

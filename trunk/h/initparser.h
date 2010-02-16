@@ -12,6 +12,14 @@ using std::ifstream;
 using std::vector;
 using std::string;
 
+class Serializator;
+
+class Initializable
+{
+public:
+	virtual Serializator* Get_parser() = 0;
+};
+
 class Serializator
 {
 protected:
@@ -97,6 +105,9 @@ bool St_loader<int>::Read_frag (ifstream &file);
 //-------------------------------------------------------------------
 template <>
 bool St_loader<double>::Read_frag (ifstream &file);
+//-------------------------------------------------------------------
+template <>
+bool St_loader<float>::Read_frag (ifstream &file);
 //-------------------------------------------------------------------
 template <>
 bool St_loader<string>::Read_frag (ifstream &file);
