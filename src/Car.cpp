@@ -24,14 +24,11 @@ Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool to_ce
 Body::~Body () { }
 
 //--------------------------------------------------------------------------------------------------
-Car::Car (Eventman* sense, Vector2f coor, float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient)
-:Active (coor, len + max(r1, r2)), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)),
+Car::Car (Vector2f coor, float health_, float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient)
+:Active (coor, len + max(r1, r2)), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)), health (health_),
 back (rmass1, r1, coor - start_orient.Get_dir()*len/(1 + rmass1/rmass2), fric, start_orient),
 front (rmass2, r2, coor + start_orient.Get_dir()*len/(1 + rmass2/rmass1), fric, start_orient)
 {
-	process_collisions = true;
-	sense->Register_key_action (new Arg_Method<void, void, Car> (this, &Car::SwitchPC), SDL_KEYUP, SDLK_c);
-
 	assert(Ok());
 }
 //--------------------------------------------------------------------------------------------------
@@ -76,7 +73,6 @@ void Car::Draw (Canvas* c)
 	c->line (rightback, leftback, Color (150, 200, 200));
 
 	Color headc (200, 150, 150);
-	if (!process_collisions) headc = Color (150, 200, 250);
 
 	c->line (one_trg, two_trg, headc);
 	c->line (two_trg, three_trg, headc);
@@ -96,16 +92,12 @@ void Car::Collis_obj (Active* that)
         op->Get_my_verticies (two);
         Collision_vector cv = Collis_rectangles (one, two, false);
         if (cv.Vital())//There is an collision
-        {
             Applay_obj_collision (op, cv);
-        }
     }
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Collis_brd (Rect with)
 {
-	if (!process_collisions) return;
-
 	Vector2f lu (with.x, with.y);//left-up
 	Vector2f ru (with.x + with.w, with.y);//right-up
 	Vector2f ld (with.x, with.y + with.h);//left-down
@@ -115,8 +107,8 @@ void Car::Collis_brd (Rect with)
         Get_my_verticies (one);
 	Vector2f two[4] = {lu, ru, rd, ld};
 
-	Collision_vector curv = Collis_rectangles (one, two, false);
 	Collision_vector rez;
+	Collision_vector curv = Collis_rectangles (one, two, false);
         rez.papp = curv.papp;
         rez.depth = curv.depth;
 

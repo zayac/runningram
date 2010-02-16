@@ -131,6 +131,7 @@ class Car :public Active
 
 	float rmass;
 	float lenght;
+	float health;
 
 	void Process_gestures (float dt);
 	void Motory_force (float f);
@@ -144,7 +145,7 @@ class Car :public Active
 	void Move (Vector2f disp) {back.pos += disp; front.pos += disp;}
 
 public:
-	Car (Eventman* sense, Vector2f pos, float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient);
+	Car (Vector2f pos, float health, float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient);
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);
@@ -168,9 +169,6 @@ public:
 	void Turn_leftf()	{lp = false;}
 	void Forwardf()		{fp = false;}
 	void Backwardf()	{bp = false;}
-
-	bool process_collisions;//for debug only
-	void SwitchPC() {process_collisions = !process_collisions;}
 
 	bool Ok() const;
 };

@@ -18,11 +18,14 @@
 #include "Console.h"
 #include "Car.h"
 #include "Activeman.h"
+#include "Carman.h"
 
 Game_manager::Game_manager (int argc, char *argv[])
 :pic (new Graphic_subsystem), sense (new Eventman), look(new Camera), ground (new Battlefield),
  cmd (new Console), cars (new Activeman)
 {
+	models = new Carman (sense);
+
 	Init (argc, argv);
 	assert(Ok());
 }
@@ -30,6 +33,7 @@ Game_manager::Game_manager (int argc, char *argv[])
 Game_manager::~Game_manager()
 {
 	if (!ground) delete ground; ground = 0;
+	if (!models) delete models; models = 0;
 	if (!sense) delete sense; sense = 0;
 	if (!look) delete look; look = 0;
 	if (!cars) delete cars; cars = 0;
@@ -42,6 +46,7 @@ bool Game_manager::Init (int argc, char *argv[])
     Sectionp gen ("gensec", '\n');
 	gen.Add_param (pic->Get_parser ());
 	gen.Add_param (ground->Get_parser ());
+	gen.Add_param (models->Get_parser ());
     File_loader fl ((char*)"./settings.cfg");
     fl.Read_sector (&gen);
 	
@@ -55,18 +60,7 @@ bool Game_manager::Init (int argc, char *argv[])
 
 	bool result = true;
 
-	Car* ncar = new Car (sense, Vector2f (50, 50), 40, 40, 30, 10, 10, Vector2f (0.01, 1.0), 0);
-	cars->push_back (ncar);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwards), SDL_KEYDOWN, SDLK_UP);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwardf), SDL_KEYUP, SDLK_UP);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwards), SDL_KEYDOWN, SDLK_DOWN);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwardf), SDL_KEYUP, SDLK_DOWN);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_lefts), SDL_KEYDOWN, SDLK_LEFT);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_leftf), SDL_KEYUP, SDLK_LEFT);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rights), SDL_KEYDOWN, SDLK_RIGHT);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rightf), SDL_KEYUP, SDLK_RIGHT);
-
-	ncar = new Car (sense, Vector2f (50, 150), 40, 40, 30, 10, 10, Vector2f (0.01, 1.0), 0);
+	Car* ncar = models->Create_car (2,Vector2f (50, 50), 0);
 	cars->push_back (ncar);
 	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwards), SDL_KEYDOWN, SDLK_w);
 	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwardf), SDL_KEYUP, SDLK_w);
@@ -76,6 +70,9 @@ bool Game_manager::Init (int argc, char *argv[])
 	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_leftf), SDL_KEYUP, SDLK_a);
 	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rights), SDL_KEYDOWN, SDLK_d);
 	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rightf), SDL_KEYUP, SDLK_d);
+
+//	ncar = new Car (sense, Vector2f (50, 150), 40, 40, 30, 10, 10, Vector2f (0.01, 1.0), 0);
+	cars->push_back (models->Create_car (1, Vector2f (150, 50), 0));
 
 	result = result && pic->Init();
 	result = result && ground->Init();
