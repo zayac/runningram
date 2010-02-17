@@ -90,9 +90,13 @@ void Console::Operate (Kbd_event ev)
 //--------------------------------------------------------------------------------------------------
 void Console::Draw (Graphic_subsystem* c) const
 {
+	Canvas* screen = c->Get_screen ();
+	Point scr_pos = screen->getPos();
+	screen->setPos (Point());
 	assert(Ok());
-	history.Draw (c->Get_screen ());
-	input.Draw (c->Get_screen ());
+	history.Draw (screen);
+	input.Draw (screen);
+	screen->setPos (scr_pos);
 }
 //--------------------------------------------------------------------------------------------------
 void Console::Out (const string& str)
