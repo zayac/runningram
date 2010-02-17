@@ -8,8 +8,8 @@
 #ifndef _EVENTMAN_H
 #define	_EVENTMAN_H
 
-#include <SDL/SDL.h>
 #include "Functor.h"
+#include "Key_event.h"
 #include <list>
 #include <assert.h>
 
@@ -23,9 +23,9 @@ class Eventman
 	{
 		Functor *fun;
 		Uint8 event;
-		SDLKey key;
+		Key_id key;
 
-		Kbd_action (Functor* f, Uint8 ev, SDLKey k)
+		Kbd_action (Functor* f, Uint8 ev, Key_id k)
 		:fun (f), event (ev), key(k) {assert(Ok());}
 
 		bool Ok() const {return fun != 0;}
@@ -38,14 +38,14 @@ class Eventman
 	bool console_active;
 	Console* cmd;
 
-	void Applay_event (SDL_KeyboardEvent& ev);
+	void Applay_event (const Kbd_event& ev);
 	void Clear_actions();
 
 public:
 	Eventman();
 	virtual ~Eventman();
 
-	void Register_key_action (Functor* fun, Uint8 event, SDLKey key);
+	void Register_key_action (Functor* fun, Uint8 event, Key_id key);
 
 	void Set_console (Console* c);
 	void Switch_console();

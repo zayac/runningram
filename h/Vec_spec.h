@@ -269,6 +269,7 @@ bool Vec<Type, dim>::operator != (const Vec<Type, dim>& that) const
 FUN_SPEC_HEADLINE
 inline Vec<Type, dim> Vec<Type, dim>::Proj (const Vec<Type, dim>& direction) const
 {
+	if (direction.Lensq() == 0) return *this;
 	return (operator^(direction))*direction/direction.Lensq();
 }
 //-----------------------------------------------------------------------------------------------

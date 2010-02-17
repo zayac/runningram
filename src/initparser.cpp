@@ -189,6 +189,6 @@ string No_spaces (const string& str)
 void No_spaces_begin (ifstream& file)
 {
 	char c = 0;
-	while ((c = file.peek()) == ' ' || c == '\t' || c == '\n') file.get();
+	while ((c = file.peek()) == ' ' || c == '\t' || c == '\n' || c == '\r') file.get();
 }
 //-----------------------------------------------------------------------------------------------

@@ -82,7 +82,7 @@ void Console::Cleanup()
         FontcCleanUp();
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Operate (SDL_KeyboardEvent ev)
+void Console::Operate (Kbd_event ev)
 {
 	assert(Ok());
 	input.Operate (ev);
@@ -130,153 +130,153 @@ void Line_edit::Init (const Rect& brd, Arg_Functor <void, string*> *enter, strin
 	assert(Ok());
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Operate (SDL_KeyboardEvent ev)
+void Line_edit::Operate (Kbd_event ev)
 {
 	assert(Ok());
-	if (ev.type == SDL_KEYUP) return;
+	if (ev.type == EV_KEYUP) return;
 
 	last_actiont = MSECS;
 
-	bool num_lock = ev.keysym.mod & KMOD_NUM;
+	bool num_lock = ev.mod & KM_NUM;
 
 	if (!num_lock)
-		switch (ev.keysym.sym)
+		switch (ev.ki)
 		{
-		case SDLK_KP1:			Cursor_end();		return;
-		case SDLK_KP2:						return;
-		case SDLK_KP3:						return;
-		case SDLK_KP4:			Cursor_left();		return;
-		case SDLK_KP5:						return;
-		case SDLK_KP6:			Cursor_right();		return;
-		case SDLK_KP7:			Cursor_home();		return;
-		case SDLK_KP8:						return;
-		case SDLK_KP9:						return;
-		case SDLK_KP_PERIOD:					return;
-		case SDLK_KP_DIVIDE:					return;
-		case SDLK_KP_MULTIPLY:					return;
-		case SDLK_KP_MINUS:					return;
-		case SDLK_KP_PLUS:					return;
-		case SDLK_KP_EQUALS:					return;
+		case KI_KP1:			Cursor_end();		return;
+		case KI_KP2:						return;
+		case KI_KP3:						return;
+		case KI_KP4:			Cursor_left();		return;
+		case KI_KP5:						return;
+		case KI_KP6:			Cursor_right();		return;
+		case KI_KP7:			Cursor_home();		return;
+		case KI_KP8:						return;
+		case KI_KP9:						return;
+		case KI_KP_PERIOD:					return;
+		case KI_KP_DIVIDE:					return;
+		case KI_KP_MULTIPLY:					return;
+		case KI_KP_MINUS:					return;
+		case KI_KP_PLUS:					return;
+		case KI_KP_EQUALS:					return;
 		}
 
-	switch (ev.keysym.sym)
+	switch (ev.ki)
 	{
-	case SDLK_LEFT:			Cursor_left();		break;
-	case SDLK_RIGHT:		Cursor_right();		break;
-	case SDLK_HOME:			Cursor_home();		break;
-	case SDLK_END:			Cursor_end();		break;
+	case KI_LEFT:			Cursor_left();		break;
+	case KI_RIGHT:		Cursor_right();		break;
+	case KI_HOME:			Cursor_home();		break;
+	case KI_END:			Cursor_end();		break;
 
-	case SDLK_BACKSPACE:            Delete_left();		break;
-	case SDLK_DELETE:		Delete_right();		break;
+	case KI_BACKSPACE:            Delete_left();		break;
+	case KI_DELETE:		Delete_right();		break;
 
-	case SDLK_RETURN:		Finish_input();		break;
-	case SDLK_KP_ENTER:		Finish_input();		break;
+	case KI_RETURN:		Finish_input();		break;
+	case KI_KP_ENTER:		Finish_input();		break;
 	default:
 		Type_char (ev);
 	}
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Type_char (SDL_KeyboardEvent& ev)
+void Line_edit::Type_char (Kbd_event& ev)
 {
 	assert(Ok());
-	bool shift = ev.keysym.mod & KMOD_SHIFT;
-	bool up_case = shift != bool (ev.keysym.mod & KMOD_CAPS);
+	bool shift = ev.mod & KM_SHIFT;
+	bool up_case = shift != bool (ev.mod & KM_CAPS);
 	char c = 0;
-	switch (ev.keysym.sym)
+	switch (ev.ki)
 	{
-	case SDLK_SPACE:		c = ' ';	break;	//space
+	case KI_SPACE:		c = ' ';	break;	//space
 
-	case SDLK_EXCLAIM:		c = '!';	break;	//exclamation mark
-	case SDLK_QUOTEDBL:		c = '"';	break;	//double quote
-	case SDLK_HASH:			c = '#';	break;	//hash
-	case SDLK_DOLLAR:		c = '$';	break;	//dollar
-	case SDLK_AMPERSAND:	c = '&';	break;	//ampersand
+	case KI_EXCLAIM:		c = '!';	break;	//exclamation mark
+	case KI_QUOTEDBL:		c = '"';	break;	//double quote
+	case KI_HASH:			c = '#';	break;	//hash
+	case KI_DOLLAR:		c = '$';	break;	//dollar
+	case KI_AMPERSAND:	c = '&';	break;	//ampersand
 
-	case SDLK_QUOTE:		c = shift? '"':'\'';	break;	//single quote
+	case KI_QUOTE:		c = shift? '"':'\'';	break;	//single quote
 
-	case SDLK_LEFTPAREN:	c = '(';	break;	//left parenthesis
-	case SDLK_RIGHTPAREN:	c = ')';	break;	//right parenthesis
-	case SDLK_ASTERISK:		c = '*';	break;	//asterisk
-	case SDLK_PLUS:			c = '+';	break;	//plus sign
+	case KI_LEFTPAREN:	c = '(';	break;	//left parenthesis
+	case KI_RIGHTPAREN:	c = ')';	break;	//right parenthesis
+	case KI_ASTERISK:		c = '*';	break;	//asterisk
+	case KI_PLUS:			c = '+';	break;	//plus sign
 
-	case SDLK_COMMA:		c = shift? '<':',';	break;	//less or comma
-	case SDLK_MINUS:		c = shift? '_':'-';	break;	//undercore or minus sign
-	case SDLK_PERIOD:		c = shift? '>':'.';	break;	//greather or period / full stop
-	case SDLK_SLASH:		c = shift? '?':'/';	break;	//question mark or forward slash
-	case SDLK_0:			c = shift? ')':'0';	break;	//0
-	case SDLK_1:			c = shift? '!':'1';	break;	//1
-	case SDLK_2:			c = shift? '@':'2';	break;	//2
-	case SDLK_3:			c = shift? '#':'3';	break;	//3
-	case SDLK_4:			c = shift? '$':'4';	break;	//4
-	case SDLK_5:			c = shift? '%':'5';	break;	//5
-	case SDLK_6:			c = shift? '^':'6';	break;	//6
-	case SDLK_7:			c = shift? '&':'7';	break;	//7
-	case SDLK_8:			c = shift? '*':'8';	break;	//8
-	case SDLK_9:			c = shift? '(':'9';	break;	//9
+	case KI_COMMA:		c = shift? '<':',';	break;	//less or comma
+	case KI_MINUS:		c = shift? '_':'-';	break;	//undercore or minus sign
+	case KI_PERIOD:		c = shift? '>':'.';	break;	//greather or period / full stop
+	case KI_SLASH:		c = shift? '?':'/';	break;	//question mark or forward slash
+	case KI_0:			c = shift? ')':'0';	break;	//0
+	case KI_1:			c = shift? '!':'1';	break;	//1
+	case KI_2:			c = shift? '@':'2';	break;	//2
+	case KI_3:			c = shift? '#':'3';	break;	//3
+	case KI_4:			c = shift? '$':'4';	break;	//4
+	case KI_5:			c = shift? '%':'5';	break;	//5
+	case KI_6:			c = shift? '^':'6';	break;	//6
+	case KI_7:			c = shift? '&':'7';	break;	//7
+	case KI_8:			c = shift? '*':'8';	break;	//8
+	case KI_9:			c = shift? '(':'9';	break;	//9
 
-	case SDLK_COLON:		c = ':';	break;	//colon
+	case KI_COLON:		c = ':';	break;	//colon
 
-	case SDLK_SEMICOLON:	c = shift? ':':';';	break;	//semicolon
+	case KI_SEMICOLON:	c = shift? ':':';';	break;	//semicolon
 
-	case SDLK_LESS:			c = '<';	break;	//less-than sign
+	case KI_LESS:			c = '<';	break;	//less-than sign
 
-	case SDLK_EQUALS:		c = shift? '+':'=';	break;	//equals sign
+	case KI_EQUALS:		c = shift? '+':'=';	break;	//equals sign
 
-	case SDLK_GREATER:		c = '>';	break;	//greater-than sign
-	case SDLK_QUESTION:		c = '?';	break;	//question mark
-	case SDLK_AT:			c = '@';	break;	//at
+	case KI_GREATER:		c = '>';	break;	//greater-than sign
+	case KI_QUESTION:		c = '?';	break;	//question mark
+	case KI_AT:			c = '@';	break;	//at
 	
-	case SDLK_LEFTBRACKET:	c = shift? '{':'[';	break;	//left bracket
-	case SDLK_BACKSLASH:	c = shift? '|':'\\';break;	//'or' or backslash
-	case SDLK_RIGHTBRACKET:	c = shift? '}':']';	break;	//right bracket
+	case KI_LEFTBRACKET:	c = shift? '{':'[';	break;	//left bracket
+	case KI_BACKSLASH:	c = shift? '|':'\\';break;	//'or' or backslash
+	case KI_RIGHTBRACKET:	c = shift? '}':']';	break;	//right bracket
 	
-	case SDLK_CARET:		c = '^';	break;	//caret
-	case SDLK_UNDERSCORE:	c = '_';	break;	//underscore
+	case KI_CARET:		c = '^';	break;	//caret
+	case KI_UNDERSCORE:	c = '_';	break;	//underscore
 	
-	case SDLK_BACKQUOTE:	c = up_case? '~':'`';	break;	//tilda or grave
-	case SDLK_a:			c = up_case? 'A':'a';	break;	//a
-	case SDLK_b:			c = up_case? 'B':'b';	break;	//b
-	case SDLK_c:			c = up_case? 'C':'c';	break;	//c
-	case SDLK_d:			c = up_case? 'D':'d';	break;	//d
-	case SDLK_e:			c = up_case? 'E':'e';	break;	//e
-	case SDLK_f:			c = up_case? 'F':'f';	break;	//f
-	case SDLK_g:			c = up_case? 'G':'g';	break;	//g
-	case SDLK_h:			c = up_case? 'H':'h';	break;	//h
-	case SDLK_i:			c = up_case? 'I':'i';	break;	//i
-	case SDLK_j:			c = up_case? 'J':'j';	break;	//j
-	case SDLK_k:			c = up_case? 'K':'k';	break;	//k
-	case SDLK_l:			c = up_case? 'L':'l';	break;	//l
-	case SDLK_m:			c = up_case? 'M':'m';	break;	//m
-	case SDLK_n:			c = up_case? 'N':'n';	break;	//n
-	case SDLK_o:			c = up_case? 'O':'o';	break;	//o
-	case SDLK_p:			c = up_case? 'P':'p';	break;	//p
-	case SDLK_q:			c = up_case? 'Q':'q';	break;	//q
-	case SDLK_r:			c = up_case? 'R':'r';	break;	//r
-	case SDLK_s:			c = up_case? 'S':'s';	break;	//s
-	case SDLK_t:			c = up_case? 'T':'t';	break;	//t
-	case SDLK_u:			c = up_case? 'U':'u';	break;	//u
-	case SDLK_v:			c = up_case? 'V':'v';	break;	//v
-	case SDLK_w:			c = up_case? 'W':'w';	break;	//w
-	case SDLK_x:			c = up_case? 'X':'x';	break;	//x
-	case SDLK_y:			c = up_case? 'Y':'y';	break;	//y
-	case SDLK_z:			c = up_case? 'Z':'z';	break;	//z
+	case KI_BACKQUOTE:	c = up_case? '~':'`';	break;	//tilda or grave
+	case KI_a:			c = up_case? 'A':'a';	break;	//a
+	case KI_b:			c = up_case? 'B':'b';	break;	//b
+	case KI_c:			c = up_case? 'C':'c';	break;	//c
+	case KI_d:			c = up_case? 'D':'d';	break;	//d
+	case KI_e:			c = up_case? 'E':'e';	break;	//e
+	case KI_f:			c = up_case? 'F':'f';	break;	//f
+	case KI_g:			c = up_case? 'G':'g';	break;	//g
+	case KI_h:			c = up_case? 'H':'h';	break;	//h
+	case KI_i:			c = up_case? 'I':'i';	break;	//i
+	case KI_j:			c = up_case? 'J':'j';	break;	//j
+	case KI_k:			c = up_case? 'K':'k';	break;	//k
+	case KI_l:			c = up_case? 'L':'l';	break;	//l
+	case KI_m:			c = up_case? 'M':'m';	break;	//m
+	case KI_n:			c = up_case? 'N':'n';	break;	//n
+	case KI_o:			c = up_case? 'O':'o';	break;	//o
+	case KI_p:			c = up_case? 'P':'p';	break;	//p
+	case KI_q:			c = up_case? 'Q':'q';	break;	//q
+	case KI_r:			c = up_case? 'R':'r';	break;	//r
+	case KI_s:			c = up_case? 'S':'s';	break;	//s
+	case KI_t:			c = up_case? 'T':'t';	break;	//t
+	case KI_u:			c = up_case? 'U':'u';	break;	//u
+	case KI_v:			c = up_case? 'V':'v';	break;	//v
+	case KI_w:			c = up_case? 'W':'w';	break;	//w
+	case KI_x:			c = up_case? 'X':'x';	break;	//x
+	case KI_y:			c = up_case? 'Y':'y';	break;	//y
+	case KI_z:			c = up_case? 'Z':'z';	break;	//z
 
-	case SDLK_KP0:			c = '0';	break;	//0
-	case SDLK_KP1:			c = '1';	break;	//1
-	case SDLK_KP2:			c = '2';	break;	//2
-	case SDLK_KP3:			c = '3';	break;	//3
-	case SDLK_KP4:			c = '4';	break;	//4
-	case SDLK_KP5:			c = '5';	break;	//5
-	case SDLK_KP6:			c = '6';	break;	//6
-	case SDLK_KP7:			c = '7';	break;	//7
-	case SDLK_KP8:			c = '8';	break;	//8
-	case SDLK_KP9:			c = '9';	break;	//9
-	case SDLK_KP_PERIOD:	c = '.';	break;	//keypad period
-	case SDLK_KP_DIVIDE:	c = '/';	break;	//keypad divide
-	case SDLK_KP_MULTIPLY:	c = '*';	break;	//keypad multiply
-	case SDLK_KP_MINUS:		c = '-';	break;	//keypad minus
-	case SDLK_KP_PLUS:		c = '+';	break;	//keypad plus
-	case SDLK_KP_EQUALS:	c = '=';	break;	//keypad equals
+	case KI_KP0:			c = '0';	break;	//0
+	case KI_KP1:			c = '1';	break;	//1
+	case KI_KP2:			c = '2';	break;	//2
+	case KI_KP3:			c = '3';	break;	//3
+	case KI_KP4:			c = '4';	break;	//4
+	case KI_KP5:			c = '5';	break;	//5
+	case KI_KP6:			c = '6';	break;	//6
+	case KI_KP7:			c = '7';	break;	//7
+	case KI_KP8:			c = '8';	break;	//8
+	case KI_KP9:			c = '9';	break;	//9
+	case KI_KP_PERIOD:	c = '.';	break;	//keypad period
+	case KI_KP_DIVIDE:	c = '/';	break;	//keypad divide
+	case KI_KP_MULTIPLY:	c = '*';	break;	//keypad multiply
+	case KI_KP_MINUS:		c = '-';	break;	//keypad minus
+	case KI_KP_PLUS:		c = '+';	break;	//keypad plus
+	case KI_KP_EQUALS:	c = '=';	break;	//keypad equals
 	}
 	if (c) Insert_symbol (c);
 }

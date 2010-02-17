@@ -8,9 +8,9 @@
 #ifndef _CONSOLE_H
 #define	_CONSOLE_H
 
-#include <SDL/SDL_events.h>
 #include <list>
 #include <string>
+#include "Key_event.h"
 #include "Canvas.h"
 #include "Vec.h"
 #include "Graphic_subsystem.h"
@@ -94,7 +94,7 @@ class Line_edit
 	void Delete_left();
 	void Delete_right();
 	void Finish_input();
-	void Type_char (SDL_KeyboardEvent& ev);
+	void Type_char (Kbd_event& ev);
 	void Insert_symbol (char);
 
 	int Cursor_offset() const;
@@ -106,7 +106,7 @@ public:
 	const string& Get_greeting() const {return greeting;}
 	
 	void Init (const Rect& brd, Arg_Functor <void, string*> *on_enter, string greeting = "");
-	void Operate (SDL_KeyboardEvent ev);
+	void Operate (Kbd_event ev);
 	void Draw (Canvas* c) const;
 
 	bool Ok() const;
@@ -130,7 +130,7 @@ public:
 	void Cleanup();
 	void On_enter_string (string* str);
 
-	void Operate (SDL_KeyboardEvent ev);
+	void Operate (Kbd_event ev);
 	void Draw (Graphic_subsystem* c) const;
 
 	void Out (const string& str);

@@ -50,28 +50,27 @@ bool Game_manager::Init (int argc, char *argv[])
     File_loader fl ((char*)"./settings.cfg");
     fl.Read_sector (&gen);
 	
-	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_left), SDL_KEYDOWN, SDLK_LEFT);
-	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_right), SDL_KEYDOWN, SDLK_RIGHT);
-	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_up), SDL_KEYDOWN, SDLK_UP);
-	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_down), SDL_KEYDOWN, SDLK_DOWN);
+	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_left), EV_KEYDOWN, KI_LEFT);
+	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_right), EV_KEYDOWN, KI_RIGHT);
+	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_up), EV_KEYDOWN, KI_UP);
+	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_down), EV_KEYDOWN, KI_DOWN);
 
 	sense->Register_key_action (new Arg_Method<void, void, Eventman> (sense, &Eventman::Switch_console),
-																			SDL_KEYDOWN, SDLK_BACKQUOTE);
+																			EV_KEYDOWN, KI_BACKQUOTE);
 
 	bool result = true;
 
 	Car* ncar = models->Create_car (2,Vector2f (50, 50), 0);
 	cars->push_back (ncar);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwards), SDL_KEYDOWN, SDLK_w);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwardf), SDL_KEYUP, SDLK_w);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwards), SDL_KEYDOWN, SDLK_s);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwardf), SDL_KEYUP, SDLK_s);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_lefts), SDL_KEYDOWN, SDLK_a);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_leftf), SDL_KEYUP, SDLK_a);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rights), SDL_KEYDOWN, SDLK_d);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rightf), SDL_KEYUP, SDLK_d);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwards), EV_KEYDOWN, KI_UP);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwardf), EV_KEYUP, KI_UP);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwards), EV_KEYDOWN, KI_DOWN);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwardf), EV_KEYUP, KI_DOWN);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_lefts), EV_KEYDOWN, KI_LEFT);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_leftf), EV_KEYUP, KI_LEFT);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rights), EV_KEYDOWN, KI_RIGHT);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rightf), EV_KEYUP, KI_RIGHT);
 
-//	ncar = new Car (sense, Vector2f (50, 150), 40, 40, 30, 10, 10, Vector2f (0.01, 1.0), 0);
 	cars->push_back (models->Create_car (1, Vector2f (150, 50), 0));
 
 	result = result && pic->Init();

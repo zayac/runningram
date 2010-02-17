@@ -17,11 +17,11 @@ Eventman::~Eventman ()
 	Clear_actions();
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::Applay_event (SDL_KeyboardEvent& ev)
+void Eventman::Applay_event (const Kbd_event& ev)
 {
 	assert(Ok());
 	for (kiter i = kbdacts.begin(); i != kbdacts.end(); ++i)
-		if (ev.keysym.sym == i->key && ev.type == i->event)
+		if (ev.ki == i->key && ev.type == i->event)
 			(*i->fun)();
 }
 //--------------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ void Eventman::Clear_actions()
 	kbdacts.clear();
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::Register_key_action (Functor* fun, Uint8 event, SDLKey key)
+void Eventman::Register_key_action (Functor* fun, Uint8 event, Key_id key)
 {
 	assert(Ok());
 	kbdacts.push_back (Kbd_action (fun, event, key));
@@ -78,7 +78,7 @@ void Eventman::Acts()
 			/* handle the keyboard */
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
-			Applay_event (event.key);
+			Applay_event (Kbd_event (event.key));
 			if (console_active) cmd->Operate (event.key);
 			break;
 		}
