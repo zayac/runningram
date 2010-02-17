@@ -35,7 +35,6 @@ public:
 	}
 }; // </editor-fold>
 
-
 #define CELL(a, b) cells[size.x*(b) + a]
 
 Battlefield::Battlefield ():cells (0), parser (new Initialaiser("[Map]"))
