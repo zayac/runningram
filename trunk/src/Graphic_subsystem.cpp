@@ -78,10 +78,12 @@ void Graphic_subsystem::Draw (Camera* look)
 {
     /* update the screen */
 
+	buffer.setPos (Point());
 	screen.copy (buffer);
 //	SDL_UnlockSurface (screen);
 	screen.update ();
 	buffer.fill (Color(0, 0,0));
+	buffer.setPos (look->Get_pos ());
 //	SDL_LockSurface (screen);
 }
 //--------------------------------------------------------------------------------------------------

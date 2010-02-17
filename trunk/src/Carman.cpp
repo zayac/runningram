@@ -8,17 +8,18 @@
 #include "Carman.h"
 #include "Car.h"
 #include "Eventman.h"
+
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
 
 
-//-----------------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------*/
 void Cut_end_spaces (char* str)
 {
 	for (int i = strlen(str) - 1; i > 0; ++i)
 		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r') str[i] = 0;
 		else return;
 }
-//-----------------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------*/
 template <>
 bool St_loader<Key_id>::Read_frag (ifstream &file)
 {
@@ -31,7 +32,7 @@ bool St_loader<Key_id>::Read_frag (ifstream &file)
 	
 	return *_val != 0;
 }
-//-------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------*/
 
 class Carman::Initialaiser : public Sectionp
 {
@@ -72,7 +73,6 @@ public:
 		Delete_props ();
 	}
 }; // </editor-fold>
-
 
 Carman::Carman (Eventman* sense):parser (new Carman::Initialaiser ("[Model]", this, sense)) { }
 

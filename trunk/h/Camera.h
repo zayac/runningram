@@ -10,9 +10,12 @@
 
 #include "Vec.h"
 
+class Active;
+
 class Camera
 {
 	Point pos;
+	Active* target;
 
 public:
 	Camera();
@@ -24,6 +27,10 @@ public:
 	void Move_down();
 
 	Point Get_pos() const;
+
+	void Set_target (Active* a) {target = a;}
+
+	void Actions();
 
 	bool Ok() const {return true;}
 

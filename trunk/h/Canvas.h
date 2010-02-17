@@ -52,6 +52,12 @@ public:
 	void Cut_left (int);
 	void Cut_top (int);
 
+	inline Point Get_lup() const {return Point (x, y);}
+	inline Point Get_size() const {return Point (w, h);}
+	inline Point Get_rdown() const {return Get_lup() + Get_size();}
+
+	inline void Move (Point by) {x += by.x; y += by.y;}
+
 	#ifdef _SDL_H
 	Rect (const SDL_Rect& that);
 	operator SDL_Rect() const;
@@ -71,6 +77,8 @@ class Canvas :public UniId<SDL_Surface>
 	static SDL_Surface* screen_p;
 	Canvas (SDL_Surface* d);
 
+	Point pos;//permanent addition
+
 	friend class Rect;
 	friend class Color;
 	friend class Fontc;
@@ -84,7 +92,7 @@ public:
 	//virtual ~Canvas();
 
 	/* helper methods */
-	Canvas cropRect(Point point, int width, int height);
+	Canvas cropRect (Point point, int width, int height, bool remember_pos = false);
 	void rotate (double angle);
 	void rotate90() { rotate(90); }
 	void rotate180() { rotate(180); };
@@ -99,6 +107,9 @@ public:
 	void setPixel (Point point, Color color);
 	bool isTransparentPixel (Point point);
 	void setTransparentPixel (Point point);
+
+	void setPos (Point npos) {pos = npos;}
+	Point getPos () const   {return pos;}
 
 	void draw (Canvas* sprite, Point pos);
 	void fillRect (Rect r, Color col);

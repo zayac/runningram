@@ -50,26 +50,14 @@ bool Game_manager::Init (int argc, char *argv[])
     File_loader fl ((char*)"./settings.cfg");
     fl.Read_sector (&gen);
 	
-	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_left), EV_KEYDOWN, KI_LEFT);
-	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_right), EV_KEYDOWN, KI_RIGHT);
-	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_up), EV_KEYDOWN, KI_UP);
-	sense->Register_key_action (new Arg_Method<void, void, Camera> (look, &Camera::Move_down), EV_KEYDOWN, KI_DOWN);
-
 	sense->Register_key_action (new Arg_Method<void, void, Eventman> (sense, &Eventman::Switch_console),
 																			EV_KEYDOWN, KI_BACKQUOTE);
 
 	bool result = true;
 
 	Car* ncar = models->Create_car (2,Vector2f (50, 50), 0);
+	look->Set_target (ncar);
 	cars->push_back (ncar);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwards), EV_KEYDOWN, KI_UP);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Forwardf), EV_KEYUP, KI_UP);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwards), EV_KEYDOWN, KI_DOWN);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Backwardf), EV_KEYUP, KI_DOWN);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_lefts), EV_KEYDOWN, KI_LEFT);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_leftf), EV_KEYUP, KI_LEFT);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rights), EV_KEYDOWN, KI_RIGHT);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ncar, &Car::Turn_rightf), EV_KEYUP, KI_RIGHT);
 
 	cars->push_back (models->Create_car (1, Vector2f (150, 50), 0));
 
@@ -89,10 +77,12 @@ bool Game_manager::Main_loop()
     while (!sense->Stopped())
     {
 		sense->Acts();
+		look->Actions();
 		dt = 0.001*(SDL_GetTicks() - last_time);
 		cars->Activate (dt);
-		cars->Collis_brd (ground);
+				cars->Collis_brd (ground);
                 cars->Process_collisions();
+
 		last_time = SDL_GetTicks();
 		ground->Draw (pic);
 		cars->Draw (pic->Get_screen ());

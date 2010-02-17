@@ -11,26 +11,27 @@
 #include <SDL/SDL_rotozoom.h>
 #include "Canvas.h"
 #include "Battlefield.h"
+#include "Orient.h"
 
 
 SDL_Surface* Canvas::screen_p = 0;
 Canvas::base* Canvas::screen_t = 0;
 
-Canvas::Canvas ():UniId<SDL_Surface>(0, 0) { }
+Canvas::Canvas ():UniId<SDL_Surface>(0, 0), pos() { }
 //--------------------------------------------------------------------------------------------------
-Canvas::Canvas (SDL_Surface* d):UniId<SDL_Surface>(d, 0)
+Canvas::Canvas (SDL_Surface* d):UniId<SDL_Surface>(d, 0), pos()
 {
 
 }
 
-Canvas::Canvas (char* file):UniId<SDL_Surface>(0, 0)
+Canvas::Canvas (char* file):UniId<SDL_Surface>(0, 0), pos()
 {
     SDL_Surface *temp = SDL_LoadBMP(file);
     Reinit(SDL_DisplayFormat(temp), 0);
     SDL_FreeSurface(temp);
 }
 //--------------------------------------------------------------------------------------------------
-Canvas::Canvas (const Canvas& orig):UniId<SDL_Surface> (orig.data, orig.table)
+Canvas::Canvas (const Canvas& orig):UniId<SDL_Surface> (orig.data, orig.table), pos()
 {
 
 }
@@ -47,24 +48,29 @@ void Canvas::deleteData()
 //--------------------------------------------------------------------------------------------------
 inline int toInt (float a) {return (int)(a + 0.5);}
 void Canvas::line (Point start, Point finish, Color c)
-{   
+{
+	start -= pos;
+	finish -= pos;
     lineRGBA (data, start.x, start.y, finish.x, finish.y, c.r, c.g, c.b, c.unused);
 }
 
 //--------------------------------------------------------------------------------------------------
 void Canvas::fillRect (Rect r, Color col)
 {
+	r.Move (-pos);
     SDL_FillRect (data, addSdl (&r), col.Toint (data));
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::fill (Color col)
 {
-	fillRect (Rect (0, 0, data->w, data->h), col);
+	fillRect (Rect (pos.x, pos.y, data->w, data->h), col);
 }
 //--------------------------------------------------------------------------------------------------
 Rect Canvas::getClipRect() const
 {
-	return data->clip_rect;
+	Rect rez = data->clip_rect;
+	rez.Move (pos);
+	return rez;
 }
 //--------------------------------------------------------------------------------------------------
 int Canvas::getWidth()
@@ -79,10 +85,26 @@ int Canvas::getHeight()
 //--------------------------------------------------------------------------------------------------
 void Canvas::copy (Canvas from, Rect src_brd, Point to)
 {
+	to -= pos;
 	SDL_Rect* src_brdp = addSdl (&src_brd);
 	if (src_brd.w == 0 && src_brd.h == 0) src_brdp = 0;
 	Rect my_brd (to.x, to.y, data->w - to.x, data->h - to.y);
 	SDL_BlitSurface (from.data, src_brdp, data, addSdl (&my_brd));
+}
+//--------------------------------------------------------------------------------------------------
+void Canvas::draw (Canvas* buffer, Point position)
+{
+	position += pos;
+    SDL_Rect dstrect;
+    dstrect.x = position.x;
+    dstrect.y = position.y;
+    // this blits the current frame from the sprite sheet
+    SDL_Rect srcRect;
+    srcRect.x = 0;
+    srcRect.y = 0;
+    srcRect.w = getWidth();
+    srcRect.h = getHeight();
+    SDL_BlitSurface (data, &srcRect, buffer->getSurface(), &dstrect);
 }
 //--------------------------------------------------------------------------------------------------
 Canvas Canvas::createCompatible (Point size) const
@@ -100,6 +122,7 @@ bool Canvas::getFromScreen (Point size)
 	{
 		screen_p = SDL_SetVideoMode (size.x, size.y, 0, 0);
 		Reinit (screen_p, screen_t);
+		pos = Point();
 		return true;
 	}
 	else
@@ -184,8 +207,7 @@ Rect::operator SDL_Rect() const {return SDL_Rect {x, y, w, h};}
 //--------------------------------------------------------------------------------------------------
 void Rect::Draw (Canvas* screen, Color c) const
 {
-	SDL_Rect copy(*this);
-	SDL_FillRect (screen->getSurface(), &copy, c.Toint (screen->getSurface()));
+	screen->fillRect (*this, c);
 }
 //--------------------------------------------------------------------------------------------------
 void Rect::Cut_left (int what)
@@ -200,45 +222,54 @@ void Rect::Cut_top (int what)
 	h -= what;
 }
 //--------------------------------------------------------------------------------------------------
-Color Canvas::getPixel(Point point)
+Color Canvas::getPixel (Point point)
 {
+	point -= pos;
     Uint32* pixels = (Uint32*)data->pixels;
     Uint8 r, g, b, a;
     SDL_GetRGBA(pixels[point.y * data->w + point.x], data->format, &r, &g, &b, &a);
     return Color (r, g, b, a);
 }
 //--------------------------------------------------------------------------------------------------
-void Canvas::setPixel(Point point, Color pixel)
+void Canvas::setPixel (Point point, Color pixel)
 {
+	point -= pos;
     Uint32* pixels = (Uint32*)data->pixels;
     pixels[point.y * data->w + point.x] = pixel.Toint(data);
 }
 //--------------------------------------------------------------------------------------------------
-void Canvas::rotate(double angle)
+void Canvas::rotate (double angle)
 {
+	Orient rot (angle);
+	pos = rot.Rotate (pos.To<float>()).To <int>();
 	data = rotozoomSurface(data, angle, 1, 1);
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::flipHorizontal()
 {
+	pos.x = -pos.x;
 	data = zoomSurface(data, 1, -1, SMOOTHING_ON);
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::flipVertical()
 {
+	pos.y = -pos.y;
 	data = zoomSurface(data, -1, 1, SMOOTHING_ON);
 }
 //--------------------------------------------------------------------------------------------------
-void Canvas::zoom(double zoomx, double zoomy)  // percentage to zoom in
+void Canvas::zoom (double zoomx, double zoomy)  // percentage to zoom in
 {
+	pos.x *= zoomx;
+	pos.y *= zoomy;
 	data = zoomSurface (data, zoomx, zoomy, SMOOTHING_ON);
 }
 //--------------------------------------------------------------------------------------------------
-Canvas Canvas::cropRect(Point point, int w, int h)
+Canvas Canvas::cropRect (Point point, int w, int h, bool remember_pos)
 {
+	point -= pos;
     // create a new surface
     int amask = 0;
-    if(data->flags & SDL_SRCCOLORKEY)
+    if (data->flags & SDL_SRCCOLORKEY)
 	{
         amask = data->format->Amask;
     }
@@ -251,50 +282,39 @@ Canvas Canvas::cropRect(Point point, int w, int h)
                                             data->format->Bmask,
                                             amask ));
 
-    for(int j = 0; j < h; j++)
+    for (int j = 0; j < h; j++)
 	{
-        for(int i = 0; i < w; i++)
+        for (int i = 0; i < w; i++)
         {
-            newrect.setPixel(Point(i, j), this->getPixel(Point (point.x + i,point.y + j)));
+            newrect.setPixel (Point(i, j), this->getPixel (Point (point.x + i, point.y + j)));
         }
     }
     //Copy color key
-    if(data->flags & SDL_SRCCOLORKEY)
+    if (data->flags & SDL_SRCCOLORKEY)
 	{
-        SDL_SetColorKey(newrect.getSurface(), SDL_RLEACCEL|SDL_SRCCOLORKEY, data->format->colorkey );
+        SDL_SetColorKey (newrect.getSurface(), SDL_RLEACCEL|SDL_SRCCOLORKEY, data->format->colorkey);
     }
+	if (remember_pos) newrect.setPos (point + pos);
     return newrect;
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::setTransparency(Color colorkey)
 {
-    SDL_SetColorKey(data, SDL_SRCCOLORKEY, colorkey.Toint(data) );
+    SDL_SetColorKey (data, SDL_SRCCOLORKEY, colorkey.Toint(data) );
 }
 //--------------------------------------------------------------------------------------------------
-void Canvas::setTransparentPixel(Point point)
+void Canvas::setTransparentPixel (Point point)
 {
-    setPixel(point, data->format->colorkey);
+	point -= pos;
+    setPixel (point, data->format->colorkey);
 }
 //--------------------------------------------------------------------------------------------------
-bool Canvas::isTransparentPixel(Point point)
+bool Canvas::isTransparentPixel (Point point)
 {
+	point -= pos;
     Uint32 pixelcolor = getPixel(point).Toint(this);
 	//test whether pixels color == color of transparent pixels for that surface
 	return (pixelcolor == data->format->colorkey);
-}
-//--------------------------------------------------------------------------------------------------
-void Canvas::draw(Canvas* buffer, Point pos)
-{
-    SDL_Rect dstrect;
-    dstrect.x = pos.x;
-    dstrect.y = pos.y;
-    // this blits the current frame from the sprite sheet
-    SDL_Rect srcRect;
-    srcRect.x = 0;
-    srcRect.y = 0;
-    srcRect.w = getWidth();
-    srcRect.h = getHeight();
-    SDL_BlitSurface(data, &srcRect, buffer->getSurface(), &dstrect);
 }
 //--------------------------------------------------------------------------------------------------
 Color Canvas::getTransparency()
