@@ -7,23 +7,12 @@
 
 #ifndef _CANVAS_H
 #define	_CANVAS_H
-#include <stdint.h>
+#include "mstdint.h"
 #include "Vec.h"
 #include "UniId.h"
 #include <string>
 class Canvas;
 class SDL_Surface;
-
-#ifndef _SDL_H
-
-typedef int8_t		Sint8;
-typedef uint8_t		Uint8;
-typedef int16_t		Sint16;
-typedef uint16_t	Uint16;
-typedef int32_t		Sint32;
-typedef uint32_t	Uint32;
-
-#endif
 
 class Color// :public SDL_Color
 {

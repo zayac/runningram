@@ -56,7 +56,7 @@ protected:
 
 protected:
 	inline Vector2f Get_vel() {return vel;}
-	virtual void Resistance(){};
+	virtual Vector2f Resistance(){};
 
 public:
 	Body (float rmass, float r_, Vector2f position)
@@ -66,10 +66,31 @@ public:
 
 	inline void Applay_motion (float dt)
 	{
-		Resistance();
 		pos += vel*dt + force*rev_mass*dt*dt/2;
 		vel += force*rev_mass*dt;
 		force = Vector2f();
+		Vector2f resist = Resistance()*rev_mass*dt;
+		int iterations = 1;
+		while (resist.Lensq() > vel.Lensq())
+		{
+			iterations *= 2;
+			resist /= 2;
+			dt /= 2;
+		}
+		for (; iterations > 0; --iterations)
+		{
+			resist = Resistance()*rev_mass*dt;
+			vel += resist;
+		}
+
+//		Resistance();			//order is important
+//		Vector2f vel_addition = force*rev_mass*dt;
+//		Vector2f vel_add_along = vel_addition.Proj (vel);
+//		Vector2f vel_add_across = vel_addition - vel_add_along;
+//
+//		if (vel_add_along.Lensq() > vel.Lensq()) vel_add_along = -vel;//for limit resistance force
+//		vel += vel_add_across + vel_add_along;
+//		force = Vector2f();
 	}
 	inline Vector2f Get_impulse()
 	{
@@ -90,11 +111,11 @@ protected:
 	Orient orient;
 	Vector2f fric;//[0] = x = parallel, [1] = y = normal friction
 
-	virtual void Resistance()
+	virtual Vector2f Resistance()
 	{
 		Vector2f dir = orient.Get_dir();
 		Vector2f proj = (Get_vel()^dir)*dir;
-		Appl_force (-fric[0]*proj - fric[1]*(Get_vel() - proj));
+		return -fric[0]*proj - fric[1]*(Get_vel() - proj);
 	}
 public:
 	Dir_body (float rmass, float r_, Vector2f coor, Vector2f friction, Orient start_orient)
@@ -103,11 +124,10 @@ public:
 	inline bool Ok() const {return Body::Ok() && fric.x > 0 && fric.y > 0 && orient.Ok();}
 };
 
-const float Motor_force = 10.;
 const float Angular_vel = 5;
 const float Max_ang_dev = 1.;
 const float Rudder_spring = 8;
-const float Bouncy = 0.5;
+const float Bouncy = 2.0;
 
 const float aboutnull = 0.000000001;
 
@@ -132,6 +152,7 @@ class Car :public Active
 	float rmass;
 	float lenght;
 	float health;
+	float motor_force;
 
 	void Process_gestures (float dt);
 	void Motory_force (float f);
@@ -145,7 +166,7 @@ class Car :public Active
 	void Move (Vector2f disp) {back.pos += disp; front.pos += disp;}
 
 public:
-	Car (Vector2f pos, float health, float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient);
+	Car (Vector2f pos, float health, float motor_force, float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient);
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);
@@ -153,7 +174,8 @@ public:
 	virtual void Collis_brd (Rect with);
 
 	void Get_my_verticies (Vector2f* four);
-	Vector2f Get_vel (Vector2f papp);
+	Vector2f Get_vel (Vector2f p);
+	Vector2f Get_imp (Vector2f p);
 	void Appl_impulse (Vector2f imp, Vector2f papp);
 	
 	virtual int My_type() const {return Car_type;}

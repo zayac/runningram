@@ -24,8 +24,9 @@ Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool to_ce
 Body::~Body () { }
 
 //--------------------------------------------------------------------------------------------------
-Car::Car (Vector2f coor, float health_, float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient)
-:Active (coor, len + max(r1, r2)), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)), health (health_),
+Car::Car (Vector2f coor, float health_, float motor_force_, float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient)
+:Active (coor, len + max(r1, r2)), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)),
+	health (health_), motor_force (motor_force_),
 back (rmass1, r1, coor - start_orient.Get_dir()*len/(1 + rmass1/rmass2), fric, start_orient),
 front (rmass2, r2, coor + start_orient.Get_dir()*len/(1 + rmass2/rmass1), fric, start_orient)
 {
@@ -37,7 +38,7 @@ void Car::Actions (float dt)
 	assert(Ok());
 	front.Applay_motion (dt);
 	back.Applay_motion (dt);
-	
+
 	Orient ori(front.pos - back.pos);
 
 	pos = (back.pos/back.rev_mass + front.pos/front.rev_mass)*rmass;
@@ -221,36 +222,45 @@ Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool to_ce
 //--------------------------------------------------------------------------------------------------
 void Car::Applay_brd_collision (Collision_vector cv)
 {
-    Vector2f imp_along = (Get_vel (cv.papp)/rmass).Proj (cv.depth);
+    Vector2f imp_along = (Get_imp (cv.papp)).Proj (cv.depth);
     if ((imp_along^cv.depth) < 0)
         Appl_impulse (imp_along*(-1 - Bouncy), cv.papp);
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Applay_obj_collision (Car* with, Collision_vector cv)
 {
-	Vector2f mydisp = cv.depth/rmass/(1/rmass + 1/with->rmass);
+	float mass_sum = 1/rmass + 1/with->rmass;
+	assert (mass_sum > 0);
+	Vector2f mydisp = cv.depth/rmass/mass_sum;
 	Vector2f hisdisp = mydisp - cv.depth;
 	
 	with->Move (hisdisp);
 	Move (mydisp);
 
-	Vector2f along_dimp = (Get_vel (cv.papp)/rmass - with->Get_vel (cv.papp)/with->rmass).Proj (cv.depth);
+	Vector2f my_imp = Get_imp (cv.papp).Proj (cv.depth);
+	Vector2f his_imp = with->Get_imp (cv.papp).Proj (cv.depth);
+	Vector2f along_dimp = (my_imp - his_imp);
 
 	if ((along_dimp^cv.depth) < 0)
 	{
-		Vector2f mydimp = -along_dimp/2;
-		Vector2f hisdimp = along_dimp/2;
+		Vector2f ci_vel = (my_imp + his_imp)/mass_sum;//inertia center velocity
+
+		Vector2f mydimp = (1 + Bouncy)*(ci_vel/rmass - my_imp);
+		Vector2f hisdimp = (1 + Bouncy)*(ci_vel/with->rmass - his_imp);
 		Appl_impulse (mydimp, cv.papp);
 		with->Appl_impulse (hisdimp, cv.papp);
+
+		his_imp = with->Get_imp (cv.papp).Proj (cv.depth);
+		his_imp.Len ();
 	}
 }
 //--------------------------------------------------------------------------------------------------
-Vector2f Car::Get_vel (Vector2f papp)
+Vector2f Car::Get_vel (Vector2f p)
 {
     Vector2f trans = back.vel;
 
     Vector2f axis = (front.pos - back.pos)/lenght;//normalize
-    Vector2f dir = papp - back.pos;
+    Vector2f dir = p - back.pos;
     float distance = dir.Len();
     dir /= distance;                            //normalize
 
@@ -259,6 +269,17 @@ Vector2f Car::Get_vel (Vector2f papp)
     Vector2f rotary = alfa.Rotate (front.vel - back.vel)*distance/lenght;
 
     return trans + rotary;
+}
+//--------------------------------------------------------------------------------------------------
+Vector2f Car::Get_imp (Vector2f p)
+{
+    Vector2f to_back = p - back.pos;
+    Vector2f to_front = p - front.pos;
+
+    Vector2f back_imp = back.Get_impulse().Proj (to_back);
+    Vector2f front_imp = front.Get_impulse().Proj (to_front);
+
+	return back_imp + front_imp;
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Appl_impulse (Vector2f imp, Vector2f papp)
@@ -295,8 +316,8 @@ void Car::Appl_impulse (Vector2f imp, Vector2f papp)
 void Car::Process_gestures (float dt)
 {
 	assert(Ok());
-	if (fp && !bp) Motory_force ( Motor_force);
-	if (bp && !fp) Motory_force (-Motor_force);
+	if (fp && !bp) Motory_force ( motor_force);
+	if (bp && !fp) Motory_force (-motor_force);
 	if (rp && !lp) Turn_front ( Angular_vel*dt);
 	if (lp && !rp) Turn_front (-Angular_vel*dt);
 }

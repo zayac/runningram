@@ -11,6 +11,7 @@
 #include <string>
 #include "Orient.h"
 #include "initparser.h"
+#include "Key_event.h"
 
 using std::list;
 using std::string;
@@ -27,12 +28,17 @@ public:
 	Eventman* sense;
 
 	float start_health;
+	float motor_force;
 	float rmass1;
 	float rmass2;
 	float lenght;
 	float r1;
 	float r2;
 	Vector2f fric;
+	Key_id up;
+	Key_id down;
+	Key_id left;
+	Key_id right;
 
 public:
 	Car_creator (Eventman* sens);
