@@ -24,9 +24,11 @@ Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool to_ce
 Body::~Body () { }
 
 //--------------------------------------------------------------------------------------------------
-Car::Car (Vector2f coor, float health_, float motor_force_, float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient)
+Car::Car (Vector2f coor, float health_, float motor_force_, float bouncy_, float angular_vel_, float rudder_spring_,
+		  float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient, Player* host_)
 :Active (coor, len + max(r1, r2)), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)),
-	health (health_), motor_force (motor_force_),
+	health (health_), motor_force (motor_force_), bouncy (bouncy_), angular_vel (angular_vel_),
+	rudder_spring (rudder_spring_), host (host_),
 back (rmass1, r1, coor - start_orient.Get_dir()*len/(1 + rmass1/rmass2), fric, start_orient),
 front (rmass2, r2, coor + start_orient.Get_dir()*len/(1 + rmass2/rmass1), fric, start_orient)
 {
@@ -224,12 +226,13 @@ void Car::Applay_brd_collision (Collision_vector cv)
 {
     Vector2f imp_along = (Get_imp (cv.papp)).Proj (cv.depth);
     if ((imp_along^cv.depth) < 0)
-        Appl_impulse (imp_along*(-1 - Bouncy), cv.papp);
+        Appl_impulse (imp_along*(-1 - bouncy), cv.papp);
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Applay_obj_collision (Car* with, Collision_vector cv)
 {
 	float mass_sum = 1/rmass + 1/with->rmass;
+	float rez_bouncy = bouncy*with->bouncy;
 	assert (mass_sum > 0);
 	Vector2f mydisp = cv.depth/rmass/mass_sum;
 	Vector2f hisdisp = mydisp - cv.depth;
@@ -245,8 +248,8 @@ void Car::Applay_obj_collision (Car* with, Collision_vector cv)
 	{
 		Vector2f ci_vel = (my_imp + his_imp)/mass_sum;//inertia center velocity
 
-		Vector2f mydimp = (1 + Bouncy)*(ci_vel/rmass - my_imp);
-		Vector2f hisdimp = (1 + Bouncy)*(ci_vel/with->rmass - his_imp);
+		Vector2f mydimp = (1 + rez_bouncy)*(ci_vel/rmass - my_imp);
+		Vector2f hisdimp = (1 + rez_bouncy)*(ci_vel/with->rmass - his_imp);
 		Appl_impulse (mydimp, cv.papp);
 		with->Appl_impulse (hisdimp, cv.papp);
 
@@ -318,8 +321,8 @@ void Car::Process_gestures (float dt)
 	assert(Ok());
 	if (fp && !bp) Motory_force ( motor_force);
 	if (bp && !fp) Motory_force (-motor_force);
-	if (rp && !lp) Turn_front ( Angular_vel*dt);
-	if (lp && !rp) Turn_front (-Angular_vel*dt);
+	if (rp && !lp) Turn_front ( angular_vel*dt);
+	if (lp && !rp) Turn_front (-angular_vel*dt);
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Motory_force (float f)
@@ -352,7 +355,7 @@ void Car::Rudder_correction (float dt)
 {
 	assert(Ok());
 	float delta = In_range ((front.orient - back.orient).Get_angle ());
-	front.orient = back.orient + delta*(1 - Rudder_spring*dt);
+	front.orient = back.orient + delta*(1 - rudder_spring*dt);
 }
 //--------------------------------------------------------------------------------------------------
 inline bool Boolly (bool arg) {return arg == true || arg == false;}

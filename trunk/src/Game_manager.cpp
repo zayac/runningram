@@ -19,10 +19,11 @@
 #include "Car.h"
 #include "Activeman.h"
 #include "Carman.h"
+#include "Player_manager.h"
 
 Game_manager::Game_manager (int argc, char *argv[])
 :pic (new Graphic_subsystem), sense (new Eventman), look(new Camera), ground (new Battlefield),
- cmd (new Console), cars (new Activeman)
+ cmd (new Console), cars (new Activeman), players (new Player_manager)
 {
 	models = new Carman (sense);
 
@@ -32,6 +33,7 @@ Game_manager::Game_manager (int argc, char *argv[])
 //--------------------------------------------------------------------------------------------------
 Game_manager::~Game_manager()
 {
+	if (!players) delete players; players = 0;
 	if (!ground) delete ground; ground = 0;
 	if (!models) delete models; models = 0;
 	if (!sense) delete sense; sense = 0;
@@ -47,6 +49,7 @@ bool Game_manager::Init (int argc, char *argv[])
 	gen.Add_param (pic->Get_parser ());
 	gen.Add_param (ground->Get_parser ());
 	gen.Add_param (models->Get_parser ());
+	gen.Add_param (players->Get_parser ());
     File_loader fl ((char*)"./settings.cfg");
     fl.Read_sector (&gen);
 	
@@ -55,11 +58,14 @@ bool Game_manager::Init (int argc, char *argv[])
 
 	bool result = true;
 
-	Car* ncar = models->Create_car (2,Vector2f (50, 50), 0);
-	look->Set_target (ncar);
-	cars->push_back (ncar);
+	players->Create_cars_for_poors (models, cars);
+	look->Set_target (*cars->begin ());
 
-	cars->push_back (models->Create_car (1, Vector2f (150, 50), 0));
+//	Car* ncar = models->Create_car (2,Vector2f (50, 50), 0);
+//	look->Set_target (ncar);
+//	cars->push_back (ncar);
+//
+//	cars->push_back (models->Create_car (1, Vector2f (150, 50), 0));
 
 	result = result && pic->Init();
 	result = result && ground->Init();

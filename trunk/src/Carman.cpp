@@ -60,6 +60,9 @@ public:
 		Add_param (new St_loader<float> ("lenght", &data.lenght));
 		Add_param (new St_loader<float> ("back size", &data.r1));
 		Add_param (new St_loader<float> ("front size", &data.r2));
+		Add_param (new St_loader<float> ("bouncy", &data.bouncy));
+		Add_param (new St_loader<float> ("rudder speed", &data.angular_vel));
+		Add_param (new St_loader<float> ("rudder spring", &data.rudder_spring));
 		Add_param (new St_loader<float> ("along friction", &data.fric.x));
 		Add_param (new St_loader<float> ("across friction", &data.fric.y));
 		Add_param (new St_loader<Key_id> ("up key", &data.up));
@@ -88,13 +91,13 @@ Serializator* Carman::Get_parser()
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
-Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient) const
+Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient, Player* host) const
 {
 	for (citer i = models.begin(); i != models.end(); ++i)
 	{
 		Car_creator* cc = *i;
 		if ((**i).model_id == model)
-			return (**i).New_car (pos, start_orient);
+			return (**i).New_car (pos, start_orient, host);
 	}
 	return 0;
 }
@@ -103,6 +106,9 @@ Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient) const
 Car_creator::Car_creator (Eventman* sens) :sense (sens),
 	start_health (100),
 	motor_force (10),
+	bouncy (1.44),
+	angular_vel (5),
+	rudder_spring (8),
 	rmass1 (40),
 	rmass2 (40),
 	lenght (30),
@@ -115,9 +121,10 @@ Car_creator::Car_creator (Eventman* sens) :sense (sens),
 	right (KI_RIGHT)
 {}
 //--------------------------------------------------------------------------------------------------
-Car* Car_creator::New_car (Vector2f pos, Orient start_orient) const
+Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host) const
 {
-	Car* ret = new Car (pos, start_health, motor_force, rmass1, rmass2, lenght, r1, r2, fric, start_orient);
+	Car* ret = new Car (pos, start_health, motor_force, bouncy, angular_vel,
+					 rudder_spring, rmass1, rmass2, lenght, r1, r2, fric, start_orient, host);
 
 	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Forwards), EV_KEYDOWN, up);
 	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Forwardf), EV_KEYUP, up);
@@ -138,6 +145,9 @@ Car_creator* Car_creator::Create_copy() const
 	ret->model_id = model_id;
 	ret->start_health = start_health;
 	ret->motor_force = motor_force;
+	ret->bouncy = bouncy;
+	ret->angular_vel = angular_vel;
+	ret->rudder_spring = rudder_spring;
 	ret->rmass1 = rmass1;
 	ret->rmass2 = rmass2;
 	ret->lenght = lenght;
