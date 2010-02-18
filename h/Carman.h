@@ -18,6 +18,7 @@ using std::string;
 
 class Eventman;
 class Car;
+class Player;
 
 class Car_creator
 {
@@ -35,6 +36,9 @@ public:
 	float r1;
 	float r2;
 	Vector2f fric;
+	float bouncy;
+	float angular_vel;
+	float rudder_spring;
 	Key_id up;
 	Key_id down;
 	Key_id left;
@@ -42,7 +46,7 @@ public:
 
 public:
 	Car_creator (Eventman* sens);
-	Car* New_car (Vector2f pos, Orient start_orient) const;
+	Car* New_car (Vector2f pos, Orient start_orient, Player* host) const;
 
 	Car_creator* Create_copy() const;
 };
@@ -66,7 +70,7 @@ public:
 
 	void Add_model (Car_creator* m) {models.push_back(m);}
 	
-	Car* Create_car (int model, Vector2f pos, Orient start_orient) const;
+	Car* Create_car (int model, Vector2f pos, Orient start_orient, Player* host) const;
 
 
 };

@@ -15,6 +15,7 @@ class Battlefield;
 class Console;
 class Activeman;
 class Carman;
+class Player_manager;
 
 class Game_manager
 {
@@ -25,6 +26,7 @@ class Game_manager
 	Console* cmd;
 	Activeman* cars;
 	Carman* models;
+	Player_manager* players;
 
 public:
 	Game_manager (int argc, char *argv[]);

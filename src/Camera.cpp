@@ -44,6 +44,7 @@ Point Camera::Get_pos() const
 void Camera::Actions()
 {
 	if (!target) return;
-	pos = target->Get_pos().To<int>() - Point (300, 300);
+
+	pos += (target->Get_pos().To<int>() - Point (300, 300) - pos)/50;
 }
 //--------------------------------------------------------------------------------------------------

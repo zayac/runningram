@@ -10,6 +10,7 @@
 #include "Vec.h"
 #include "Canvas.h"
 #include "Orient.h"
+#include "Console.h"
 
 const float VeryBigMass = 1e10;
 
@@ -124,10 +125,10 @@ public:
 	inline bool Ok() const {return Body::Ok() && fric.x > 0 && fric.y > 0 && orient.Ok();}
 };
 
-const float Angular_vel = 5;
+//const float Angular_vel = 5;
 const float Max_ang_dev = 1.;
-const float Rudder_spring = 8;
-const float Bouncy = 2.0;
+//const float Rudder_spring = 8;
+//const float Bouncy = 2.0;
 
 const float aboutnull = 0.000000001;
 
@@ -140,10 +141,12 @@ struct Collision_vector
 	inline bool Vital() {return Weight() > aboutnull;}
 };
 
-class Eventman;
+class Player;
 
 class Car :public Active
 {
+	Player* host;
+
 	bool rp, lp, fp, bp;//right, left, forward, backward procedure states
 
 	Dir_body back;
@@ -153,6 +156,9 @@ class Car :public Active
 	float lenght;
 	float health;
 	float motor_force;
+	float bouncy;
+	float angular_vel;
+	float rudder_spring;
 
 	void Process_gestures (float dt);
 	void Motory_force (float f);
@@ -166,7 +172,8 @@ class Car :public Active
 	void Move (Vector2f disp) {back.pos += disp; front.pos += disp;}
 
 public:
-	Car (Vector2f pos, float health, float motor_force, float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient);
+	Car (Vector2f pos, float health, float motor_force, float bouncy, float angular_vel, float rudder_spring,
+		 float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient, Player* host = 0);
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);
