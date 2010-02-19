@@ -70,6 +70,8 @@ bool Console::Init (Graphic_subsystem* c)
 	borders.h = font.Height ();
 	input.Init  (borders, new Arg_Method<void, string*, Console> (this, &Console::On_enter_string), "You:>");
 
+	enabled = false;
+
 	assert(Ok());
 
 	return true;
@@ -84,11 +86,13 @@ void Console::Cleanup()
 void Console::Operate (Kbd_event ev)
 {
 	assert(Ok());
-	input.Operate (ev);
+	if (enabled)
+		input.Operate (ev);
 }
 //--------------------------------------------------------------------------------------------------
 void Console::Draw (Graphic_subsystem* c) const
 {
+	if (!enabled) return;
 	Canvas* screen = c->Get_screen ();
 	Point scr_pos = screen->getPos();
 	screen->setPos (Point());
@@ -96,6 +100,11 @@ void Console::Draw (Graphic_subsystem* c) const
 	history.Draw (screen);
 	input.Draw (screen);
 	screen->setPos (scr_pos);
+}
+//--------------------------------------------------------------------------------------------------
+void Console::Switch()
+{
+	enabled = !enabled;
 }
 //--------------------------------------------------------------------------------------------------
 void Console::Out (const string& str)
@@ -137,6 +146,7 @@ void Line_edit::Operate (Kbd_event ev)
 {
 	assert(Ok());
 	if (ev.type == EV_KEYUP) return;
+	if (ev.ki == KI_BACKQUOTE) return; //!!! it's ugly. this key switches console
 
 	last_actiont = MSECS;
 

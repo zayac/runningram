@@ -114,6 +114,7 @@ public:
 
 class Console
 {
+	bool enabled;
 	Fontc font;
 	Lines_view history;
 	Line_edit input;
@@ -132,6 +133,8 @@ public:
 
 	void Operate (Kbd_event ev);
 	void Draw (Graphic_subsystem* c) const;
+
+	void Switch();
 
 	void Out (const string& str);
 

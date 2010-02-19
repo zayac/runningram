@@ -67,6 +67,14 @@ protected:
 			Init (d, tab);
 		}
 	}
+	void Substitute_data (T* nd)
+	{
+		Delete_data();
+		for (typename base::iterator i = table.begin(); i != table.end(); ++i)
+		{
+			(**i).data = nd;
+		}
+	}
 
 	UniId (T* d, base* tab):data (d)
 	{
