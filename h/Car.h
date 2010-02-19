@@ -44,6 +44,7 @@ public:
 	virtual void Collis_obj (Active* that) = 0;
 	
 	virtual int My_type() const {return No_type;}
+	virtual bool Dead() const = 0;
 
 	virtual bool Ok() const = 0;
 };
@@ -142,6 +143,9 @@ struct Collision_vector
 };
 
 class Player;
+const int Health_indicator_len = 50;
+const int Health_indicator_offset = -20;
+const int Health_indicator_height = 5;
 
 class Car :public Active
 {
@@ -159,6 +163,8 @@ class Car :public Active
 	float bouncy;
 	float angular_vel;
 	float rudder_spring;
+
+	static float max_health;
 
 	void Process_gestures (float dt);
 	void Motory_force (float f);
@@ -183,9 +189,11 @@ public:
 	void Get_my_verticies (Vector2f* four);
 	Vector2f Get_vel (Vector2f p);
 	Vector2f Get_imp (Vector2f p);
-	void Appl_impulse (Vector2f imp, Vector2f papp);
+	bool Damage (Vector2f imp, Vector2f papp, float destructive_k);			//returns true if killed
+	void Appl_impulse (Vector2f imp, Vector2f papp, float destructive_k = 1);
 	
 	virtual int My_type() const {return Car_type;}
+	virtual bool Dead() const;
 
 //	Vector2f Collis_rectangle (Vector2f one, Vector2f two, Vector2f three, Vector2f four);
 

@@ -99,6 +99,7 @@ public:
 	virtual ~St_processor(){}
 };
 void No_spaces_begin (ifstream& file);
+void Cut_end_spaces (char* str);
 //-------------------------------------------------------------------
 template <>
 bool St_loader<int>::Read_frag (ifstream &file);

@@ -47,6 +47,7 @@ bool Game_manager::Init (int argc, char *argv[])
 {
     Sectionp gen ("gensec", '\n');
 	gen.Add_param (pic->Get_parser ());
+	gen.Add_param (cmd->Get_parser ());
 	gen.Add_param (ground->Get_parser ());
 	gen.Add_param (models->Get_parser ());
 	gen.Add_param (players->Get_parser ());
@@ -58,14 +59,8 @@ bool Game_manager::Init (int argc, char *argv[])
 
 	bool result = true;
 
-	players->Create_cars_for_poors (models, cars);
-	look->Set_target (*cars->begin ());
-
-//	Car* ncar = models->Create_car (2,Vector2f (50, 50), 0);
-//	look->Set_target (ncar);
-//	cars->push_back (ncar);
-//
-//	cars->push_back (models->Create_car (1, Vector2f (150, 50), 0));
+	font.Open_font ("default.ttf", 16);
+	font.Set_fg (Color(100, 100, 200));//!!! deprecated
 
 	result = result && pic->Init();
 	result = result && ground->Init();
@@ -83,7 +78,6 @@ bool Game_manager::Main_loop()
     while (!sense->Stopped())
     {
 		sense->Acts();
-		look->Actions();
 		dt = 0.001*(SDL_GetTicks() - last_time);
 		cars->Activate (dt);
 				cars->Collis_brd (ground);
@@ -94,7 +88,14 @@ bool Game_manager::Main_loop()
 		cars->Draw (pic->Get_screen ());
 		if (sense->Console_enabled ()) cmd->Draw (pic);
 
+		players->Draw_comp_table (pic->Get_screen (), &font);
+
+		if (!look->Has_target()) look->Set_target (*cars->begin());
+		look->Actions();
+		bool found = cars->Delete_deadalives ();
+
 		pic->Draw (look);
+		players->Create_cars_for_poors (models, cars, ground);
     }
 	return Ok();
 }

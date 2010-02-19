@@ -26,6 +26,7 @@ public:
 	void Draw (Canvas*);
 	void Collis_brd (const Battlefield* bf);
 	void Process_collisions();
+	bool Delete_deadalives();//returns true when one or more of Deadalives have found and deleted
 
 	bool Ok() const;
 };

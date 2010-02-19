@@ -21,12 +21,8 @@ public:
 	Camera();
 	virtual ~Camera();
 
-	void Move_right();
-	void Move_left();
-	void Move_up();
-	void Move_down();
-
 	Point Get_pos() const;
+	bool Has_target() const {return target != 0;}
 
 	void Set_target (Active* a) {target = a;}
 
