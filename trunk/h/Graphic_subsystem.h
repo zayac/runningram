@@ -16,7 +16,7 @@ class Camera;
 
 class Graphic_subsystem
 {
-	Canvas screen;
+	Canvas* screen;
 	Canvas buffer;
 
 	class Initialaiser;

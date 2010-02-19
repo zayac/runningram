@@ -63,8 +63,8 @@ bool Graphic_subsystem::Init()
     SDL_WM_SetCaption (parser->win_name.c_str (), "name");
 
     /* create window */
-    screen.getFromScreen (Point (parser->win_x, parser->win_y));
-    buffer = screen.createCompatible();
+    screen = Canvas::getScreenCanvas (Point (parser->win_x, parser->win_y));
+    buffer = screen->createCompatible();
 
     /*buffer->format->Amask = 0xff000000;
     buffer->format->Ashift = 24;
@@ -79,9 +79,9 @@ void Graphic_subsystem::Draw (Camera* look)
     /* update the screen */
 
 	buffer.setPos (Point());
-	screen.copy (buffer);
+	screen->copy (buffer);
 //	SDL_UnlockSurface (screen);
-	screen.update ();
+	screen->update ();
 	buffer.fill (Color(0, 0,0));
 	buffer.setPos (look->Get_pos ());
 //	SDL_LockSurface (screen);
@@ -90,11 +90,13 @@ void Graphic_subsystem::Draw (Camera* look)
 void Graphic_subsystem::Cleanup()
 {
     /* cleanup SDL */
+	delete screen;
+	screen = 0;
     SDL_Quit ();
 }
 //--------------------------------------------------------------------------------------------------
 bool Graphic_subsystem::Ok() const
 {
-	return parser != 0 && screen.Ok() && buffer.Ok();
+	return parser != 0 && screen != 0 && screen->Ok() && buffer.Ok();
 }
 //--------------------------------------------------------------------------------------------------

@@ -54,8 +54,9 @@ bool Game_manager::Init (int argc, char *argv[])
     File_loader fl ((char*)"./settings.cfg");
     fl.Read_sector (&gen);
 	
-	sense->Register_key_action (new Arg_Method<void, void, Eventman> (sense, &Eventman::Switch_console),
-																			EV_KEYDOWN, KI_BACKQUOTE);
+	sense->Register_key_action (new Arg_Method<void, void, Console> (cmd, &Console::Switch),
+																		EV_KEYDOWN, KI_BACKQUOTE);
+	sense->Register_key_oper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::Operate));
 
 	bool result = true;
 
@@ -65,8 +66,6 @@ bool Game_manager::Init (int argc, char *argv[])
 	result = result && pic->Init();
 	result = result && ground->Init();
 	result = result && cmd->Init (pic);
-	
-	sense->Set_console (cmd);
 
 	return result && Ok();
 }
@@ -86,7 +85,7 @@ bool Game_manager::Main_loop()
 		last_time = SDL_GetTicks();
 		ground->Draw (pic);
 		cars->Draw (pic->Get_screen ());
-		if (sense->Console_enabled ()) cmd->Draw (pic);
+		cmd->Draw (pic);
 
 		players->Draw_comp_table (pic->Get_screen (), &font);
 
@@ -102,9 +101,9 @@ bool Game_manager::Main_loop()
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Cleanup()
 {
+	return Ok();
 	pic->Cleanup();
 	cmd->Cleanup();
-	return Ok();
 }
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Ok() const

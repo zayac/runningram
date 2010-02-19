@@ -344,6 +344,16 @@ struct Kbd_event
 	Uint8 type;
 	Key_mode mod;
 	Key_id ki;
+	
+	Kbd_event (Uint8 type_, Key_mode mod_, Key_id ki_)
+		:type (type_), mod (mod_), ki (ki_) {}
+	Kbd_event (const Kbd_event& src)
+		:type (src.type), mod (src.mod), ki (src.ki) {}
+
+	bool Contain (const Kbd_event& that) const
+	{
+		return that.type == type && that.ki == ki && ((that.mod&mod) == that.mod);
+	}
 #ifdef _SDL_events_h
 	Kbd_event (const SDL_KeyboardEvent& src)
 		:type (src.type), mod (Get_my_mode (src.keysym.mod)), ki(Get_my_code (src.keysym.sym)) {}

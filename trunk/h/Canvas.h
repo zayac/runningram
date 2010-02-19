@@ -73,8 +73,8 @@ inline const Rect*		cutSdl (const SDL_Rect* p) {return (const Rect*)p;}
 
 class Canvas :public UniId<SDL_Surface>
 {
-	static base* screen_t;
-	static SDL_Surface* screen_p;
+	static Canvas* Screen;
+
 	Canvas (SDL_Surface* d);
 
 	Point pos;//permanent addition
@@ -125,10 +125,10 @@ public:
 	//void setSurface (SDL_Surface* surf) {data = surf};
 	Canvas createCompatible (Point size = Point()) const;
 
-	bool getFromScreen (Point size);//Run once!!!
 	bool Ok() const;
-};
 
+	static Canvas* getScreenCanvas (Point size);//Run once!!!
+};
 
 #endif	/* _CANVAS_H */
 

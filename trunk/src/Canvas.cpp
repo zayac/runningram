@@ -14,8 +14,10 @@
 #include "Orient.h"
 
 
-SDL_Surface* Canvas::screen_p = 0;
-Canvas::base* Canvas::screen_t = 0;
+//SDL_Surface* Canvas::screen_p = 0;
+//Canvas::base* Canvas::screen_t = 0;
+
+Canvas* Canvas::Screen = 0;
 
 Canvas::Canvas ():UniId<SDL_Surface>(0, 0), pos() { }
 //--------------------------------------------------------------------------------------------------
@@ -40,10 +42,7 @@ Canvas::Canvas (const Canvas& orig):UniId<SDL_Surface> (orig.data, orig.table), 
 //--------------------------------------------------------------------------------------------------
 void Canvas::deleteData()
 {
-	if (data != screen_p)
-		SDL_FreeSurface (data);
-	else
-		screen_p = 0;
+	SDL_FreeSurface (data);
 }
 //--------------------------------------------------------------------------------------------------
 inline int toInt (float a) {return (int)(a + 0.5);}
@@ -113,21 +112,6 @@ Canvas Canvas::createCompatible (Point size) const
 	return Canvas (SDL_CreateRGBSurface (data->flags, size.x, size.y, data->format->BitsPerPixel,
 										 data->format->Rmask, data->format->Gmask,
                                 						 data->format->Bmask, data->format->Amask));
-}
-//--------------------------------------------------------------------------------------------------
-bool Canvas::getFromScreen (Point size)
-{
-	if (screen_t == 0) screen_t = new base;
-	if (screen_p == 0)
-	{
-		screen_p = SDL_SetVideoMode (size.x, size.y, 0, 0);
-		Reinit (screen_p, screen_t);
-		pos = Point();
-		return true;
-	}
-	else
-		Reinit (0, 0);//if screen has allready getted you need copy that Canvas
-	return false;
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::update()
@@ -323,3 +307,11 @@ Color Canvas::getTransparency()
     SDL_GetRGBA(data->format->colorkey, data->format, &r, &g, &b, &a);
     return Color (r, g, b, a);
 }
+//--------------------------------------------------------------------------------------------------
+Canvas* Canvas::getScreenCanvas (Point size)
+{
+	if (Screen == 0)
+		Screen = new Canvas (SDL_SetVideoMode (size.x, size.y, 0, 0));
+	return Screen;
+}
+//--------------------------------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 #include "Eventman.h"
 #include "Console.h"
 
-Eventman::Eventman () :stop (false), console_active(false), cmd (0)
+Eventman::Eventman () :stop (false)
 {
 }
 //--------------------------------------------------------------------------------------------------
@@ -20,8 +20,10 @@ Eventman::~Eventman ()
 void Eventman::Applay_event (const Kbd_event& ev)
 {
 	assert(Ok());
+	for (koiter i = kbd_opers.begin(); i != kbd_opers.end(); ++i)
+		(**i)(ev);
 	for (kiter i = kbdacts.begin(); i != kbdacts.end(); ++i)
-		if (ev.ki == i->key && ev.type == i->event)
+		if (ev.Contain (i->ev))
 			(*i->fun)();
 }
 //--------------------------------------------------------------------------------------------------
@@ -30,34 +32,21 @@ void Eventman::Clear_actions()
 	assert(Ok());
 	for (kiter i = kbdacts.begin(); i != kbdacts.end(); ++i)
 		delete i->fun;
+	for (koiter i = kbd_opers.begin(); i != kbd_opers.end(); ++i)
+		delete *i;
 	kbdacts.clear();
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::Register_key_action (Functor* fun, Uint8 event, Key_id key)
+void Eventman::Register_key_action (Functor* fun, Uint8 event, Key_id key, Key_mode mod)
 {
 	assert(Ok());
-	kbdacts.push_back (Kbd_action (fun, event, key));
+	kbdacts.push_back (Kbd_action (fun, key, event, mod));
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::Set_console (Console* c)
-{
-	cmd = c;
-	assert(Ok());
-}
-//--------------------------------------------------------------------------------------------------
-void Eventman::Switch_console()
+void Eventman::Register_key_oper (Kbd_oper op)
 {
 	assert(Ok());
-	console_active = !console_active;
-
-	if (console_active) SDL_EnableKeyRepeat (300, 50);
-	else SDL_EnableKeyRepeat (0, 0);
-}
-//--------------------------------------------------------------------------------------------------
-bool Eventman::Console_enabled()
-{
-	assert(Ok());
-	return console_active;
+	kbd_opers.push_back (op);
 }
 //--------------------------------------------------------------------------------------------------
 void Eventman::Acts()
@@ -79,7 +68,6 @@ void Eventman::Acts()
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 			Applay_event (Kbd_event (event.key));
-			if (console_active) cmd->Operate (event.key);
 			break;
 		}
 	}
@@ -96,7 +84,6 @@ bool Eventman::Ok() const
 {
 	for (list <Kbd_action>::const_iterator i = kbdacts.begin(); i != kbdacts.end(); ++i)
 		if (!i->Ok()) return false;
-	if (console_active && cmd == 0) return false;
-	return (cmd == 0 || cmd->Ok()) && Boolly (stop) && Boolly (console_active);
+	return Boolly (stop);
 }
 //--------------------------------------------------------------------------------------------------
