@@ -1,3 +1,9 @@
+/*
+ * File:   Key_event.cpp
+ * Author: necto
+ *
+ * Created on January 21, 2010, 3:04 PM
+ */
 #include "Key_event.h"
 
 const char* Key_names[] =

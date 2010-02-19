@@ -1,4 +1,5 @@
 #include "initparser.h"
+#include <string.h>
 
 string No_spaces (const string& str);
 
@@ -159,6 +160,7 @@ bool St_loader<string>::Read_frag (ifstream &file)
 	No_spaces_begin (file);
 	char istr[1024] = "wrong value";
 	file.getline (istr, 1024);
+	Cut_end_spaces (istr);
 	*_val = istr;
 	return true;
 }
@@ -190,5 +192,12 @@ void No_spaces_begin (ifstream& file)
 {
 	char c = 0;
 	while ((c = file.peek()) == ' ' || c == '\t' || c == '\n' || c == '\r') file.get();
+}
+//-----------------------------------------------------------------------------------------------
+void Cut_end_spaces (char* str)
+{
+	for (int i = strlen(str) - 1; i > 0; ++i)
+		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r') str[i] = 0;
+		else return;
 }
 //-----------------------------------------------------------------------------------------------

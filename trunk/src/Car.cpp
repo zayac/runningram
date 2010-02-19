@@ -9,6 +9,7 @@
 #include "Orient.h"
 #include "Canvas.h"
 #include "Eventman.h"
+#include "Player_manager.h"
 
 #ifndef max
 inline float max (float a, float b) {return a < b ? b : a;}
@@ -23,6 +24,8 @@ Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool to_ce
 //
 Body::~Body () { }
 
+float Car::max_health = 0;
+
 //--------------------------------------------------------------------------------------------------
 Car::Car (Vector2f coor, float health_, float motor_force_, float bouncy_, float angular_vel_, float rudder_spring_,
 		  float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient, Player* host_)
@@ -32,6 +35,7 @@ Car::Car (Vector2f coor, float health_, float motor_force_, float bouncy_, float
 back (rmass1, r1, coor - start_orient.Get_dir()*len/(1 + rmass1/rmass2), fric, start_orient),
 front (rmass2, r2, coor + start_orient.Get_dir()*len/(1 + rmass2/rmass1), fric, start_orient)
 {
+	if (health_ > max_health) max_health = health_;
 	assert(Ok());
 }
 //--------------------------------------------------------------------------------------------------
@@ -81,6 +85,13 @@ void Car::Draw (Canvas* c)
 	c->line (two_trg, three_trg, headc);
 	c->line (three_trg, one_trg, headc);
 	c->line (end, one_trg, headc);
+
+	if (!Dead())
+	{
+		int hlen = health/max_health*Health_indicator_len;
+		Rect hline (pos.x - hlen/2, pos.y + Health_indicator_offset, hlen, Health_indicator_height);
+		hline.Draw (c, headc);
+	}
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Collis_obj (Active* that)
@@ -224,13 +235,20 @@ Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool to_ce
 //--------------------------------------------------------------------------------------------------
 void Car::Applay_brd_collision (Collision_vector cv)
 {
+	if (Dead()) return;
     Vector2f imp_along = (Get_imp (cv.papp)).Proj (cv.depth);
     if ((imp_along^cv.depth) < 0)
-        Appl_impulse (imp_along*(-1 - bouncy), cv.papp);
+	{
+        Appl_impulse (imp_along*(-1 - bouncy), cv.papp, 0.1);
+		if (Dead() && host != 0)
+			host->Sub_frag ();
+	}
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Applay_obj_collision (Car* with, Collision_vector cv)
 {
+	if (Dead()) return;
+	if (with->Dead ()) return;
 	float mass_sum = 1/rmass + 1/with->rmass;
 	float rez_bouncy = bouncy*with->bouncy;
 	assert (mass_sum > 0);
@@ -253,8 +271,12 @@ void Car::Applay_obj_collision (Car* with, Collision_vector cv)
 		Appl_impulse (mydimp, cv.papp);
 		with->Appl_impulse (hisdimp, cv.papp);
 
-		his_imp = with->Get_imp (cv.papp).Proj (cv.depth);
-		his_imp.Len ();
+		if (with->Dead() && host != 0)
+			if (with->host == host) host->Sub_frag ();
+			else					host->Add_frag ();
+		if (Dead() && with->host != 0)						//frag encouting
+			if (with->host == host) with->host->Sub_frag ();
+			else					with->host->Add_frag ();
 	}
 }
 //--------------------------------------------------------------------------------------------------
@@ -285,7 +307,26 @@ Vector2f Car::Get_imp (Vector2f p)
 	return back_imp + front_imp;
 }
 //--------------------------------------------------------------------------------------------------
-void Car::Appl_impulse (Vector2f imp, Vector2f papp)
+bool Car::Damage (Vector2f imp, Vector2f papp, float destructive_k)
+{
+	float val = imp.Lensq ()*destructive_k;//!!! too plain formula
+
+	health -= val;
+	if (Dead())
+	{
+		if (host) host->Car_crashed ();
+		host = 0;
+		return true;
+	}
+	return false;
+}
+//--------------------------------------------------------------------------------------------------
+bool Car::Dead() const
+{
+	return health <= 0;
+}
+//--------------------------------------------------------------------------------------------------
+void Car::Appl_impulse (Vector2f imp, Vector2f papp, float destructive_k)
 {
     Vector2f to_back = papp - back.pos;
     Vector2f to_front = papp - front.pos;
@@ -314,6 +355,8 @@ void Car::Appl_impulse (Vector2f imp, Vector2f papp)
 
     back.Appl_impulse (dvel_axis/back.rev_mass + ortho_bproj);
     front.Appl_impulse (dvel_axis/front.rev_mass + ortho_fproj);
+
+	Damage (imp, papp, destructive_k);
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Process_gestures (float dt)

@@ -17,6 +17,8 @@ class Activeman;
 class Carman;
 class Player_manager;
 
+#include <Fontc.h>//!!! deprecated
+
 class Game_manager
 {
 	Graphic_subsystem *pic;
@@ -37,6 +39,9 @@ public:
 	bool Cleanup();
 
 	bool Ok() const;
+
+
+Fontc font;//!!! deprecated, must be deleted
 };
 
 #endif	/* _GAME_MANAGER_H */

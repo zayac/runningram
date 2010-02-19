@@ -116,12 +116,47 @@ bool Battlefield::Load_from_file (const char* fname)
 		if (file.eof()) return false;
 	}
 
+	No_spaces_begin (file);
+	while (file.peek() == '(')
+	{
+		resur_points.push_back (Read_respoint (file));
+		No_spaces_begin (file);
+	}
+	cur_res_point = resur_points.begin();
+
         /*this->sprites.push_back(new Sprite("textures/tommy.bmp", 13, 100));
         this->sprites[0]->rotate270();
         this->sprites[0]->setTransparency(Color (97,68,43));
         this->sprites[0]->animate();*/
 	file.close();
 	return Ok();
+}
+//--------------------------------------------------------------------------------------------------
+Point Battlefield::Read_respoint (ifstream& file)
+{
+	No_spaces_begin (file);
+	Point ret;
+	char buf[512];
+
+	file.getline (buf, 512, ',');
+	if (buf[0] == '(') buf[0] = ' ';
+	ret.x = atoi (buf)*csize + csize/2;
+
+	file.getline (buf, 512, ')');
+	if (buf[0] == ',') buf[0] = ' ';
+	ret.y = atoi (buf)*csize + csize/2;
+
+	return ret;
+}
+//--------------------------------------------------------------------------------------------------
+Point Battlefield::Get_next_res_point()
+{
+	if (resur_points.size() == 0) return Point();
+
+	cur_res_point++;
+	if (cur_res_point == resur_points.end())
+		cur_res_point = resur_points.begin();
+	return *cur_res_point;
 }
 //--------------------------------------------------------------------------------------------------
 void Battlefield::Clean_field (char fill_cell)

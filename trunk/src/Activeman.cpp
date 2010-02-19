@@ -141,6 +141,35 @@ void Activeman::Process_collisions()
         }
 }
 //--------------------------------------------------------------------------------------------------
+bool Activeman::Delete_deadalives()
+{
+	iterator last;
+	bool last_must_be_deleted = false;
+	bool deletion_done = false;
+	for (iterator i = begin(); i != end(); ++i)
+	{
+		if (last_must_be_deleted)
+		{
+			delete *last;
+			erase (last);
+			last_must_be_deleted = false;
+			deletion_done = true;
+		}
+		if ((**i).Dead ())
+		{
+			last = i;
+			last_must_be_deleted = true;
+		}
+	}
+	if (last_must_be_deleted)
+	{
+		delete *last;
+		erase (last);
+		deletion_done = true;
+	}
+	return deletion_done;
+}
+//--------------------------------------------------------------------------------------------------
 bool Activeman::Ok() const
 {
 	for (const_iterator i = begin(); i != end(); ++i)
