@@ -82,6 +82,7 @@ void Battlefield::Draw (Graphic_subsystem* c) const
                                 Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), Color (80, 80, 80));
 //            ground_texture[CELL(i, j) - 48]->draw(c->Get_screen(), Point (i * csize, j * csize), csize, csize);
         }
+    //test[0]->draw(c->Get_screen(), Point(100, 100));
     /*
     sprites[0]->draw(c->Get_screen(), Point(40, 40));
     sprites[0]->animate();*/
@@ -124,6 +125,8 @@ bool Battlefield::Load_from_file (const char* fname)
 	}
 	cur_res_point = resur_points.begin();
 
+        //this->test.push_back(new Canvas("textures/wall_big.bmp"));
+        //test[0]->ortogonalToIsometric();
         /*this->sprites.push_back(new Sprite("textures/tommy.bmp", 13, 100));
         this->sprites[0]->rotate270();
         this->sprites[0]->setTransparency(Color (97,68,43));

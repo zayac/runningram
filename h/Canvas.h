@@ -11,8 +11,11 @@
 #include "Vec.h"
 #include "UniId.h"
 #include <string>
+#include <vector>
 class Canvas;
 class SDL_Surface;
+
+using namespace std;
 
 class Color// :public SDL_Color
 {
@@ -27,6 +30,7 @@ public:
 	 :r(red), g(green), b(blue), unused(alpha) {}
 	Uint32 Toint (Canvas* screen) const;
 
+        static Color average(vector<Color>* colors);
 	#ifdef _SDL_H
 	operator SDL_Color() const;
 	Color (const SDL_Color& src);
@@ -107,6 +111,7 @@ public:
 	void setPixel (Point point, Color color);
 	bool isTransparentPixel (Point point);
 	void setTransparentPixel (Point point);
+        void ortogonalToIsometric();
 
 	void setPos (Point npos) {pos = npos;}
 	Point getPos () const   {return pos;}
