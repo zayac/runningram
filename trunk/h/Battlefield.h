@@ -31,9 +31,9 @@ class Battlefield
 
         /* Vector for keeping ground textures */
 	vector<Sprite*> sprites;
+        vector<Canvas*> test;
 	class Initialaiser;
 	Initialaiser* parser;
-        IsometricField* test;
 
 	void Clean_field (char fill_cell);
 	Point Read_respoint (ifstream& file);

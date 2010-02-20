@@ -13,7 +13,6 @@
 #include "Battlefield.h"
 #include "Orient.h"
 
-
 //SDL_Surface* Canvas::screen_p = 0;
 //Canvas::base* Canvas::screen_t = 0;
 
@@ -93,7 +92,7 @@ void Canvas::copy (Canvas from, Rect src_brd, Point to)
 //--------------------------------------------------------------------------------------------------
 void Canvas::draw (Canvas* buffer, Point position)
 {
-	position += pos;
+    position += pos;
     SDL_Rect dstrect;
     dstrect.x = position.x;
     dstrect.y = position.y;
@@ -164,7 +163,7 @@ bool Canvas::Ok() const
 //--------------------------------------------------------------------------------------------------
 Color::operator SDL_Color() const
 {
-	return SDL_Color {r, g, b, unused};
+	return SDL_Color { r, g, b, unused };
 }
 //--------------------------------------------------------------------------------------------------
 Color::Color (const SDL_Color& src) :r (src.r), g (src.g), b (src.b), unused (src.unused){}
@@ -178,6 +177,28 @@ Uint32 Color::Toint (SDL_Surface* screen) const
 {
 	return SDL_MapRGBA (screen->format, r,g,b,unused);
 }
+
+Color Color::average(vector<Color>* colors)
+{
+    Uint32 new_r = 0;
+    Uint32 new_g = 0;
+    Uint32 new_b = 0;
+    Uint32 new_t = 0;
+    for(int i = 0; i < colors->size(); i++)
+    {
+        Color c = colors->at(i);
+        new_r += c.r;
+        new_g += c.g;
+        new_b += c.b;
+        new_t += c.unused;
+    }
+    new_r /= colors->size();
+    new_g /= colors->size();
+    new_b /= colors->size();
+    new_t /= colors->size();
+    return Color (new_r, new_g, new_b, new_t);
+}
+
 //--------------------------------------------------------------------------------------------------
 Rect::Rect (int _x, int _y, int _w, int _h) :x(_x), y(_y), w(_w), h(_h){}
 
@@ -315,3 +336,64 @@ Canvas* Canvas::getScreenCanvas (Point size)
 	return Screen;
 }
 //--------------------------------------------------------------------------------------------------
+
+void Canvas::ortogonalToIsometric()
+{
+    Canvas new_surf = createCompatible( Point (getWidth() * 4 - 2, getHeight() * 2));
+    for (int i = 0; i < getHeight(); i++)
+    {
+        for(int j = 0; j < 2 * i +1; j++)
+        {
+            Point new_cell ( new_surf.getWidth() / 2 - i * 2 - 1 + j * 2, i);
+            Color color;
+            int dj = j / 2;
+            if ((j % 2) == 0 )
+            {
+
+                color = getPixel( Point (i - dj, dj));
+            }
+            else
+            {
+                vector<Color> tmp_vec;
+                tmp_vec.push_back( getPixel(Point (i - dj - 1, dj    )));
+                tmp_vec.push_back( getPixel(Point (i - dj    , dj    )));
+                tmp_vec.push_back( getPixel(Point (i - dj - 1, dj + 1)));
+                tmp_vec.push_back( getPixel(Point (i - dj    , dj + 1)));
+                color = color.average(&tmp_vec);
+            }
+            new_surf.setPixel(new_cell, color);
+            new_cell.x++;
+            new_surf.setPixel(new_cell, color);
+        }
+    }
+    
+    for (int i = getHeight() * 2; i > getHeight(); i--)
+    {
+        for(int j = 0; j < 2 * (getHeight() * 2  - i) + 1; j++)
+        {
+            Point new_cell ( new_surf.getWidth() / 2 - (getHeight() * 2 - i) * 2 - 1 + j * 2, i - 1);
+            Color color;
+            int dj = j / 2;
+            if ((j % 2) == 0 )
+            {
+
+                color = getPixel( Point (getHeight() - dj - 1, i - getHeight() + dj - 1));
+            }
+            else
+            {
+                vector<Color> tmp_vec;
+                tmp_vec.push_back( getPixel(Point (getHeight() - dj - 1, i - getHeight() + dj - 1)));
+                tmp_vec.push_back( getPixel(Point (getHeight() - dj - 2, i - getHeight() + dj    )));
+                tmp_vec.push_back( getPixel(Point (getHeight() - dj - 1, i - getHeight() + dj    )));
+                tmp_vec.push_back( getPixel(Point (getHeight() - dj - 2, i - getHeight() + dj - 1)));
+                color = color.average(&tmp_vec);
+            }
+            new_surf.setPixel(new_cell, color);
+            new_cell.x++;
+            new_surf.setPixel(new_cell, color);
+        }
+    }
+    data = new_surf.getSurface();
+    setTransparency(new_surf.getTransparency());
+    //SDL_SaveBMP(new_surf.getSurface(), "temp.bmp");
+}
