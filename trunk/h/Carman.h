@@ -19,6 +19,7 @@ using std::string;
 class Eventman;
 class Car;
 class Player;
+class Key_storage;
 
 class Car_creator
 {
@@ -39,10 +40,6 @@ public:
 	float bouncy;
 	float angular_vel;
 	float rudder_spring;
-	Key_id up;
-	Key_id down;
-	Key_id left;
-	Key_id right;
 
 public:
 	Car_creator (Eventman* sens);

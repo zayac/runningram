@@ -9,6 +9,7 @@
 #define	_PLAYER_MANAGER_H
 #include <list>
 #include <string>
+#include "Key_event.h"
 #include "Vec.h"
 
 using std::string;
@@ -21,6 +22,18 @@ class Car;
 class Canvas;
 class Fontc;
 class Battlefield;
+class Eventman;
+
+
+struct Key_storage
+{
+	Key_id up;
+	Key_id down;
+	Key_id left;
+	Key_id right;
+
+	void Set_control (Car*, Eventman*);
+};
 
 struct Player
 {
@@ -28,9 +41,10 @@ struct Player
 	int preffered_model;
 	string name;
 	Car* mobile;
+	Key_storage ks;
 	
 public:
-	Player (string name, int pref_model);
+	Player (string name, int pref_model, const Key_storage& ks);
 	
 	Car* Create_car (Carman* shop, Vector2f where);
 	
@@ -38,6 +52,8 @@ public:
 	void Sub_frag() {frags--;}
 	int Get_frags() const {return frags;}
 	string Get_name() const {return name;}
+
+	Key_storage Get_control() const {return ks;}
 	
 	bool Is_poor() const {return mobile == 0;}
 	void Car_crashed() {mobile = 0;}

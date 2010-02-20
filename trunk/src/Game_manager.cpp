@@ -53,7 +53,9 @@ bool Game_manager::Init (int argc, char *argv[])
 	gen.Add_param (players->Get_parser ());
     File_loader fl ((char*)"./settings.cfg");
     fl.Read_sector (&gen);
-	
+
+	sense->Register_key_action (new Arg_Function<void, void> (DBG_switch), EV_KEYDOWN, KI_s);
+
 	sense->Register_key_action (new Arg_Method<void, void, Console> (cmd, &Console::Switch),
 																		EV_KEYDOWN, KI_BACKQUOTE);
 	sense->Register_key_oper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::Operate));

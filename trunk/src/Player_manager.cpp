@@ -10,8 +10,24 @@
 #include "Carman.h"
 #include "Car.h"
 #include "Battlefield.h"
+#include "Eventman.h"
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
+
+/*-----------------------------------------------------------------------------------------------*/
+template <>
+bool St_loader<Key_id>::Read_frag (ifstream &file)
+{
+	No_spaces_begin (file);
+	char istr[1024] = "wrong value";
+	file.getline (istr, 1024);
+	Cut_end_spaces (istr);
+
+	*_val = Get_key_id (istr);
+
+	return *_val != 0;
+}
+/*-----------------------------------------------------------------------------------------------*/
 
 class Player_manager::Initialaiser : public Sectionp
 {
@@ -19,11 +35,12 @@ public:
 	Player_manager* host;
 	string pname;
 	int model;
+	Key_storage ks;
 
 protected:
 	virtual bool After_read (ifstream &file)
 	{
-		host->push_back (new Player (pname, model));
+		host->push_back (new Player (pname, model, ks));
 		return true;
 	}
 public:
@@ -33,6 +50,10 @@ public:
 	{
 		Add_param (new St_loader<string> ("name", &pname));
 		Add_param (new St_loader<int>	("model", &model));
+		Add_param (new St_loader<Key_id> ("up key", &ks.up));
+		Add_param (new St_loader<Key_id> ("down key", &ks.down));
+		Add_param (new St_loader<Key_id> ("left key", &ks.left));
+		Add_param (new St_loader<Key_id> ("right key", &ks.right));
 	}
 
 	virtual ~Initialaiser ()
@@ -89,7 +110,8 @@ void Player_manager::Draw_comp_table (Canvas* where, Fontc* font)
 	where->setPos (where_pos);
 }
 //--------------------------------------------------------------------------------------------------
-Player::Player (string name_, int pref_model) :name (name_), preffered_model (pref_model), mobile(0), frags(0)
+Player::Player (string name_, int pref_model, const Key_storage& ks_)
+	:name (name_), preffered_model (pref_model), mobile(0), frags(0), ks (ks_)
 {
 }
 //--------------------------------------------------------------------------------------------------
@@ -97,5 +119,18 @@ Car* Player::Create_car (Carman* shop, Vector2f where)
 {
 	mobile = shop->Create_car (preffered_model, where, 0, this);
 	return mobile;
+}
+
+//--------------------------------------------------------------------------------------------------
+void Key_storage::Set_control (Car* c, Eventman* sense)
+{
+	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Forwards), EV_KEYDOWN, up);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Forwardf), EV_KEYUP, up);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Backwards), EV_KEYDOWN, down);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Backwardf), EV_KEYUP, down);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Turn_lefts), EV_KEYDOWN, left);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Turn_leftf), EV_KEYUP, left);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Turn_rights), EV_KEYDOWN, right);
+	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Turn_rightf), EV_KEYUP, right);
 }
 //--------------------------------------------------------------------------------------------------
