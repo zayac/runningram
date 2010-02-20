@@ -10,7 +10,8 @@
 #include "Vec.h"
 #include "Canvas.h"
 #include "Orient.h"
-#include "Console.h"
+#include "Collision_detection.h"
+//#include "Console.h"
 
 const float VeryBigMass = 1e10;
 
@@ -131,17 +132,6 @@ const float Max_ang_dev = 1.;
 //const float Rudder_spring = 8;
 //const float Bouncy = 2.0;
 
-const float aboutnull = 0.000000001;
-
-struct Collision_vector
-{
-	Vector2f papp;
-	Vector2f depth;
-
-	inline float Weight() {return depth.Lensq();}
-	inline bool Vital() {return Weight() > aboutnull;}
-};
-
 class Player;
 const int Health_indicator_len = 50;
 const int Health_indicator_offset = -20;
@@ -209,6 +199,6 @@ public:
 
 	bool Ok() const;
 };
-
+void DBG_switch();
 #endif	/* _BODY_H */
 

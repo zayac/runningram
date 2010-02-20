@@ -58,9 +58,14 @@ void Car::Actions (float dt)
 	Rudder_correction (dt);
 
 }
+Canvas* dbgcanv = 0;//deprecated;
+bool collis_brd = true;
+//--------------------------------------------------------------------------------------------------
+void DBG_switch() { collis_brd = ! collis_brd;}
 //--------------------------------------------------------------------------------------------------
 void Car::Draw (Canvas* c)
 {
+	dbgcanv = c;//deprecated;
 	assert(Ok());
 	Point begin = back.pos.To<int>();
 	Point end = front.pos.To<int>();//(front.orient.Get_dir()*front.r + pos).To<int> ();
@@ -100,11 +105,14 @@ void Car::Collis_obj (Active* that)
     {
         Car* op = static_cast<Car*> (that);
 
-        Vector2f one[4];
-        Get_my_verticies (one);
-        Vector2f two[4];
-        op->Get_my_verticies (two);
-        Collision_vector cv = Collis_rectangles (one, two, false);
+//        Vector2f one[4];
+		Shape one;
+        Get_my_verticies (one.v);
+		Shape two;
+//        Vector2f two[4];
+        op->Get_my_verticies (two.v);
+        Collision_vector cv = Detect_collision (one, two, 0);//Collis_rectangles (one.v, two.v, false);
+//		if (!cv.Vital()) cv = Detect_collision (one, two, 0);
         if (cv.Vital())//There is an collision
             Applay_obj_collision (op, cv);
     }
@@ -112,13 +120,14 @@ void Car::Collis_obj (Active* that)
 //--------------------------------------------------------------------------------------------------
 void Car::Collis_brd (Rect with)
 {
+	if (!collis_brd) return;
 	Vector2f lu (with.x, with.y);//left-up
 	Vector2f ru (with.x + with.w, with.y);//right-up
 	Vector2f ld (with.x, with.y + with.h);//left-down
 	Vector2f rd (with.x + with.w, with.y + with.h);//right-down
 
 	Vector2f one[4];
-        Get_my_verticies (one);
+    Get_my_verticies (one);
 	Vector2f two[4] = {lu, ru, rd, ld};
 
 	Collision_vector rez;
@@ -126,7 +135,7 @@ void Car::Collis_brd (Rect with)
         rez.papp = curv.papp;
         rez.depth = curv.depth;
 
-	int num_iters = 20;
+	int num_iters = 1;
 
 	while (num_iters-- > 0 && curv.Vital())
 	{
@@ -408,3 +417,4 @@ bool Car::Ok() const
 		back.Ok () && front.Ok () && lenght > 0 && rmass > 0;
 }
 //--------------------------------------------------------------------------------------------------
+

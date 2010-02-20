@@ -8,24 +8,10 @@
 #include "Carman.h"
 #include "Car.h"
 #include "Eventman.h"
+#include "Player_manager.h"
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
 
-
-/*-----------------------------------------------------------------------------------------------*/
-template <>
-bool St_loader<Key_id>::Read_frag (ifstream &file)
-{
-	No_spaces_begin (file);
-	char istr[1024] = "wrong value";
-	file.getline (istr, 1024);
-	Cut_end_spaces (istr);
-	
-	*_val = Get_key_id (istr);
-	
-	return *_val != 0;
-}
-/*-----------------------------------------------------------------------------------------------*/
 
 class Carman::Initialaiser : public Sectionp
 {
@@ -58,10 +44,6 @@ public:
 		Add_param (new St_loader<float> ("rudder spring", &data.rudder_spring));
 		Add_param (new St_loader<float> ("along friction", &data.fric.x));
 		Add_param (new St_loader<float> ("across friction", &data.fric.y));
-		Add_param (new St_loader<Key_id> ("up key", &data.up));
-		Add_param (new St_loader<Key_id> ("down key", &data.down));
-		Add_param (new St_loader<Key_id> ("left key", &data.left));
-		Add_param (new St_loader<Key_id> ("right key", &data.right));
 	}
 
 	virtual ~Initialaiser ()
@@ -107,26 +89,23 @@ Car_creator::Car_creator (Eventman* sens) :sense (sens),
 	lenght (30),
 	r1 (10),
 	r2 (10),
-	fric (0.01, 1.0),
-	up (KI_UP),
-	down (KI_DOWN),
-	left (KI_LEFT),
-	right (KI_RIGHT)
+	fric (0.01, 1.0)
 {}
 //--------------------------------------------------------------------------------------------------
 Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host) const
 {
 	Car* ret = new Car (pos, start_health, motor_force, bouncy, angular_vel,
 					 rudder_spring, rmass1, rmass2, lenght, r1, r2, fric, start_orient, host);
-
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Forwards), EV_KEYDOWN, up);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Forwardf), EV_KEYUP, up);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Backwards), EV_KEYDOWN, down);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Backwardf), EV_KEYUP, down);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_lefts), EV_KEYDOWN, left);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_leftf), EV_KEYUP, left);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_rights), EV_KEYDOWN, right);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_rightf), EV_KEYUP, right);
+	Key_storage contr = host->Get_control ();
+	contr.Set_control (ret, sense);
+//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Forwards), EV_KEYDOWN, up);
+//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Forwardf), EV_KEYUP, up);
+//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Backwards), EV_KEYDOWN, down);
+//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Backwardf), EV_KEYUP, down);
+//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_lefts), EV_KEYDOWN, left);
+//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_leftf), EV_KEYUP, left);
+//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_rights), EV_KEYDOWN, right);
+//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_rightf), EV_KEYUP, right);
 
 	return ret;
 }
@@ -147,10 +126,6 @@ Car_creator* Car_creator::Create_copy() const
 	ret->r1 = r1;
 	ret->r2 = r2;
 	ret->fric = fric;
-	ret->up = up;
-	ret->down = down;
-	ret->left = left;
-	ret->right = right;
 	return ret;
 }
 //--------------------------------------------------------------------------------------------------
