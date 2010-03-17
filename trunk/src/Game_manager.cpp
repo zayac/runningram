@@ -66,9 +66,8 @@ bool Game_manager::Init (int argc, char *argv[])
 	font.Set_fg (Color(100, 100, 200));//!!! deprecated
 
 	result = result && pic->Init();
+        result = result && cmd->Init (pic);
 	result = result && ground->Init();
-	result = result && cmd->Init (pic);
-
 	return result && Ok();
 }
 //--------------------------------------------------------------------------------------------------
@@ -89,7 +88,7 @@ bool Game_manager::Main_loop()
 		cars->Draw (pic->Get_screen ());
 		cmd->Draw (pic);
 
-		players->Draw_comp_table (pic->Get_screen (), &font);
+		//players->Draw_comp_table (pic->Get_screen (), &font);
 
 		if (!look->Has_target()) look->Set_target (*cars->begin());
 		look->Actions();

@@ -29,9 +29,7 @@ class Battlefield
 	vector<Point> resur_points;
 	vector<Point>::iterator cur_res_point;
 
-        /* Vector for keeping ground textures */
-	vector<Sprite*> sprites;
-        vector<Canvas*> test;
+
 	class Initialaiser;
 	Initialaiser* parser;
 
@@ -39,6 +37,10 @@ class Battlefield
 	Point Read_respoint (ifstream& file);
 
 public:
+        /* Vector for keeping ground textures */
+	vector<Sprite*> sprites;
+        vector<Canvas*> test;
+
 	Battlefield();
 	virtual ~Battlefield();
 
