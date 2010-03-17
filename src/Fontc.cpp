@@ -44,32 +44,31 @@ Fontc& Fontc::operator= (const Fontc& orig)
 //--------------------------------------------------------------------------------------------------
 int Fontc::Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_reverse) const
 {
-	assert(Ok());
+    assert(Ok());
     SDL_Surface *text_surface;
-	if (color_reverse)
-		text_surface = TTF_RenderUTF8_Shaded (data, line, bgcol, col);
-	else
-		text_surface = TTF_RenderUTF8_Shaded (data, line, col, bgcol);
+    if (color_reverse)
+    	text_surface = TTF_RenderUTF8_Shaded (data, line, bgcol, col);
+    else
+    text_surface = TTF_RenderUTF8_Shaded (data, line, col, bgcol);
 
-	Point size;
+    Point size;
     if (text_surface != NULL)
     {
-		size = Str_size (line);
+	size = Str_size (line);
 
-		Rect src_brd = *brd;
-		src_brd.x = 0;
-		src_brd.y = 0;
-		if (src_brd.w > size.x) src_brd.w = size.x;
-		if (src_brd.h > size.y) src_brd.h = size.y;
-
-		brd->x -= screen->getPos ().x;
-		brd->y -= screen->getPos ().y;
+	Rect src_brd = *brd;
+	src_brd.x = 0;
+	src_brd.y = 0;
+	if (src_brd.w > size.x) src_brd.w = size.x;
+	if (src_brd.h > size.y) src_brd.h = size.y;
+	brd->x -= screen->getPos ().x;
+	brd->y -= screen->getPos ().y;
         SDL_BlitSurface (text_surface, addSdl (&src_brd), screen->data, addSdl (brd));
         SDL_FreeSurface (text_surface);
 
         return size.y;
     }
-	return 0;
+    return 0;
 }
 //--------------------------------------------------------------------------------------------------
 Point Fontc::Str_size (const char* str) const

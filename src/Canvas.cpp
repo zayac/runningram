@@ -305,7 +305,9 @@ Canvas Canvas::cropRect (Point point, int w, int h, bool remember_pos)
 //--------------------------------------------------------------------------------------------------
 void Canvas::setTransparency(Color colorkey)
 {
-    SDL_SetColorKey (data, SDL_SRCCOLORKEY, colorkey.Toint(data) );
+    SDL_SetColorKey( data, SDL_SRCCOLORKEY|SDL_RLEACCEL, colorkey.Toint(data) );
+    data = SDL_DisplayFormat(data);
+    //SDL_SetColorKey (data, SDL_SRCCOLORKEY, colorkey.Toint(data) );
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::setTransparentPixel (Point point)
@@ -340,6 +342,7 @@ Canvas* Canvas::getScreenCanvas (Point size)
 void Canvas::ortogonalToIsometric()
 {
     Canvas new_surf = createCompatible( Point (getWidth() * 4 - 2, getHeight() * 2));
+    new_surf.fillRect(Rect (0, 0, new_surf.getWidth(), new_surf.getHeight()), Color (255, 0, 255));
     for (int i = 0; i < getHeight(); i++)
     {
         for(int j = 0; j < 2 * i +1; j++)
@@ -394,6 +397,8 @@ void Canvas::ortogonalToIsometric()
         }
     }
     data = new_surf.getSurface();
-    setTransparency(new_surf.getTransparency());
-    //SDL_SaveBMP(new_surf.getSurface(), "temp.bmp");
+    setTransparency(Color (255, 0, 255));
+    //SDL_SetColorKey( data, SDL_SRCCOLORKEY|SDL_RLEACCEL, SDL_MapRGB( data->format,0, 0, 0 ) );
+    //data = SDL_DisplayFormat(data);
+
 }

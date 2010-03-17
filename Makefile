@@ -14,7 +14,7 @@ CXX = g++
 BASICOPTS = -g
 CCFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx
 CXXFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx
-CCADMIN = 
+CCADMIN =
 
 # Define a lookup dir
 
@@ -25,7 +25,7 @@ TARGETDIR=GNU-i386-Linux
 ## Target: runningram
 CPPFLAGS_runningram = -Ih
 OBJS =  $(patsubst src/%.cpp,$(TARGETDIR)/%.o,$(wildcard src/*.cpp)) \
-	$(patsubst %.cpp, $(TARGETDIR)/%.o, $(wildcard *.cpp))
+        $(patsubst %.cpp, $(TARGETDIR)/%.o, $(wildcard *.cpp))
 
 SYSLIBS_runningram = -lm
 USERLIBS_runningram = $(SYSLIBS_runningram)
@@ -70,4 +70,3 @@ $(TARGETDIR):
 # Enable dependency checking
 .KEEP_STATE:
 .KEEP_STATE_FILE:.make.state.GNU-i386-Linux
-
