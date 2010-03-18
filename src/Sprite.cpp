@@ -21,7 +21,7 @@ Sprite::Sprite() {
 
 Sprite::~Sprite()
 {
-
+    sprites.clear();
 }
 
 void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)

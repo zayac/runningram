@@ -23,6 +23,7 @@
         <in>Orient.h</in>
         <in>Player_manager.h</in>
         <in>Sprite.h</in>
+        <in>TileFactory.h</in>
         <in>UniId.h</in>
         <in>Vec.h</in>
         <in>Vec_spec.h</in>
@@ -46,6 +47,7 @@
         <in>Orient.cpp</in>
         <in>Player_manager.cpp</in>
         <in>Sprite.cpp</in>
+        <in>TileFactory.cpp</in>
         <in>initparser.cpp</in>
       </df>
       <df name="textures">
