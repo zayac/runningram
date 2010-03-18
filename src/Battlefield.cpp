@@ -82,8 +82,9 @@ void Battlefield::Draw (Graphic_subsystem* c) const
                                 Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), Color (80, 80, 80));
         }
     sprites[0]->animate();
+//	sprites[1]->animate();
     sprites[0]->draw(c->Get_screen(), Point(100, 100));
-
+//    sprites[1]->draw(c->Get_screen(), Point(200, 200));
 }
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::Init()
@@ -123,8 +124,11 @@ bool Battlefield::Load_from_file (const char* fname)
 	cur_res_point = resur_points.begin();
 
     this->sprites.push_back(new Sprite("textures/water2.bmp", 10, 50));
-    sprites[0]->start();
-    sprites[0]->ortogonalToIsometric();
+//	this->sprites.push_back(new Sprite("textures/car.bmp", 51, 50));
+	sprites[1]->start();
+//	sprites[1]->setTransparency (Color(255, 0, 255));
+	sprites[0]->start();
+  //  sprites[0]->ortogonalToIsometric();
 	file.close();
 	return Ok();
 }

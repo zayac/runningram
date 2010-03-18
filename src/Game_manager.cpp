@@ -45,14 +45,19 @@ Game_manager::~Game_manager()
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Init (int argc, char *argv[])
 {
+	bool result = true;
     Sectionp gen ("gensec", '\n');
 	gen.Add_param (pic->Get_parser ());
+    File_loader fl ((char*)"./settings.cfg");
+    fl.Read_sector (&gen);
+	result = result && pic->Init();			//Graphic subsystem must be initialaised previously
+	
+	gen.Delete_props ();
 	gen.Add_param (cmd->Get_parser ());
 	gen.Add_param (ground->Get_parser ());
 	gen.Add_param (models->Get_parser ());
 	gen.Add_param (players->Get_parser ());
-    File_loader fl ((char*)"./settings.cfg");
-    fl.Read_sector (&gen);
+	fl.Read_sector (&gen);
 
 	sense->Register_key_action (new Arg_Function<void, void> (DBG_switch), EV_KEYDOWN, KI_s);
 
@@ -60,13 +65,11 @@ bool Game_manager::Init (int argc, char *argv[])
 																		EV_KEYDOWN, KI_BACKQUOTE);
 	sense->Register_key_oper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::Operate));
 
-	bool result = true;
 
 	font.Open_font ("default.ttf", 16);
 	font.Set_fg (Color(100, 100, 200));//!!! deprecated
 
-	result = result && pic->Init();
-        result = result && cmd->Init (pic);
+    result = result && cmd->Init (pic);
 	result = result && ground->Init();
 	return result && Ok();
 }

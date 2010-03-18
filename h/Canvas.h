@@ -92,7 +92,7 @@ protected:
 public:
 	Canvas();
 	Canvas (const Canvas& orig);
-	Canvas (char* file);
+	Canvas (const char* file);
 	//virtual ~Canvas();
 
 	/* helper methods */
@@ -127,6 +127,7 @@ public:
 	int getWidth();
 	int getHeight();
 	SDL_Surface* getSurface() { return data(); }
+	inline bool valid() {return data() != 0;}
 	//void setSurface (SDL_Surface* surf) {data = surf};
 	Canvas createCompatible (Point size = Point()) const;
 

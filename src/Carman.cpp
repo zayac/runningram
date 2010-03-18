@@ -9,6 +9,7 @@
 #include "Car.h"
 #include "Eventman.h"
 #include "Player_manager.h"
+#include "Sprite.h"
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
 
@@ -16,19 +17,29 @@
 class Carman::Initialaiser : public Sectionp
 {
 public:
+	string spritefname;
+	int nsprites;
+	Point sprite_offset;
 	Carman* host;
 	Car_creator data;
 
 protected:
 	virtual bool After_read (ifstream &file)
 	{
+		if (spritefname.size() > 0 && nsprites > 0)
+		{
+			Sprite *sp = new Sprite (spritefname.c_str(), nsprites, 1);
+			sp->setTransparency (Color (255, 0, 255));//!!! only for a time
+			sp->setPos (-sprite_offset);
+			data.setPicture (sp);
+		}
 		host->Add_model (data.Create_copy ());
 		return true;
 	}
 public:
 
 	Initialaiser (char* name, Carman* chost, Eventman* sense)
-	: Sectionp (name, '='), host (chost), data (sense)
+	: Sectionp (name, '='), host (chost), data (sense), spritefname (""), nsprites(0)
 	{
 		Add_param (new St_loader<string> ("name", &data.model_name));
 		Add_param (new St_loader<int>	("id", &data.model_id));
@@ -44,6 +55,10 @@ public:
 		Add_param (new St_loader<float> ("rudder spring", &data.rudder_spring));
 		Add_param (new St_loader<float> ("along friction", &data.fric.x));
 		Add_param (new St_loader<float> ("across friction", &data.fric.y));
+		Add_param (new St_loader<string> ("sprite file", &spritefname));
+		Add_param (new St_loader<int> ("number of frames", &nsprites));
+		Add_param (new St_loader<int> ("sprite centre x", &sprite_offset.x));
+		Add_param (new St_loader<int> ("sprite centre y", &sprite_offset.y));
 	}
 
 	virtual ~Initialaiser ()
@@ -89,13 +104,14 @@ Car_creator::Car_creator (Eventman* sens) :sense (sens),
 	lenght (30),
 	r1 (10),
 	r2 (10),
-	fric (0.01, 1.0)
+	fric (0.01, 1.0),
+	picture(0)
 {}
 //--------------------------------------------------------------------------------------------------
 Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host) const
 {
 	Car* ret = new Car (pos, start_health, motor_force, bouncy, angular_vel,
-					 rudder_spring, rmass1, rmass2, lenght, r1, r2, fric, start_orient, host);
+					 rudder_spring, rmass1, rmass2, lenght, r1, r2, fric, start_orient, picture, host);
 	Key_storage contr = host->Get_control ();
 	contr.Set_control (ret, sense);
 //	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Forwards), EV_KEYDOWN, up);
@@ -126,6 +142,7 @@ Car_creator* Car_creator::Create_copy() const
 	ret->r1 = r1;
 	ret->r2 = r2;
 	ret->fric = fric;
+	ret->picture = picture;
 	return ret;
 }
 //--------------------------------------------------------------------------------------------------
