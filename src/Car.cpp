@@ -47,9 +47,11 @@ void Car::Actions (float dt)
 
 	Orient ori(front.pos - back.pos);
 
+//	float fm = 1/front.rev_mass, bm = 1/back.rev_mass;
+
 	pos = (back.pos/back.rev_mass + front.pos/front.rev_mass)*rmass;
-	front.pos = pos + ori.Get_dir()*lenght/(1 + front.rev_mass/back.rev_mass);
-	back.pos = pos - ori.Get_dir()*lenght/(1 + back.rev_mass/front.rev_mass);
+	front.pos = pos + ori.Get_dir()*lenght/(1 + back.rev_mass/front.rev_mass);
+	back.pos = pos - ori.Get_dir()*lenght/(1 + front.rev_mass/back.rev_mass);
 
 	back.orient = ori;
 	Process_gestures (dt);
@@ -190,8 +192,8 @@ inline Vector2f Get_depth (Vector2f rect[4], Vector2f centre, Vector2f p, Vector
 		if (Same_side (rect[i], rect[i + 1] - rect[i], centre, p))
 		{
 			Vector2f cur = From_point_to_stline (rect[i], rect[i + 1] - rect[i], p);
-			if (//(!to_centre || (ret^(p - hiscentre)) > 0) &&
-				cur.Lensq() < ret.Lensq()) ret = cur;
+			//(!to_centre || (ret^(p - hiscentre)) > 0) &&
+			if (cur.Lensq() < ret.Lensq()) ret = cur;
 		}
 	return ret;
 }

@@ -97,7 +97,7 @@ void Player_manager::Draw_comp_table (Canvas* where, Fontc* font)
 		label_brd.w = 100;
 		label_brd.h = 100;
 
-		//font->Draw_line (where, (**i).name.c_str(), &label_brd);
+		font->Draw_line (where, (**i).name.c_str(), &label_brd);
 		label_brd.x += 100;
 
 		char buf[256];

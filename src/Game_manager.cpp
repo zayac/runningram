@@ -88,7 +88,7 @@ bool Game_manager::Main_loop()
 		cars->Draw (pic->Get_screen ());
 		cmd->Draw (pic);
 
-		//players->Draw_comp_table (pic->Get_screen (), &font);
+		players->Draw_comp_table (pic->Get_screen (), &font);
 
 		if (!look->Has_target()) look->Set_target (*cars->begin());
 		look->Actions();
