@@ -25,11 +25,13 @@ Canvas::Canvas (SDL_Surface* d):UniId<SDL_Surface>(d, 0), pos()
 
 }
 
-Canvas::Canvas (char* file):UniId<SDL_Surface>(0, 0), pos()
+Canvas::Canvas (const char* file):UniId<SDL_Surface>(0, 0), pos()
 {
-    SDL_Surface *temp = SDL_LoadBMP(file);
-    Reinit(SDL_DisplayFormat(temp), 0);
-    SDL_FreeSurface(temp);
+    SDL_Surface *temp = SDL_LoadBMP (file);
+	if (temp == 0) return;
+
+    Reinit (SDL_DisplayFormat(temp), 0);
+    SDL_FreeSurface (temp);
 }
 //--------------------------------------------------------------------------------------------------
 Canvas::Canvas (const Canvas& orig):UniId<SDL_Surface> (orig.data(), orig.table()), pos()
@@ -83,7 +85,7 @@ int Canvas::getHeight()
 //--------------------------------------------------------------------------------------------------
 void Canvas::copy (Canvas from, Rect src_brd, Point to)
 {
-	to -= pos;
+	to += from.pos - pos;
 	SDL_Rect* src_brdp = addSdl (&src_brd);
 	if (src_brd.w == 0 && src_brd.h == 0) src_brdp = 0;
 	Rect my_brd (to.x, to.y, data()->w - to.x, data()->h - to.y);
@@ -92,7 +94,7 @@ void Canvas::copy (Canvas from, Rect src_brd, Point to)
 //--------------------------------------------------------------------------------------------------
 void Canvas::draw (Canvas* buffer, Point position)
 {
-    position += pos;
+    position += pos - buffer->pos;
     SDL_Rect dstrect;
     dstrect.x = position.x;
     dstrect.y = position.y;

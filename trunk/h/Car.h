@@ -133,6 +133,7 @@ const float Max_ang_dev = 1.;
 //const float Bouncy = 2.0;
 
 class Player;
+class Sprite;
 const int Health_indicator_len = 50;
 const int Health_indicator_offset = -20;
 const int Health_indicator_height = 5;
@@ -154,6 +155,8 @@ class Car :public Active
 	float angular_vel;
 	float rudder_spring;
 
+	Sprite* pic;
+
 	static float max_health;
 
 	void Process_gestures (float dt);
@@ -169,7 +172,8 @@ class Car :public Active
 
 public:
 	Car (Vector2f pos, float health, float motor_force, float bouncy, float angular_vel, float rudder_spring,
-		 float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient, Player* host = 0);
+		 float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient,
+		 Sprite* pic = 0, Player* host = 0);
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);

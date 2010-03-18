@@ -13,7 +13,6 @@
 #include "Vec.h"
 #include <vector>
 #include "Canvas.h"
-#include <SDL/SDL.h>
 using namespace std;
 
 class Sprite
@@ -33,12 +32,12 @@ private:
 
     vector<Canvas> sprites;
 
-    void init(Canvas* canvas, int maxFrames, int animationSpeed);
+    void init (Canvas* canvas, int maxFrames, int animationSpeed);
 public:
     Sprite();
     ~Sprite();
-    Sprite(char* fileName, int maxFrames, int animationSpeed);
-    Sprite(Canvas* canvas, int maxFrames,int animationSpeed);
+    Sprite (const char* fileName, int maxFrames, int animationSpeed);
+    Sprite (Canvas* canvas, int maxFrames,int animationSpeed);
 
     void rotate (double angle);
     void rotate90();
@@ -56,11 +55,14 @@ public:
     int getWidth();
     int getHeight();
     void animate();
-    void draw(Canvas* buffer, Point point);
+    void draw (Canvas* buffer, Point point);
+    void draw (Canvas* buffer, Point point, float progress);
     void start();
     void restart();
     void setSpeed(int i);
     int getSpeed();
+
+	void setPos (Point npos);
 
     void ortogonalToIsometric();
 

@@ -5,6 +5,7 @@
  * Created on January 24, 2010, 6:54 PM
  */
 
+#include <SDL/SDL.h>
 #include "Sprite.h"
 using namespace std;
 
@@ -25,7 +26,7 @@ Sprite::~Sprite()
 
 void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
 {
-    if(surface == NULL) {
+    if(surface == NULL || !surface->valid()) {
         cout << "failed to load sprite" << endl;
         width = 0; height = 0;
         this->speed = 0;
@@ -54,7 +55,7 @@ void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
     loopToBeginning = true;
 }
 
-Sprite::Sprite(char* file, int frames, int speed) {
+Sprite::Sprite (const char* file, int frames, int speed) {
     Canvas* can = new Canvas(file);
     init(can, frames, speed);
 }
@@ -102,6 +103,11 @@ void Sprite::draw(Canvas* buffer, Point point) {
     sprites[index].draw(buffer, point);
 }
 
+void Sprite::draw(Canvas* buffer, Point point, float progress)
+{
+	sprites[int (progress*maxFrames)].draw (buffer, point);
+}
+
 
 void Sprite::start() {
     run = true;
@@ -114,13 +120,19 @@ void Sprite::restart() {
     }
 }
 
-void Sprite::setSpeed(int i) {
+void Sprite::setSpeed (int i) {
     speed = i;
 }
 
 int Sprite::getSpeed()
 {
     return speed;
+}
+
+void Sprite::setPos (Point npos)
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].setPos (npos);
 }
 
 void Sprite::rotate (double angle)

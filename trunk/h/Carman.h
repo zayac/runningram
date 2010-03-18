@@ -20,6 +20,7 @@ class Eventman;
 class Car;
 class Player;
 class Key_storage;
+class Sprite;
 
 class Car_creator
 {
@@ -41,11 +42,15 @@ public:
 	float angular_vel;
 	float rudder_spring;
 
+	Sprite* picture;
+
 public:
 	Car_creator (Eventman* sens);
 	Car* New_car (Vector2f pos, Orient start_orient, Player* host) const;
 
 	Car_creator* Create_copy() const;
+
+	inline void setPicture (Sprite* pic) {picture = pic;}
 };
 
 class Carman

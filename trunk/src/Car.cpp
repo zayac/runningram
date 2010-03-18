@@ -8,6 +8,7 @@
 #include "Car.h"
 #include "Orient.h"
 #include "Canvas.h"
+#include "Sprite.h"
 #include "Eventman.h"
 #include "Player_manager.h"
 
@@ -28,10 +29,11 @@ float Car::max_health = 0;
 
 //--------------------------------------------------------------------------------------------------
 Car::Car (Vector2f coor, float health_, float motor_force_, float bouncy_, float angular_vel_, float rudder_spring_,
-		  float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient, Player* host_)
+		  float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient,
+		 Sprite* pic_ , Player* host_)
 :Active (coor, len + max(r1, r2)), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)),
 	health (health_), motor_force (motor_force_), bouncy (bouncy_), angular_vel (angular_vel_),
-	rudder_spring (rudder_spring_), host (host_),
+	rudder_spring (rudder_spring_), host (host_), pic(pic_),
 back (rmass1, r1, coor - start_orient.Get_dir()*len/(1 + rmass1/rmass2), fric, start_orient),
 front (rmass2, r2, coor + start_orient.Get_dir()*len/(1 + rmass2/rmass1), fric, start_orient)
 {
@@ -67,34 +69,39 @@ void DBG_switch() { collis_brd = ! collis_brd;}
 //--------------------------------------------------------------------------------------------------
 void Car::Draw (Canvas* c)
 {
-	dbgcanv = c;//deprecated;
-	assert(Ok());
-	Point begin = back.pos.To<int>();
-	Point end = front.pos.To<int>();//(front.orient.Get_dir()*front.r + pos).To<int> ();
+	if (pic != 0)
+		pic->draw (c, pos.To<int>(), (PI + back.orient.Get_angle())/PI/2);
+//	else	//if car hasn't sprite, it will be drawn schematically
+	{
+		dbgcanv = c;//deprecated;
+		assert(Ok());
+		Point begin = back.pos.To<int>();
+		Point end = front.pos.To<int>();//(front.orient.Get_dir()*front.r + pos).To<int> ();
 
-	Point leftback = Point (back.r*back.orient.Get_dir().y, -back.r*back.orient.Get_dir().x) + begin;
-	Point leftfront = Point (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + end;
-	Point rightback = Point (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + begin;
-	Point rightfront = Point (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + end;
+		Point leftback = Point (back.r*back.orient.Get_dir().y, -back.r*back.orient.Get_dir().x) + begin;
+		Point leftfront = Point (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + end;
+		Point rightback = Point (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + begin;
+		Point rightfront = Point (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + end;
 
-	Point one_trg = (front.r*front.orient.Get_dir() + front.pos).To<int>();
-	Point two_trg = (front.r*(front.orient + Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
-	Point three_trg = (front.r*(front.orient - Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
+		Point one_trg = (front.r*front.orient.Get_dir() + front.pos).To<int>();
+		Point two_trg = (front.r*(front.orient + Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
+		Point three_trg = (front.r*(front.orient - Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
 
-	c->line (leftback, leftfront, Color (150, 200, 200));
-	c->line (leftfront, rightfront, Color (150, 200, 200));
-	c->line (rightfront, rightback, Color (150, 200, 200));
-	c->line (rightback, leftback, Color (150, 200, 200));
+		c->line (leftback, leftfront, Color (150, 200, 200));
+		c->line (leftfront, rightfront, Color (150, 200, 200));
+		c->line (rightfront, rightback, Color (150, 200, 200));
+		c->line (rightback, leftback, Color (150, 200, 200));
 
-	Color headc (200, 150, 150);
+		Color headc (200, 150, 150);
 
-	c->line (one_trg, two_trg, headc);
-	c->line (two_trg, three_trg, headc);
-	c->line (three_trg, one_trg, headc);
-	c->line (end, one_trg, headc);
-
+		c->line (one_trg, two_trg, headc);
+		c->line (two_trg, three_trg, headc);
+		c->line (three_trg, one_trg, headc);
+		c->line (end, one_trg, headc);
+	}
 	if (!Dead())
 	{
+		Color headc (200, 150, 150);
 		int hlen = health/max_health*Health_indicator_len;
 		Rect hline (pos.x - hlen/2, pos.y + Health_indicator_offset, hlen, Health_indicator_height);
 		hline.Draw (c, headc);
