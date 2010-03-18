@@ -81,7 +81,8 @@ void Battlefield::Draw (Graphic_subsystem* c) const
             Draw_cage (c->Get_screen(), Point(i, j)*csize, Point (csize, csize),
                                 Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), Color (80, 80, 80));
         }
-    test[0]->draw(c->Get_screen(), Point(100, 100));
+    //sprites[0]->animate();
+    //sprites[0]->draw(c->Get_screen(), Point(100, 100));
 
 }
 //--------------------------------------------------------------------------------------------------
@@ -121,8 +122,9 @@ bool Battlefield::Load_from_file (const char* fname)
 	}
 	cur_res_point = resur_points.begin();
 
-        this->test.push_back(new Canvas("textures/smile.bmp"));
-        test[0]->ortogonalToIsometric();
+        this->sprites.push_back(new Sprite("textures/water2.bmp", 10, 1));
+        //sprites[0]->start();
+        //sprites[0]->ortogonalToIsometric();
 	file.close();
 	return Ok();
 }

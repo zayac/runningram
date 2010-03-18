@@ -34,7 +34,7 @@ void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
         height = surface->getHeight();
         cout << "successfully loaded sprite" << endl;
 
-        for(int i = 0; i <  surface->getWidth(); i++)
+        for(int i = 0; i <  maxFrames; i++)
         {
             Canvas temp = surface->createCompatible(Point (width, height));
             temp = surface->cropRect(Point (i * width, 0), width, height);
@@ -175,5 +175,12 @@ void Sprite::zoom(double zoomx, double zoomy)
 {
     for(int i = 0; i < maxFrames; i++)
         sprites[i].zoom(zoomx, zoomy);
+
+}
+
+void Sprite::ortogonalToIsometric()
+{
+    for(int i = 0; i < maxFrames; i++)
+        sprites[i].ortogonalToIsometric();
 
 }

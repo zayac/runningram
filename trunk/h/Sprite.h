@@ -62,6 +62,8 @@ public:
     void setSpeed(int i);
     int getSpeed();
 
+    void ortogonalToIsometric();
+
 };
 
 #endif	/* _SPRITE_H */
