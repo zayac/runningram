@@ -126,7 +126,7 @@ public:
 	Rect getClipRect() const;
 	int getWidth();
 	int getHeight();
-	SDL_Surface* getSurface() { return data; }
+	SDL_Surface* getSurface() { return data(); }
 	//void setSurface (SDL_Surface* surf) {data = surf};
 	Canvas createCompatible (Point size = Point()) const;
 

@@ -24,8 +24,8 @@ Fontc::~Fontc()
 //--------------------------------------------------------------------------------------------------
 void Fontc::Delete_data()
 {
-	if (data)
-		TTF_CloseFont (data);
+	if (data())
+		TTF_CloseFont (data());
 }
 //--------------------------------------------------------------------------------------------------
 void Fontc::Open_font (const char* fname, int height)
@@ -46,10 +46,10 @@ int Fontc::Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_re
 {
     assert(Ok());
     SDL_Surface *text_surface;
-    if (color_reverse)
-    	text_surface = TTF_RenderUTF8_Shaded (data, line, bgcol, col);
-    else
-    text_surface = TTF_RenderUTF8_Shaded (data, line, col, bgcol);
+	if (color_reverse)
+		text_surface = TTF_RenderUTF8_Shaded (data(), line, bgcol, col);
+	else
+		text_surface = TTF_RenderUTF8_Shaded (data(), line, col, bgcol);
 
     Point size;
     if (text_surface != NULL)
@@ -63,8 +63,8 @@ int Fontc::Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_re
 	if (src_brd.h > size.y) src_brd.h = size.y;
 	brd->x -= screen->getPos ().x;
 	brd->y -= screen->getPos ().y;
-        SDL_BlitSurface (text_surface, addSdl (&src_brd), screen->data, addSdl (brd));
-        SDL_FreeSurface (text_surface);
+    SDL_BlitSurface (text_surface, addSdl (&src_brd), screen->getSurface(), addSdl (brd));
+    SDL_FreeSurface (text_surface);
 
         return size.y;
     }
@@ -75,14 +75,14 @@ Point Fontc::Str_size (const char* str) const
 {
 	assert(Ok());
 	int w = 0, h = 0;
-	TTF_SizeUTF8 (data, str, &w, &h);
+	TTF_SizeUTF8 (data(), str, &w, &h);
 	return Point (w, h);
 }
 //--------------------------------------------------------------------------------------------------
 int Fontc::Height() const
 {
 	assert(Ok());
-	return TTF_FontHeight (data);
+	return TTF_FontHeight (data());
 }
 //--------------------------------------------------------------------------------------------------
 int Fontc::Approximate_num_symbols (int width) const

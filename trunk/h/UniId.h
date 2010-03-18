@@ -17,90 +17,111 @@ template <class T>
 class UniId
 {
 protected:
-typedef list <UniId<T> *> base;
 
+	typedef list <UniId<T> *> base;
 	typename base::iterator myentry;
-	base* table;
-	T* data;
+
+private:
+	base* _table;
+	T* _data;
+protected:
 
 	inline void Register (base* tab)
 	{
-		if (tab == 0) table = new base;
-		else table = tab;
-		table->push_front (this);
-		myentry = table->begin ();
+		if (tab == 0) _table = new base;
+		else _table = tab;
+		_table->push_front (this);
+		myentry = _table->begin ();
 	}
 	inline void Unregister()
 	{
-		table->erase (myentry);
-		myentry = table->end();
+		_table->erase (myentry);
+		myentry = _table->end();
 	}
 	inline void Destroy()
 	{
-		if (data == 0) return;
+		if (_data == 0) return;
 		Unregister();
-		if (table->empty())
+		if (_table->empty())
 		{
-			delete table;
+			delete _table;
 			Delete_data();
-			data = 0;
+			_data = 0;
 		}
 	}
 
 	virtual void Delete_data()
 	{
-		delete data;
+		delete _data;
 	}
 
 private:
 	inline void Init (T* d, base* tab)
 	{
 		if (d != 0) Register (tab);
-		data = d;
+		_data = d;
 	}
 protected:
 	inline void Reinit (T* d, base* tab)
 	{
-		if (d != data)
+		if (d != _data)
 		{
 			Destroy();
 			Init (d, tab);
 		}
 	}
+	inline void Reinit (UniId that)
+	{
+		if (that._data != _data)
+		{
+			Destroy();
+			Init (that._data, that._table);
+		}
+	}
 	void Substitute_data (T* nd)
 	{
 		Delete_data();
-		for (typename base::iterator i = table.begin(); i != table.end(); ++i)
+		for (typename base::iterator i = _table->begin(); i != _table->end(); ++i)
 		{
-			(**i).data = nd;
+			(**i)._data = nd;
 		}
 	}
 
-	UniId (T* d, base* tab):data (d)
+	UniId (T* d, base* tab):_data (d)
 	{
 		Init (d, tab);
 	}
-public:
-	UniId (const UniId& orig):data (orig.data)
+
+	inline T* data() const
 	{
-		if (data == 0) table = 0;
-		else Register (orig.table);
+		return _data;
+	}
+	inline base* table() const
+	{
+		return _table;
+	}
+public:
+	UniId (const UniId& orig):_data (orig._data)
+	{
+		if (_data == 0) _table = 0;
+		else Register (orig._table);
 	}
 	virtual ~UniId()
 	{
 		Destroy();
 	}
 
-	UniId& operator= (const UniId& orig)
+	inline UniId& operator= (const UniId& orig)
 	{
-		Reinit (orig.data, orig.table);
+//		Reinit (orig.data, orig._table);
+		Reinit (orig);
 		return *this;
 	}
 
 	virtual bool Ok() const
 	{
-		if (data == 0) return table == 0;//uninitialaised
-		return table != 0 && table->size() > 0 && (*myentry) == this;
+		if (_data == 0) return _table == 0;//uninitialaised
+		return _table != 0 && _table->size() > 0 && (*myentry) == this;
 	}
 
 };
