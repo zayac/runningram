@@ -35,13 +35,14 @@ void Activeman::Draw (Canvas* c)
 		(**i).Draw (c);
 }
 //--------------------------------------------------------------------------------------------------
+#define CELL(a, b) cells[size.x*(b) + a]
+//--------------------------------------------------------------------------------------------------
 void Activeman::Collis_brd (const Battlefield* bf)
 {
 	assert(Ok());
 	assert (bf != 0 && bf->Ok());
-#define CELL(a, b) cells[size.x*(b) + a]
 
-	const char* cells = bf->Get_cells ();
+	const unsigned char* cells = bf->Get_cells ();
 	Point size = bf->Get_size ();
 	int csize = bf->Get_cell_size();
 
@@ -66,7 +67,7 @@ void Activeman::Collis_brd (const Battlefield* bf)
 
 		for (int x = 0; x < size.x; ++x)
 			for (int y = 0; y < size.y; ++y)
-				if (CELL(x, y) != '1')
+				if (bf->No_road(x, y))
 				{
 					int left = x*csize;
 					int right = left + csize;//cell borders
@@ -78,24 +79,31 @@ void Activeman::Collis_brd (const Battlefield* bf)
 					if (up > rdown.y) continue;
 					if (down < lup.y) continue;
 
+					if (bf->Is_sand (x, y))
+					{
+						Rect cell (left, up, right - left, down - up);
+						(**i).Drive_sand (cell, bf->Friction (x, y));
+						continue;						//sands acts lonesome
+					}
+
 					if (pos.y < up || pos.y > down)//we need a horisontal full lenght wall
 					{
 						int nx = x;
 
 						while (++nx < size.x && right <= rdown.x)
 						{
-							if (CELL(nx, y) != '1'||
-								(pos.y < up && y - 1 >=  0 && CELL(nx, y-1) != '1') ||	//for gnawed corners
-								(pos.y > down && y + 1 < size.y && CELL(nx, y+1) != '1'))
+							if (bf->Is_rough (nx, y)||
+								(pos.y < up && y - 1 >=  0 && bf->Is_rough(nx, y-1)) ||	//for gnawed corners
+								(pos.y > down && y + 1 < size.y && bf->Is_rough(nx, y+1)))
 								right += csize;			//cell alliance expansion
 							else break;
 						}
 						nx = x;
 						while (--nx >= 0 && left > lup.x)
 						{
-							if (CELL(nx, y) != '1'||
-								(pos.y < up && y - 1 >=  0 && CELL(nx, y-1) != '1') ||	//for gnawed corners
-								(pos.y > down && y + 1 < size.y && CELL(nx, y+1) != '1'))
+							if (bf->Is_rough (nx, y) && bf->Is_rough (nx, y)||
+								(pos.y < up && y - 1 >=  0 && bf->Is_rough (nx, y-1)) ||	//for gnawed corners
+								(pos.y > down && y + 1 < size.y && bf->Is_rough (nx, y+1)))
 								left -= csize;			//cell alliance expansion
 							else break;
 						}
@@ -105,29 +113,29 @@ void Activeman::Collis_brd (const Battlefield* bf)
 						int ny = y;
 						while (++ny < size.y && down <= rdown.y)
 						{
-							if (CELL(x, ny) != '1'||
-								(pos.x < left && x - 1 >=  0 && CELL(x-1, ny) != '1') ||	//for gnawed corners
-								(pos.x > right && x + 1 < size.x && CELL(x+1, ny) != '1'))
+							if (bf->Is_rough (x, ny)||
+								(pos.x < left && x - 1 >=  0 && bf->Is_rough (x-1, ny)) ||	//for gnawed corners
+								(pos.x > right && x + 1 < size.x && bf->Is_rough (x+1, ny)))
 								down += csize;			//cell alliance expansion
 							else break;
 						}
 						ny = y;
 						while (--ny >= 0 && up > lup.y)
 						{
-							if (CELL(x, ny) != '1' ||
-								(pos.x < left && x - 1 >=  0 && CELL(x-1, ny) != '1') ||	//for gnawed corners
-								(pos.x > right && x + 1 < size.x && CELL(x+1, ny) != '1'))
+							if (bf->Is_rough (x, ny) ||
+								(pos.x < left && x - 1 >=  0 && bf->Is_rough (x-1, ny)) ||	//for gnawed corners
+								(pos.x > right && x + 1 < size.x && bf->Is_rough (x+1, ny)))
 								up -= csize;			//cell alliance expansion
 							else break;
 						}
 					}
 					Rect cell (left, up, right - left, down - up);
 					if (globb) cell.Draw (globb, Color (200, 0, 124));//!!! deprecated
-					(**i).Collis_brd (cell);
+					(**i).Collis_brd (cell, bf->Friction (x, y));
 				}
 	}
-#undef CELL
 }
+#undef CELL
 //--------------------------------------------------------------------------------------------------
 void Activeman::Process_collisions()
 {

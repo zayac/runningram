@@ -39,12 +39,15 @@ public:
 
 Battlefield::Battlefield ():cells (0), parser (new Initialaiser("[Map]"))
 {
+	for (int i = 0; i < 256; ++i)
+		sprites[i] = 0;
 }
 //--------------------------------------------------------------------------------------------------
 Battlefield::~Battlefield ()
 {
 	assert(Ok());
 
+	Clean_sprites();
 	if (cells) delete [] cells;
 	delete parser;
 }
@@ -74,17 +77,19 @@ void Draw_cage (Canvas* c, Point start, Point full_size, Point num_cells, Color 
 void Battlefield::Draw (Graphic_subsystem* c) const
 {
     assert(Ok());
+	Canvas *canv = c->Get_screen ();
 
     for (int i = 0; i < size.x; ++i)
         for (int j = 0; j < size.y; ++j)
         {
-            Draw_cage (c->Get_screen(), Point(i, j)*csize, Point (csize, csize),
-                                Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), Color (80, 80, 80));
+			Color bkg =  Color (80, 80, 80);
+			if (Is_rough (i, j)) bkg = Color (100, 50, 50);
+			if (Is_sand (i, j))  bkg = Color (100, 100, 50);
+
+            Draw_cage (canv, Point(i, j)*csize, Point (csize, csize),
+                            Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), bkg);
         }
-    sprites[0]->animate();
-//	sprites[1]->animate();
-    sprites[0]->draw(c->Get_screen(), Point(100, 100));
-//    sprites[1]->draw(c->Get_screen(), Point(200, 200));
+	sprites['1']->draw (canv, Point(120, 120));
 }
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::Init()
@@ -92,6 +97,59 @@ bool Battlefield::Init()
 	return Load_from_file (parser->filename.c_str());
 }
 //--------------------------------------------------------------------------------------------------
+class Field_set : public Sectionp
+{
+public:
+	string texture_fname;
+	Point texture_offset;
+	unsigned char sym;
+	float fric;
+	bool rough;
+
+	Sprite** sprites;
+	float* frics;
+	vector<unsigned char> *roughs;
+	vector<unsigned char> *sands;
+
+public:
+	virtual bool After_read (ifstream &file)
+	{
+		if (texture_fname.size() > 0)
+		{
+			Sprite *sp = new Sprite (texture_fname.c_str(), 1, 1);
+			sp->setPos (-texture_offset);
+			sprites[sym] = sp;
+		}
+		if (rough) roughs->push_back (sym);
+		frics[sym] = fric;
+		if ((-aboutnull > (fric - 1) || (fric - 1) > aboutnull) && !rough)
+			sands->push_back (sym);
+
+		texture_fname.clear();
+		fric = 1.0;
+		rough = false;
+		return true;
+	}
+
+	Field_set (string name, Sprite** sps, float* frics_, vector<unsigned char> *roughs_, vector<unsigned char> *sands_)
+	:Sectionp (name, '='), sprites(sps), frics(frics_), roughs(roughs_), sands(sands_), texture_fname(), sym(0),
+	fric(1.0), rough(false)
+	{
+		Add_param (new St_loader<unsigned char> ("character", &sym));
+		Add_param (new St_loader<string> ("texture", &texture_fname));
+		Add_param (new St_loader<int> ("texture centre x", &texture_offset.x));
+		Add_param (new St_loader<int> ("texture centre y", &texture_offset.y));
+		Add_param (new St_loader<float> ("friction", &fric));
+		Add_param (new St_loader<bool> ("rough", &rough));
+	}
+
+	virtual ~Field_set ()
+	{
+		Delete_props ();
+	}
+};
+//--------------------------------------------------------------------------------------------------
+
 bool Battlefield::Load_from_file (const char* fname)
 {
 	ifstream file (fname);
@@ -102,7 +160,7 @@ bool Battlefield::Load_from_file (const char* fname)
 	file >>size.y;
 	file >>csize;
 
-	cells = new char[size.x*size.y];
+	cells = new unsigned char[size.x*size.y];
 	if (cells == 0) return false;
 	Clean_field ('0');
 
@@ -123,12 +181,11 @@ bool Battlefield::Load_from_file (const char* fname)
 	}
 	cur_res_point = resur_points.begin();
 
-    this->sprites.push_back(new Sprite("textures/water2.bmp", 10, 50));
-//	this->sprites.push_back(new Sprite("textures/car.bmp", 51, 50));
-	sprites[1]->start();
-//	sprites[1]->setTransparency (Color(255, 0, 255));
-	sprites[0]->start();
-  //  sprites[0]->ortogonalToIsometric();
+	Clean_sprites ();
+	Sectionp tile_props("gensec", '\n');
+	tile_props.Add_param (new Field_set ("tile", sprites, frics, &roughs, &sands));
+	tile_props.Unserialise (file);
+
 	file.close();
 	return Ok();
 }
@@ -160,6 +217,42 @@ Point Battlefield::Get_next_res_point()
 	return *cur_res_point;
 }
 //--------------------------------------------------------------------------------------------------
+inline bool contain (const vector<unsigned char>& vec, unsigned char c)
+{
+	for (vector<unsigned char>::const_iterator i = vec.begin(); i != vec.end(); ++i)
+		if (*i == c)return true;
+	return false;
+}
+//--------------------------------------------------------------------------------------------------
+bool Battlefield::Is_rough (int x, int y) const
+{
+	return contain (roughs, CELL(x, y));
+//	return CELL(x, y) != '1' && CELL(x, y) != '2' && CELL(x, y) != '3';
+}
+//--------------------------------------------------------------------------------------------------
+bool Battlefield::No_road (int x, int y) const
+{
+	return Is_rough (x, y) || Is_sand (x, y);
+//	return CELL(x, y) != '1';
+}
+//--------------------------------------------------------------------------------------------------
+bool Battlefield::Is_sand (int x, int y) const
+{
+	return contain (sands, CELL(x, y));
+//	return CELL(x, y) == '2' || CELL(x, y) == '3';
+}
+//--------------------------------------------------------------------------------------------------
+float Battlefield::Friction (int x, int y) const
+{
+	return frics[CELL(x, y)];
+//	if (CELL(x, y) == '2')
+//		return 5;
+//	else if (CELL(x, y) = '3')
+//		return -0.2;
+//	else
+//		return 1;
+}
+//--------------------------------------------------------------------------------------------------
 void Battlefield::Clean_field (char fill_cell)
 {
 	assert(Ok());
@@ -167,6 +260,16 @@ void Battlefield::Clean_field (char fill_cell)
 	{
 		cells[i] = fill_cell;
 	}
+}
+//--------------------------------------------------------------------------------------------------
+void Battlefield::Clean_sprites()
+{
+	for (int i = 0; i < 256; ++i)
+		if (sprites[i] != 0)
+		{
+			delete sprites[i];
+			sprites[i] = 0;
+		}
 }
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::Ok() const

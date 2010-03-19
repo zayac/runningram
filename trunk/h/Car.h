@@ -41,7 +41,8 @@ public:
 	Active (Vector2f position, float r_):Limited (position, r_){}
 	virtual void Actions (float dt) = 0;
 	virtual void Draw (Canvas*) = 0;
-	virtual void Collis_brd (Rect width) = 0;
+	virtual void Collis_brd (Rect width, float fric) = 0;
+	virtual void Drive_sand (Rect width, float fric) = 0;
 	virtual void Collis_obj (Active* that) = 0;
 	
 	virtual int My_type() const {return No_type;}
@@ -56,6 +57,7 @@ protected:
 	float rev_mass;
 	Vector2f vel;
 	Vector2f force;
+	Vector2f resist;
 
 protected:
 	inline Vector2f Get_vel() {return vel;}
@@ -72,19 +74,25 @@ public:
 		pos += vel*dt + force*rev_mass*dt*dt/2;
 		vel += force*rev_mass*dt;
 		force = Vector2f();
-		Vector2f resist = Resistance()*rev_mass*dt;
-		int iterations = 1;
-		while (resist.Lensq() > vel.Lensq())
-		{
-			iterations *= 2;
-			resist /= 2;
-			dt /= 2;
-		}
-		for (; iterations > 0; --iterations)
-		{
-			resist = Resistance()*rev_mass*dt;
-			vel += resist;
-		}
+		Appl_resistance (Resistance());
+		Vector2f resdv = resist*rev_mass*dt;
+		if (resdv.Lensq() > vel.Lensq())
+			vel -= vel.Proj(resdv);
+		else
+			vel += resdv;
+		resist = Vector2f();
+//		int iterations = 1;
+//		while (resdv.Lensq() > vel.Lensq())
+//		{
+//			iterations *= 2;
+//			resdv /= 2;
+//			dt /= 2;
+//		}
+//		for (; iterations > 0; --iterations)
+//		{
+//			resdv = Resistance()*rev_mass*dt;
+//			vel += resdv;
+//		}
 
 //		Resistance();			//order is important
 //		Vector2f vel_addition = force*rev_mass*dt;
@@ -102,6 +110,12 @@ public:
 	}
 
 	inline void Appl_force (Vector2f f) {force += f;}
+	inline void Appl_resistance (Vector2f f) {resist += f;}
+	inline void Appl_force (Vector2f f, bool resistancive)
+	{
+		if (resistancive) Appl_resistance(f);
+		else Appl_force (f);
+	}
 	inline void Appl_impulse (Vector2f imp) {vel += imp*rev_mass;}
 
 	inline bool Ok() const {return rev_mass > 0;}
@@ -123,6 +137,13 @@ protected:
 public:
 	Dir_body (float rmass, float r_, Vector2f coor, Vector2f friction, Orient start_orient)
 		:Body (rmass, r_, coor), orient (start_orient), fric (friction) {}
+
+	Vector2f Get_resist (Vector2f velocity)
+	{
+		Vector2f dir = orient.Get_dir();
+		Vector2f proj = (velocity^dir)*dir;
+		return -fric[0]*proj - fric[1]*(velocity - proj);
+	}
 
 	inline bool Ok() const {return Body::Ok() && fric.x > 0 && fric.y > 0 && orient.Ok();}
 };
@@ -165,8 +186,12 @@ class Car :public Active
 	void Normalise_front_orient();
 	void Rudder_correction (float dt);
 
-	void Applay_brd_collision (Collision_vector cv);
+	void Applay_brd_collision (Collision_vector cv, float fric);
 	void Applay_obj_collision (Car* with, Collision_vector cv);
+
+	static const bool Back_rect = true;
+	static const bool Front_rect = false;
+	void Applay_sand_friction (Collision_vector cv, float fric, bool bORf);
 
 	void Move (Vector2f disp) {back.pos += disp; front.pos += disp;}
 
@@ -178,13 +203,17 @@ public:
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);
 	virtual void Collis_obj (Active* that);
-	virtual void Collis_brd (Rect with);
+	virtual void Collis_brd (Rect with, float fric);
+	virtual void Drive_sand (Rect width, float fric);
 
 	void Get_my_verticies (Vector2f* four);
+	void Get_my_front_verticies (Vector2f* four);
+	void Get_my_back_verticies (Vector2f* four);
 	Vector2f Get_vel (Vector2f p);
 	Vector2f Get_imp (Vector2f p);
 	bool Damage (Vector2f imp, Vector2f papp, float destructive_k);			//returns true if killed
 	void Appl_impulse (Vector2f imp, Vector2f papp, float destructive_k = 1);
+	void Appl_force (Vector2f f, Vector2f papp, bool resistancive);
 	
 	virtual int My_type() const {return Car_type;}
 	virtual bool Dead() const;

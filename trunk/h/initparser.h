@@ -115,6 +115,13 @@ bool St_loader<string>::Read_frag (ifstream &file);
 //-------------------------------------------------------------------
 template <>
 bool St_loader<char>::Read_frag (ifstream &file);
+//-------------------------------------------------------------------
+template <>
+bool St_loader<unsigned char>::Read_frag (ifstream &file);
+//-------------------------------------------------------------------
+template <>
+bool St_loader<bool>::Read_frag (ifstream &file);
+//-------------------------------------------------------------------
 #ifdef TENSOR_H_INCLUDED
 #ifndef ST_LOADER_FOR_VECTOR3D_DEFINED
 #define ST_LOADER_FOR_VECTOR3D_DEFINED

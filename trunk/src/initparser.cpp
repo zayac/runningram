@@ -174,6 +174,29 @@ bool St_loader<char>::Read_frag (ifstream &file)
 	*_val = istr[0];
 	return true;
 }
+//-------------------------------------------------------------------
+template <>
+bool St_loader<unsigned char>::Read_frag (ifstream &file)
+{
+	No_spaces_begin (file);
+	char istr[1024] = "wrong value";
+	file.getline (istr, 1024);
+	*_val = istr[0];
+	return true;
+}
+//-------------------------------------------------------------------
+template <>
+bool St_loader<bool>::Read_frag (ifstream &file)
+{
+	No_spaces_begin (file);
+	char istr[1024] = "wrong value";
+	file.getline (istr, 1024);
+	if (istr[0] == 't' || istr[0] == '1')
+		*_val = true;
+	else
+		*_val = false;
+	return true;
+}
 //-----------------------------------------------------------------------------------------------
 //===============================================================================================
 //-----------------------------------------------------------------------------------------------
