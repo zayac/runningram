@@ -120,10 +120,15 @@ public:
 			sp->setPos (-texture_offset);
 			sprites[sym] = sp;
 		}
-		if (rough) roughs->push_back (sym);
-		frics[sym] = fric;
+		if (rough)
+			roughs->push_back (sym);
+
 		if ((-aboutnull > (fric - 1) || (fric - 1) > aboutnull) && !rough)
 			sands->push_back (sym);
+
+		frics[sym] = fric;
+		if ((-aboutnull < (fric - 1) && (fric - 1) < aboutnull) && rough)
+			frics[sym] = 0;//if rough then friction about null
 
 		texture_fname.clear();
 		fric = 1.0;

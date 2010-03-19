@@ -39,7 +39,7 @@ tile
 	texture centre x = 40
 	texture centre y = 40
 	rough = true
-	friction = 100
+	friction = 0.00001
 
 tile
 	character = 1
@@ -63,6 +63,7 @@ tile
 	texture centre x = 40
 	texture centre y = 40
 	rough = true
+	friction = 0.00001
 tile
 	character = 5
 	texture = textures/curly_stone.bmp

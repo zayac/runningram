@@ -313,7 +313,7 @@ void Car::Applay_brd_collision (Collision_vector cv, float fric)
 		Vector2f vell = Get_vel (cv.papp);
 		Vector2f vel_across = vell - vell.Proj (cv.depth);
 
-		Appl_force (-fric*vel_across*cv.depth.Lensq (), cv.papp, true);
+		Appl_impulse (-fric*vel_across*imp_along.Lensq (), cv.papp, 0.1);//!!! here must be an impules, not force
 		if (Dead() && host != 0)
 			host->Sub_frag ();
 	}
