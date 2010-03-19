@@ -27,17 +27,55 @@
 01111112151114111215111410
 01111111155631111115563110
 01111111111111111111111110
-01111111111111111111111110
-01111111111111111111111110
+01133311111111111111111110
+01133311111111111111111110
 01111111111111111111111110
 00000000000000000000000000
 (1, 1) (2, 3) (5, 8) (23, 24)
-8
-textures/little_stones.bmp
-textures/yellow.bmp
-textures/dirty_sand.bmp
-textures/forest.bmp
-textures/jungle.bmp
-textures/curly_stone.bmp
-textures/swamp.bmp
-textures/stones.bmp
+
+tile
+	character = 0
+	texture = textures/little_stones.bmp
+	texture centre x = 40
+	texture centre y = 40
+	rough = true
+	friction = 100
+
+tile
+	character = 1
+	texture = textures/yellow.bmp
+	texture centre x = 40
+	texture centre y = 40
+tile
+	character = 2
+	texture = textures/dirty_sand.bmp
+	texture centre x = 40
+	texture centre y = 40
+tile
+	character = 3
+	texture = textures/forest.bmp
+	texture centre x = 40
+	texture centre y = 40
+	friction = 4
+tile
+	character = 4
+	texture = textures/jungle.bmp
+	texture centre x = 40
+	texture centre y = 40
+	rough = true
+tile
+	character = 5
+	texture = textures/curly_stone.bmp
+	texture centre x = 40
+	texture centre y = 40
+	rough = true
+tile
+	character = 6
+	texture = textures/swamp.bmp
+	texture centre x = 40
+	texture centre y = 40
+tile
+	character = 7
+	texture = textures/stones.bmp
+	texture centre x = 40
+	texture centre y = 40

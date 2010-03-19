@@ -71,7 +71,7 @@ void Car::Draw (Canvas* c)
 {
 	if (pic != 0)
 		pic->draw (c, pos.To<int>(), (PI + back.orient.Get_angle())/PI/2);
-//	else	//if car hasn't sprite, it will be drawn schematically
+	else	//if car hasn't sprite, it will be drawn schematically
 	{
 		dbgcanv = c;//deprecated;
 		assert(Ok());
@@ -127,7 +127,7 @@ void Car::Collis_obj (Active* that)
     }
 }
 //--------------------------------------------------------------------------------------------------
-void Car::Collis_brd (Rect with)
+void Car::Collis_brd (Rect with, float fric)
 {
 	if (!collis_brd) return;
 	Vector2f lu (with.x, with.y);//left-up
@@ -141,8 +141,8 @@ void Car::Collis_brd (Rect with)
 
 	Collision_vector rez;
 	Collision_vector curv = Collis_rectangles (one, two, false);
-        rez.papp = curv.papp;
-        rez.depth = curv.depth;
+	rez.papp = curv.papp;
+	rez.depth = curv.depth;
 
 	int num_iters = 1;
 
@@ -156,7 +156,41 @@ void Car::Collis_brd (Rect with)
         rez.depth += curv.depth;
 	}
 
-    if (rez.Vital()) Applay_brd_collision (rez);
+    if (rez.Vital()) Applay_brd_collision (rez, fric);
+}
+//--------------------------------------------------------------------------------------------------
+void Car::Drive_sand (Rect with, float fric)
+{
+	if (!collis_brd) return;
+	Vector2f lu (with.x, with.y);//left-up
+	Vector2f ru (with.x + with.w, with.y);//right-up
+	Vector2f ld (with.x, with.y + with.h);//left-down
+	Vector2f rd (with.x + with.w, with.y + with.h);//right-down
+
+	Vector2f one[4];
+    Get_my_verticies (one);
+	Vector2f two[4] = {lu, ru, rd, ld};
+
+	Shape myf;
+	Get_my_front_verticies (myf.v);
+	myf.Update_orthos ();
+
+	Shape myb;
+	Get_my_back_verticies (myb.v);
+	myb.Update_orthos ();
+
+	Shape sand;
+	sand.v[0] = lu;
+	sand.v[1] = ru;
+	sand.v[2] = rd;
+	sand.v[3] = ld;
+	sand.Update_orthos ();
+
+	Collision_vector rez  = Detect_collision (myb, sand, 0);
+    if (rez.Vital()) Applay_sand_friction (rez, fric, Back_rect);
+
+	rez  = Detect_collision (myf, sand, 0);
+    if (rez.Vital()) Applay_sand_friction (rez, fric, Front_rect);
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Get_my_verticies (Vector2f* four)
@@ -165,6 +199,22 @@ void Car::Get_my_verticies (Vector2f* four)
 	four[1] = Vector2f (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + back.pos;
 	four[2] = Vector2f (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + front.pos;
 	four[3] = Vector2f (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + front.pos;
+}
+//--------------------------------------------------------------------------------------------------
+void Car::Get_my_front_verticies (Vector2f* four)
+{
+	four[0] = Vector2f (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + (back.pos + front.pos)/2;
+	four[1] = Vector2f (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + (back.pos + front.pos)/2;
+	four[2] = four[0] + (front.pos - back.pos)/2;
+	four[3] = four[1] + (front.pos - back.pos)/2;
+}
+//--------------------------------------------------------------------------------------------------
+void Car::Get_my_back_verticies (Vector2f* four)
+{
+	four[2] = Vector2f (back.r*back.orient.Get_dir().y, -back.r*back.orient.Get_dir().x) + (back.pos + front.pos)/2;
+	four[3] = Vector2f (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + (back.pos + front.pos)/2;
+	four[0] = four[2] - (front.pos - back.pos)/2;
+	four[1] = four[3] - (front.pos - back.pos)/2;
 }
 //--------------------------------------------------------------------------------------------------
 inline Vector2f From_point_to_stline (Vector2f end, Vector2f delta, Vector2f p)
@@ -251,13 +301,19 @@ Collision_vector Collis_rectangles (Vector2f one[4], Vector2f two[4], bool to_ce
 }
 #undef IN
 //--------------------------------------------------------------------------------------------------
-void Car::Applay_brd_collision (Collision_vector cv)
+void Car::Applay_brd_collision (Collision_vector cv, float fric)
 {
 	if (Dead()) return;
-    Vector2f imp_along = (Get_imp (cv.papp)).Proj (cv.depth);
+    Vector2f imp_along =  Get_imp (cv.papp).Proj (cv.depth);
+
     if ((imp_along^cv.depth) < 0)
 	{
         Appl_impulse (imp_along*(-1 - bouncy), cv.papp, 0.1);
+
+		Vector2f vell = Get_vel (cv.papp);
+		Vector2f vel_across = vell - vell.Proj (cv.depth);
+
+		Appl_force (-fric*vel_across*cv.depth.Lensq (), cv.papp, true);
 		if (Dead() && host != 0)
 			host->Sub_frag ();
 	}
@@ -296,6 +352,24 @@ void Car::Applay_obj_collision (Car* with, Collision_vector cv)
 			if (with->host == host) with->host->Sub_frag ();
 			else					with->host->Add_frag ();
 	}
+}
+//--------------------------------------------------------------------------------------------------
+void Car::Applay_sand_friction (Collision_vector cv, float fric, bool bORf)
+{
+	if (Dead()) return;
+    Vector2f imp = Get_imp (cv.papp);
+	Vector2f resist;
+
+	if (bORf == Back_rect)
+		resist = back.Get_resist (Get_vel (cv.papp))*(cv.depth.Lensq ()/back.r/back.r);
+	else
+		resist = front.Get_resist (Get_vel (cv.papp))*(cv.depth.Lensq ()/front.r/front.r);
+
+	resist *= fric;
+
+	Appl_force (resist, cv.papp, true);
+	if (Dead() && host != 0)
+		host->Sub_frag ();
 }
 //--------------------------------------------------------------------------------------------------
 Vector2f Car::Get_vel (Vector2f p)
@@ -375,6 +449,37 @@ void Car::Appl_impulse (Vector2f imp, Vector2f papp, float destructive_k)
     front.Appl_impulse (dvel_axis/front.rev_mass + ortho_fproj);
 
 	Damage (imp, papp, destructive_k);
+}
+//--------------------------------------------------------------------------------------------------
+void Car::Appl_force (Vector2f f, Vector2f papp, bool resistancive)
+{
+    Vector2f to_back = papp - back.pos;
+    Vector2f to_front = papp - front.pos;
+    float det = to_back.x*to_front.y - to_back.y*to_front.x;
+
+    if (-aboutnull < det && det < aboutnull) //impulse along the cardan shaft
+    {
+		Vector2f acc = f*rmass;
+		back.Appl_force (acc/back.rev_mass, resistancive);
+		front.Appl_force (acc/front.rev_mass, resistancive);
+        return;
+    }
+
+    Vector2f back_proj = to_back * (f.x*to_front.y - f.y*to_front.x)/det;
+    Vector2f front_proj = to_front * (f.y*to_back.x - f.x*to_back.y)/det;// oblique projections
+
+    Vector2f axis = front.pos - back.pos;
+    Vector2f axis_bproj = (back_proj^axis)*axis/axis.Lensq();
+    Vector2f axis_fproj = (front_proj^axis)*axis/axis.Lensq();
+
+    Vector2f ortho_bproj = back_proj - axis_bproj;//this part takes only front
+    Vector2f ortho_fproj = front_proj - axis_fproj;//this part takes only back
+
+
+    Vector2f acc_axis = (axis_bproj + axis_fproj)*rmass;//this part of impulse take both front and back
+
+    back.Appl_force (acc_axis/back.rev_mass + ortho_bproj, resistancive);
+    front.Appl_force (acc_axis/front.rev_mass + ortho_fproj, resistancive);
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Process_gestures (float dt)
