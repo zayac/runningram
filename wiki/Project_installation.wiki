@@ -1,5 +1,5 @@
 =Project installation=
-1. Install SDL with SDL_ttf and SDL_img. You can find it at http://www.libsdl.org/cgi/viewvc.cgi/trunk/<br>
+1. Install SDL with SDL_ttf and SDL_img. You can find it at http://www.libsdl.org/projects/<br>
 2. Install SDL_gfx, from http://www.ferzkopp.net/Software/SDL_gfx-2.0/SDL_gfx-2.0.20.tar.gz<br>
 3. Install SVN client.<br>
 4. Download sources as mentioned in page http://code.google.com/p/runningram/source/checkout<br>
