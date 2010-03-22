@@ -12,6 +12,7 @@
 #include "Orient.h"
 #include "initparser.h"
 #include "Key_event.h"
+#include "Player_manager.h"
 
 using std::list;
 using std::string;
@@ -21,6 +22,8 @@ class Car;
 class Player;
 class Key_storage;
 class Sprite;
+class Activeman;
+class Player_manager;
 
 class Car_creator
 {
@@ -55,7 +58,24 @@ public:
 
 class Carman
 {
+	struct Creation
+	{
+		int model;
+		Vector2f pos;
+		Orient start_orient;
+		int pl_id;
+
+		Creation();
+		Creation (const Creation&);
+		Creation (int model, Vector2f pos, Orient start_orient, int pl_id);
+
+		int Export (char* buffer, int size) const;
+		int Import (char* buffer, int size);
+	};
+	
 	list<Car_creator*> models;//May be it needed vector here for speed???
+
+	list<Creation> last_creations;
 
 	typedef list<Car_creator*>::iterator iter;
 	typedef list<Car_creator*>::const_iterator citer;
@@ -63,17 +83,20 @@ class Carman
 	class Initialaiser;
 	Initialaiser* parser;
 
+
 public:
 	Carman (Eventman* sense);
-//	Carman(const Carman& orig);
 	virtual ~Carman();
 
 	Serializator* Get_parser();
 
 	void Add_model (Car_creator* m) {models.push_back(m);}
 	
-	Car* Create_car (int model, Vector2f pos, Orient start_orient, Player* host) const;
+	Car* Create_car (int model, Vector2f pos, Orient start_orient, Player* host);
+	void Clear_last_creations();
 
+	int Export (char* buffer, int size) const;
+	int Import (char* buffer, int size, Player_manager* hosts, Activeman* objs);
 
 };
 

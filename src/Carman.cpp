@@ -10,6 +10,7 @@
 #include "Eventman.h"
 #include "Player_manager.h"
 #include "Sprite.h"
+#include "Activeman.h"
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
 
@@ -81,15 +82,54 @@ Serializator* Carman::Get_parser()
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
-Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient, Player* host) const
+Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient, Player* host)
 {
 	for (citer i = models.begin(); i != models.end(); ++i)
 	{
 		Car_creator* cc = *i;
 		if ((**i).model_id == model)
+		{
+			last_creations.push_back (Creation (model, pos, start_orient, host->Id()));
 			return (**i).New_car (pos, start_orient, host);
+		}
 	}
 	return 0;
+}
+//--------------------------------------------------------------------------------------------------
+void Carman::Clear_last_creations()
+{
+	last_creations.clear();
+}
+//--------------------------------------------------------------------------------------------------
+int Carman::Export (char* buffer, int size) const
+{
+	int offset = 0;
+	for (list <Creation>::const_iterator i = last_creations.begin();
+		i != last_creations.end(); ++i)
+	{
+		*(buffer + offset++) = 'c';//continue
+		int len = i->Export (buffer + offset, size - offset);
+		if (len == -1) return -1;
+		offset += len;
+		if (offset + 1 > size) return -1;
+	}
+	*(buffer + offset++) = 's';//stop
+	return offset;
+}
+//--------------------------------------------------------------------------------------------------
+int Carman::Import (char* buffer, int size, Player_manager* hosts, Activeman* objs)
+{
+	int offset = 0;
+	Creation cur;
+	while (*(buffer + offset++) == 'c')
+	{
+		int len = cur.Import (buffer + offset, size - offset);
+		if (len == -1) return -1;
+		offset += len;
+		if (offset > size) return -1;
+		objs->push_back (Create_car (cur.model, cur.pos, cur.start_orient, hosts->Get (cur.pl_id)));
+	}
+	return offset;
 }
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
@@ -114,14 +154,6 @@ Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host) cons
 					 rudder_spring, rmass1, rmass2, lenght, r1, r2, fric, start_orient, picture, host);
 	Key_storage contr = host->Get_control ();
 	contr.Set_control (ret, sense);
-//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Forwards), EV_KEYDOWN, up);
-//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Forwardf), EV_KEYUP, up);
-//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Backwards), EV_KEYDOWN, down);
-//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Backwardf), EV_KEYUP, down);
-//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_lefts), EV_KEYDOWN, left);
-//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_leftf), EV_KEYUP, left);
-//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_rights), EV_KEYDOWN, right);
-//	sense->Register_key_action (new Arg_Method<void, void, Car> (ret, &Car::Turn_rightf), EV_KEYUP, right);
 
 	return ret;
 }
@@ -144,5 +176,32 @@ Car_creator* Car_creator::Create_copy() const
 	ret->fric = fric;
 	ret->picture = picture;
 	return ret;
+}
+//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
+Carman::Creation::Creation() : model(0), pos(), start_orient(0), pl_id(0) {}
+//--------------------------------------------------------------------------------------------------
+Carman::Creation::Creation (int model_, Vector2f pos_, Orient start_orient_, int pl_id_)
+:model (model_), pos (pos_), start_orient (start_orient_), pl_id (pl_id_)
+{
+}
+//--------------------------------------------------------------------------------------------------
+Carman::Creation::Creation (const Carman::Creation& orig)
+:model (orig.model), pos (orig.pos), start_orient (orig.start_orient), pl_id (orig.pl_id)
+{
+}
+//--------------------------------------------------------------------------------------------------
+int Carman::Creation::Export (char* buffer, int size) const
+{
+	if (sizeof (Creation) > size) return -1;
+	memcpy (buffer, this, sizeof (Creation));
+	return sizeof (Creation);
+}
+//--------------------------------------------------------------------------------------------------
+int Carman::Creation::Import (char* buffer, int size)
+{
+	if (sizeof (Creation) > size) return -1;
+	memcpy (this, buffer, sizeof (Creation));
+	return sizeof (Creation);
 }
 //--------------------------------------------------------------------------------------------------

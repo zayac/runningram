@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="62">
+<configurationDescriptor version="65">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <df name="runningram" root=".">
       <df name="GNU-i386-Linux">
@@ -14,6 +14,7 @@
         <in>Collision_detection.h</in>
         <in>Console.h</in>
         <in>Eventman.h</in>
+        <in>Exeption.h</in>
         <in>Fontc.h</in>
         <in>Functor.h</in>
         <in>Game_manager.h</in>

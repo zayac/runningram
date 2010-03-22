@@ -68,7 +68,7 @@ bool Console::Init (Graphic_subsystem* c)
 
 	borders.y = borders.h;
 	borders.h = font.Height ();
-	input.Init  (borders, new Arg_Method<void, string*, Console> (this, &Console::On_enter_string), "You:>");
+	input.Init  (borders, new Arg_Method<void, const string&, Console> (this, &Console::On_enter_string), "You:>");
 
 	enabled = false;
 
@@ -112,11 +112,16 @@ void Console::Out (const string& str)
     history.Push_string (str);
 }
 //--------------------------------------------------------------------------------------------------
-void Console::On_enter_string (string* str)
+void Console::On_enter_string (const string& str)
 {
-	assert(str != 0);
 	assert(Ok());
-	history.Push_string (input.Get_greeting() + *str);
+	history.Push_string (input.Get_greeting() + str);
+}
+//--------------------------------------------------------------------------------------------------
+void Console::Push_string (const string& str)
+{
+	assert(Ok());
+	history.Push_string (str);
 }
 //--------------------------------------------------------------------------------------------------
 bool Console::Ok() const
@@ -124,7 +129,7 @@ bool Console::Ok() const
 	return font.Ok() && history.Ok() && input.Ok() && parser != 0;
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Init (const Rect& brd, Arg_Functor <void, string*> *enter, string gr)
+void Line_edit::Init (const Rect& brd, Arg_Functor <void, const string&> *enter, string gr)
 {
 	on_enter = enter;
 	data = "Very very very long  long test edit string for test drawing of text A same characters other"
@@ -311,7 +316,7 @@ void Line_edit::Finish_input ()
 	assert(Ok());
 	cursor_pos = 0;
 	start_view = 0;
-	(*on_enter)(&data);
+	(*on_enter)(data);
 	data.clear();
 }
 //--------------------------------------------------------------------------------------------------

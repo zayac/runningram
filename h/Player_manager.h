@@ -37,11 +37,14 @@ struct Key_storage
 
 struct Player
 {
+	int id;
 	int frags;
-	int preffered_model;
+	int prefered_model;
 	string name;
 	Car* mobile;
 	Key_storage ks;
+
+	static int max_id;
 	
 public:
 	Player (string name, int pref_model, const Key_storage& ks);
@@ -52,6 +55,12 @@ public:
 	void Sub_frag() {frags--;}
 	int Get_frags() const {return frags;}
 	string Get_name() const {return name;}
+
+	int My_size() const;
+	int Export (char* buffer, int size) const;
+	int Import (char* buffer, int size);
+
+	inline int Id() const {return id;}
 
 	Key_storage Get_control() const {return ks;}
 	
@@ -71,6 +80,11 @@ public:
 
 	Serializator* Get_parser();
 	void Draw_comp_table (Canvas* where, Fontc* font);
+
+	Player* Get (int id) const;
+
+	int Export (char* buffer, int size) const;
+	int Import (char* buffer, int size);
 
 	void Create_cars_for_poors (Carman* shop, Activeman* dest, Battlefield* site);
 

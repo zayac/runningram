@@ -7,6 +7,7 @@
 
 #include <SDL/SDL.h>
 #include "Sprite.h"
+#include "Exeption.h"
 using namespace std;
 
 Sprite::Sprite() {
@@ -26,14 +27,15 @@ Sprite::~Sprite()
 
 void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
 {
-    if(surface == NULL || !surface->valid()) {
-        cout << "failed to load sprite" << endl;
+    if(surface == NULL || !surface->valid()) 
+	{
+		throw Exeption ("failed to load sprite");
         width = 0; height = 0;
         this->speed = 0;
     } else {
         width = surface->getWidth() / maxFrames;
         height = surface->getHeight();
-        cout << "successfully loaded sprite" << endl;
+        clog << "successfully loaded sprite" << endl;
 
         for(int i = 0; i <  maxFrames; i++)
         {

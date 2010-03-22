@@ -178,6 +178,36 @@ bool Activeman::Delete_deadalives()
 	return deletion_done;
 }
 //--------------------------------------------------------------------------------------------------
+int Activeman::Export (char* buffer, int size) const
+{
+	int offset = 0;
+	for (const_iterator i = begin(); i != end(); ++i)
+	{
+		int cur_offs = (**i).Export (buffer + offset, size - offset);
+		if (cur_offs == -1) return -1;
+		offset += cur_offs;
+		*(buffer + cur_offs) = 'e';//existing car
+		++cur_offs;
+		if (offset > size) return -1;
+	}
+	return offset;
+}
+//--------------------------------------------------------------------------------------------------
+int Activeman::Import (char* buffer, int size)
+{
+	int offset = 0;
+	for (const_iterator i = begin(); i != end(); ++i)
+	{
+		int cur_offs = (**i).Import (buffer + offset, size - offset);
+		if (cur_offs == -1) return -1;
+		offset += cur_offs;
+		if (*(buffer + cur_offs) != 'e') return -1;//Unknown data
+		++cur_offs;
+		if (offset > size) return -1;
+	}
+	return offset;
+}
+//--------------------------------------------------------------------------------------------------
 bool Activeman::Ok() const
 {
 	for (const_iterator i = begin(); i != end(); ++i)

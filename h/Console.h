@@ -16,6 +16,7 @@
 #include "Graphic_subsystem.h"
 #include "Functor.h"
 #include "Fontc.h"
+#include "Exeption.h"
 
 using std::string;
 using std::list;
@@ -80,7 +81,7 @@ class Line_edit
 	int cursor_pos;
 	int start_view;
 	Rect borders;
-	Arg_Functor <void, string*> *on_enter;
+	Arg_Functor <void, const string&> *on_enter;
 
 	Uint32 last_actiont;
 
@@ -105,7 +106,7 @@ public:
 
 	const string& Get_greeting() const {return greeting;}
 	
-	void Init (const Rect& brd, Arg_Functor <void, string*> *on_enter, string greeting = "");
+	void Init (const Rect& brd, Arg_Functor <void, const string&> *on_enter, string greeting = "");
 	void Operate (Kbd_event ev);
 	void Draw (Canvas* c) const;
 
@@ -129,7 +130,8 @@ public:
 	Serializator* Get_parser();
 	bool Init (Graphic_subsystem* c);
 	void Cleanup();
-	void On_enter_string (string* str);
+	void On_enter_string (const string& str);
+	void Push_string (const string&);
 
 	void Operate (Kbd_event ev);
 	void Draw (Graphic_subsystem* c) const;
@@ -139,6 +141,18 @@ public:
 	void Out (const string& str);
 
 	bool Ok() const;
+};
+
+
+class Console_output :public Std_output_err
+{
+	Console* out;
+public:
+	Console_output (Console* what):out (what){;}
+	virtual void print (const string& text)
+	{
+		out->Push_string (text);
+	}
 };
 
 //!!! only for debug
