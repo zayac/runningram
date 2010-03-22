@@ -12,6 +12,7 @@
 #include "Canvas.h"
 #include "Battlefield.h"
 #include "Orient.h"
+#include "Exeption.h"
 
 //SDL_Surface* Canvas::screen_p = 0;
 //Canvas::base* Canvas::screen_t = 0;
@@ -28,7 +29,7 @@ Canvas::Canvas (SDL_Surface* d):UniId<SDL_Surface>(d, 0), pos()
 Canvas::Canvas (const char* file):UniId<SDL_Surface>(0, 0), pos()
 {
     SDL_Surface *temp = SDL_LoadBMP (file);
-	if (temp == 0) return;
+	if (temp == 0) throw Exeption(Sprintf ("can't load file %s !!!", file));
 
     Reinit (SDL_DisplayFormat(temp), 0);
     SDL_FreeSurface (temp);

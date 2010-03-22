@@ -16,8 +16,11 @@ class Console;
 class Activeman;
 class Carman;
 class Player_manager;
+class Console_output;
 
-#include <Fontc.h>//!!! deprecated
+#include <Fontc.h>
+
+#include "Exeption.h"//!!! deprecated
 
 class Game_manager
 {
@@ -30,6 +33,10 @@ class Game_manager
 	Carman* models;
 	Player_manager* players;
 
+	Std_output_err* co;//for exeptions
+
+	char buffer[1048576];
+
 public:
 	Game_manager (int argc, char *argv[]);
 	virtual ~Game_manager();
@@ -37,6 +44,9 @@ public:
 	bool Init (int argc, char *argv[]);
 	bool Main_loop();
 	bool Cleanup();
+
+	void tmpExport();
+	void tmpImport();
 
 	bool Ok() const;
 

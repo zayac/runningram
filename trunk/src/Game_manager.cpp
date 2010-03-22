@@ -25,6 +25,9 @@ Game_manager::Game_manager (int argc, char *argv[])
 :pic (new Graphic_subsystem), sense (new Eventman), look(new Camera), ground (new Battlefield),
  cmd (new Console), cars (new Activeman), players (new Player_manager)
 {
+	co = new Output_cerr;
+	Exeption::Set_output (co);
+
 	models = new Carman (sense);
 
 	Init (argc, argv);
@@ -41,42 +44,60 @@ Game_manager::~Game_manager()
 	if (!cars) delete cars; cars = 0;
 	if (!cmd) delete cmd; cmd = 0;
 	if (!pic) delete pic; pic = 0;
+	if (!co) delete co; co = 0;
 }
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Init (int argc, char *argv[])
 {
 	bool result = true;
-    Sectionp gen ("gensec", '\n');
-	gen.Add_param (pic->Get_parser ());
-    File_loader fl ((char*)"./settings.cfg");
-    fl.Read_sector (&gen);
-	result = result && pic->Init();			//Graphic subsystem must be initialaised previously
+	try
+	{
+	    Sectionp gen ("gensec", '\n');
+		gen.Add_param (pic->Get_parser ());
+		File_loader fl ((char*)"./settings.cfg");
+	    fl.Read_sector (&gen);
+		result = result && pic->Init();			//Graphic subsystem must be initialaised previously
 	
-	gen.Delete_props ();
-	gen.Add_param (cmd->Get_parser ());
-	gen.Add_param (ground->Get_parser ());
-	gen.Add_param (models->Get_parser ());
-	gen.Add_param (players->Get_parser ());
-	fl.Read_sector (&gen);
+		gen.Delete_props ();
+		gen.Add_param (cmd->Get_parser ());
+		gen.Add_param (ground->Get_parser ());
+		gen.Add_param (models->Get_parser ());
+		gen.Add_param (players->Get_parser ());
+		fl.Read_sector (&gen);
 
-	sense->Register_key_action (new Arg_Function<void, void> (DBG_switch), EV_KEYDOWN, KI_s);
+		sense->Register_key_action (new Arg_Function<void, void> (DBG_switch), EV_KEYDOWN, KI_s);
 
-	sense->Register_key_action (new Arg_Method<void, void, Console> (cmd, &Console::Switch),
-																		EV_KEYDOWN, KI_BACKQUOTE);
-	sense->Register_key_oper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::Operate));
+		sense->Register_key_action (new Arg_Method<void, void, Console> (cmd, &Console::Switch),
+																			EV_KEYDOWN, KI_BACKQUOTE);
+		sense->Register_key_oper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::Operate));
+
+		sense->Register_key_action (new Arg_Method<void, void, Game_manager> (this, &Game_manager::tmpExport),
+																			EV_KEYDOWN, KI_z);
+		sense->Register_key_action (new Arg_Method<void, void, Game_manager> (this, &Game_manager::tmpImport),
+																			EV_KEYDOWN, KI_x);
 
 
-	font.Open_font ("default.ttf", 16);
-	font.Set_fg (Color(100, 100, 200));//!!! deprecated
+		font.Open_font ("default.ttf", 16);
+		font.Set_fg (Color(100, 100, 200));//!!! deprecated
 
-    result = result && cmd->Init (pic);
-	result = result && ground->Init();
+	    result = result && cmd->Init (pic);
+		result = result && ground->Init();
+
+		if (co) delete co;
+		co = new Console_output (cmd);
+		Exeption::Set_output (co);
+	}
+	catch (Exeption& ex)
+	{
+		ex.print();
+	}
+
 	return result && Ok();
 }
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Main_loop()
 {
-	unsigned int last_time = SDL_GetTicks ();
+	unsigned int last_time = SDL_GetTicks();
 	float dt = 0;
     while (!sense->Stopped())
     {
@@ -101,6 +122,24 @@ bool Game_manager::Main_loop()
 		players->Create_cars_for_poors (models, cars, ground);
     }
 	return Ok();
+}
+//--------------------------------------------------------------------------------------------------
+void Game_manager::tmpExport()
+{
+//	cars->Export (buffer, 1048576);
+	players->Export (buffer, 1048576);
+	Player_manager::iterator i, j;
+	i = players->begin ();
+	j = players->begin();
+	++j;
+	std::swap (*i, *j);
+
+}
+//--------------------------------------------------------------------------------------------------
+void Game_manager::tmpImport()
+{
+//	cars->Import (buffer, 1048576);
+	players->Import (buffer, 1048576);
 }
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Cleanup()

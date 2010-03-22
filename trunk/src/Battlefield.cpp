@@ -154,7 +154,6 @@ public:
 	}
 };
 //--------------------------------------------------------------------------------------------------
-
 bool Battlefield::Load_from_file (const char* fname)
 {
 	ifstream file (fname);

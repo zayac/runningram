@@ -37,6 +37,8 @@ public:
 
 class Active :public Limited
 {
+protected:
+	virtual int Sign_date_len() const {return sizeof(pos) + sizeof(r);}
 public:
 	Active (Vector2f position, float r_):Limited (position, r_){}
 	virtual void Actions (float dt) = 0;
@@ -44,6 +46,9 @@ public:
 	virtual void Collis_brd (Rect width, float fric) = 0;
 	virtual void Drive_sand (Rect width, float fric) = 0;
 	virtual void Collis_obj (Active* that) = 0;
+
+	virtual int Export (char* buffer, int size) const;
+	virtual int Import (char* buffer, int size);
 	
 	virtual int My_type() const {return No_type;}
 	virtual bool Dead() const = 0;
@@ -195,6 +200,9 @@ class Car :public Active
 
 	void Move (Vector2f disp) {back.pos += disp; front.pos += disp;}
 
+protected:
+	virtual int Sign_date_len() const;
+
 public:
 	Car (Vector2f pos, float health, float motor_force, float bouncy, float angular_vel, float rudder_spring,
 		 float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient,
@@ -214,6 +222,9 @@ public:
 	bool Damage (Vector2f imp, Vector2f papp, float destructive_k);			//returns true if killed
 	void Appl_impulse (Vector2f imp, Vector2f papp, float destructive_k = 1);
 	void Appl_force (Vector2f f, Vector2f papp, bool resistancive);
+
+	virtual int Export (char* buffer, int size) const;
+	virtual int Import (char* buffer, int size);
 	
 	virtual int My_type() const {return Car_type;}
 	virtual bool Dead() const;

@@ -74,10 +74,71 @@ Serializator* Player_manager::Get_parser()
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
+Player* Player_manager::Get (int id) const
+{
+	for (const_iterator i = begin(); i != end(); ++i)
+		if ((**i).Id () == id) return *i;
+	return 0;
+}
+//--------------------------------------------------------------------------------------------------
 void Player_manager::Create_cars_for_poors (Carman* shop, Activeman* dest, Battlefield* site)
 {
 	for (iterator i = begin(); i != end(); ++i)
 		if ((**i).Is_poor ()) dest->push_back ((**i).Create_car (shop, site->Get_next_res_point().To<float>()));
+}
+//--------------------------------------------------------------------------------------------------
+int Player_manager::Export (char* buffer, int size) const
+{
+	int offset = 0;
+	for (const_iterator i = begin(); i != end(); ++i)
+	{
+		*(buffer + offset++) = 'c';//continue
+		*(buffer + offset) = (**i).Id ();
+		offset += sizeof(int);
+		int len = (**i).Export (buffer + offset, size - offset);
+		if (len == -1) return -1;
+		offset += len;
+	}
+	*(buffer + offset++) = 's';//stop
+	return offset;
+}
+//--------------------------------------------------------------------------------------------------
+int Player_manager::Import (char* buffer, int size)
+{
+	int offset = 0;
+	for (iterator i = begin(); i != end(); ++i)
+	{
+		if (*(buffer + offset++) != 'c') return -1;
+		int id = *(buffer + offset);
+		offset += sizeof(int);
+
+		if (id != (**i).Id())
+		{
+			bool found = false;
+			iterator j = i;
+			for (j = i; j != end(); ++j)
+				if ((**j).Id() == id)
+				{
+					found = true;
+					break;
+				}
+			if (found)
+			{
+				std::swap (*i, *j);
+				(**i).Import (buffer + offset, size - offset);
+			}
+			else
+			{
+				j = insert (i, new Player ("no name", 0, Key_storage ()));
+				(**j).Import (buffer + offset, size - offset);
+			}
+		}
+
+		int len = (**i).Import (buffer + offset, size - offset);
+		if (len == -1) return -1;
+		offset += len;
+	}
+	return offset;
 }
 //--------------------------------------------------------------------------------------------------
 #include "Canvas.h"
@@ -109,18 +170,56 @@ void Player_manager::Draw_comp_table (Canvas* where, Fontc* font)
 
 	where->setPos (where_pos);
 }
+int Player::max_id = 0;
 //--------------------------------------------------------------------------------------------------
 Player::Player (string name_, int pref_model, const Key_storage& ks_)
-	:name (name_), preffered_model (pref_model), mobile(0), frags(0), ks (ks_)
+	:name (name_), prefered_model (pref_model), mobile(0), frags(0), ks (ks_), id (++max_id)
 {
 }
 //--------------------------------------------------------------------------------------------------
 Car* Player::Create_car (Carman* shop, Vector2f where)
 {
-	mobile = shop->Create_car (preffered_model, where, 0, this);
+	mobile = shop->Create_car (prefered_model, where, 0, this);
 	return mobile;
 }
+//--------------------------------------------------------------------------------------------------
+int Player::My_size() const
+{
+	return sizeof (frags) + sizeof (prefered_model) + (1 + name.size())*sizeof (string::value_type);
+}
+//--------------------------------------------------------------------------------------------------
+int Player::Export (char* buffer, int size) const
+{
+	if (My_size() > size) return -1;
+	memcpy (buffer, &frags, sizeof(frags));
+	memcpy (buffer + sizeof (frags), &prefered_model, sizeof(prefered_model));
+	const char* name_str = name.c_str();
+	int name_size = sizeof(char)*(name.size() + 1);
+	memcpy (buffer + sizeof (frags) + sizeof (prefered_model), name_str, name_size);
+	return My_size ();
+}
+//--------------------------------------------------------------------------------------------------
+int Player::Import (char* buffer, int size)
+{
+	if (My_size() > size) return -1;
 
+	int offset = 0;
+	memcpy (&frags, buffer, sizeof(frags));
+	offset += sizeof (frags);
+	memcpy (&prefered_model, buffer + offset, sizeof(prefered_model));
+	offset += sizeof (prefered_model);
+
+	name.clear ();
+	char c = 0;
+	while (1)
+	{
+		c = *(buffer + offset++);
+		if (c == 0) break;
+		name += c;
+	}
+	return offset;
+}
+//--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
 void Key_storage::Set_control (Car* c, Eventman* sense)
 {
