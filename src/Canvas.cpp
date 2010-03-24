@@ -310,8 +310,6 @@ void Canvas::setTransparency(Color colorkey)
 {
     SDL_SetColorKey( data(), SDL_SRCCOLORKEY|SDL_RLEACCEL, colorkey.Toint(data()) );
 	Substitute_data (SDL_DisplayFormat(data()));
-//    data() = ;
-    //SDL_SetColorKey (data(), SDL_SRCCOLORKEY, colorkey.Toint(data()) );
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::setTransparentPixel (Point point)
