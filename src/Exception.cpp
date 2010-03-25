@@ -1,8 +1,8 @@
 #include <stdarg.h>
 #include <iostream>
-#include "Exeption.h"
+#include "Exception.h"
 
-Std_output_err* Exeption::out;
+Std_output_err* Exception::out;
 
 void Output_cerr::print (const string& text)
 {

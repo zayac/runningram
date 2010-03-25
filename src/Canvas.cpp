@@ -9,10 +9,11 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
 #include <SDL/SDL_rotozoom.h>
+#include <SDL/SDL_image.h>
 #include "Canvas.h"
 #include "Battlefield.h"
 #include "Orient.h"
-#include "Exeption.h"
+#include "Exception.h"
 
 //SDL_Surface* Canvas::screen_p = 0;
 //Canvas::base* Canvas::screen_t = 0;
@@ -21,18 +22,20 @@ Canvas* Canvas::Screen = 0;
 
 Canvas::Canvas ():UniId<SDL_Surface>(0, 0), pos() { }
 //--------------------------------------------------------------------------------------------------
-Canvas::Canvas (SDL_Surface* d):UniId<SDL_Surface>(d, 0), pos()
+Canvas::Canvas (SDL_Surface* d):UniId<SDL_Surface>(d, 0), pos() { }
+
+Canvas::Canvas (const char* file, bool alpha):UniId<SDL_Surface>(0, 0), pos()
 {
+    SDL_Surface *temp = NULL;
+    temp = IMG_Load (file);
+    if (temp == NULL) throw Exception(Sprintf ("can't load file %s !!!", file));
 
-}
-
-Canvas::Canvas (const char* file):UniId<SDL_Surface>(0, 0), pos()
-{
-    SDL_Surface *temp = SDL_LoadBMP (file);
-	if (temp == 0) throw Exeption(Sprintf ("can't load file %s !!!", file));
-
-    Reinit (SDL_DisplayFormat(temp), 0);
+    if (alpha)
+        Reinit (SDL_DisplayFormatAlpha(temp), 0);
+    else
+        Reinit (SDL_DisplayFormat(temp), 0);
     SDL_FreeSurface (temp);
+    //SDL_SetColorKey( this->data(), SDL_SRCCOLORKEY, SDL_MapRGB( this->data()->format, 0, 0xFF, 0xFF ) );
 }
 //--------------------------------------------------------------------------------------------------
 Canvas::Canvas (const Canvas& orig):UniId<SDL_Surface> (orig.data(), orig.table()), pos()
@@ -111,9 +114,11 @@ void Canvas::draw (Canvas* buffer, Point position)
 Canvas Canvas::createCompatible (Point size) const
 {
 	if (size == Point()) size = Point (data()->w, data()->h);
+        
 	return Canvas (SDL_CreateRGBSurface (data()->flags, size.x, size.y, data()->format->BitsPerPixel,
 										 data()->format->Rmask, data()->format->Gmask,
                                 						 data()->format->Bmask, data()->format->Amask));
+
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::update()
@@ -276,19 +281,8 @@ Canvas Canvas::cropRect (Point point, int w, int h, bool remember_pos)
 {
 	point -= pos;
     // create a new surface
-    int amask = 0;
-    if (data()->flags & SDL_SRCCOLORKEY)
-	{
-        amask = data()->format->Amask;
-    }
-    Canvas newrect ( SDL_CreateRGBSurface(  SDL_SWSURFACE,
-                                            w,
-                                            h,
-                                            data()->format->BitsPerPixel,
-                                            data()->format->Rmask,
-                                            data()->format->Gmask,
-                                            data()->format->Bmask,
-                                            amask ));
+
+    Canvas newrect =  createCompatible(Point (w, h));
 
     for (int j = 0; j < h; j++)
 	{

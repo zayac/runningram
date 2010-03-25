@@ -1,7 +1,7 @@
 #include "Game_manager.h"
 
 #include "Battlefield.h"
-#include "Exeption.h"
+#include "Exception.h"
 //--------------------------------------------------------------------------------------------------
 int main (int argc, char *argv[])
 {
@@ -13,7 +13,7 @@ int main (int argc, char *argv[])
 
 		if (!gm.Cleanup()) return -1;
 	}
-	catch (Exeption& ex)
+	catch (Exception& ex)
 	{
 		ex.print ();
 	}

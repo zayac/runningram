@@ -1,12 +1,12 @@
 /* 
- * File:   Exeption.h
+ * File:   Exception.h
  * Author: necto
  *
  * Created on March 20, 2010, 3:00 PM
  */
 
-#ifndef _EXEPTION_H
-#define	_EXEPTION_H
+#ifndef _Exception_H
+#define	_Exception_H
 #include <string>
 #include <stdio.h>
 
@@ -24,14 +24,14 @@ public:
 	virtual void print (const string& text);
 };
 
-class Exeption
+class Exception
 {
 	string text;
 	static Std_output_err* out;
 
 public:
-	Exeption() :text("unnamed exeption"){}
-	Exeption (const string& str, int line = 0, char* file = 0):text (str)
+	Exception() :text("unnamed Exception"){}
+	Exception (const string& str, int line = 0, char* file = 0):text (str)
 	{
 		char buf[128] = "";
 		if (file != 0)
@@ -43,11 +43,11 @@ public:
 
 	void print() {out->print (text);};
 
-	inline static void Set_output (Std_output_err* nout) {Exeption::out = nout;}
+	inline static void Set_output (Std_output_err* nout) {Exception::out = nout;}
 private:
 
 };
 string Sprintf (char* fmt, ...);
 
-#endif	/* _EXEPTION_H */
+#endif	/* _Exception_H */
 

@@ -36,7 +36,7 @@ private:
 public:
     Sprite();
     ~Sprite();
-    Sprite (const char* fileName, int maxFrames, int animationSpeed);
+    Sprite (const char* fileName, int maxFrames, int animationSpeed, bool alpha = false);
     Sprite (Canvas* canvas, int maxFrames,int animationSpeed);
 
     void rotate (double angle);

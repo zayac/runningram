@@ -26,7 +26,7 @@ Game_manager::Game_manager (int argc, char *argv[])
  cmd (new Console), cars (new Activeman), players (new Player_manager)
 {
 	co = new Output_cerr;
-	Exeption::Set_output (co);
+	Exception::Set_output (co);
 
 	models = new Carman (sense);
 
@@ -85,9 +85,9 @@ bool Game_manager::Init (int argc, char *argv[])
 
 		if (co) delete co;
 		co = new Console_output (cmd);
-		Exeption::Set_output (co);
+		Exception::Set_output (co);
 	}
-	catch (Exeption& ex)
+	catch (Exception& ex)
 	{
 		ex.print();
 	}

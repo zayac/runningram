@@ -20,7 +20,7 @@ class Console_output;
 
 #include <Fontc.h>
 
-#include "Exeption.h"//!!! deprecated
+#include "Exception.h"//!!! deprecated
 
 class Game_manager
 {
@@ -33,7 +33,7 @@ class Game_manager
 	Carman* models;
 	Player_manager* players;
 
-	Std_output_err* co;//for exeptions
+	Std_output_err* co;//for Exceptions
 
 	char buffer[1048576];
 
