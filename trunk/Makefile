@@ -12,8 +12,8 @@
 CCC = g++
 CXX = g++
 BASICOPTS = -g
-CCFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx
-CXXFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx
+CCFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx -lSDL_image
+CXXFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx -lSDL_image
 CCADMIN =
 
 # Define a lookup dir

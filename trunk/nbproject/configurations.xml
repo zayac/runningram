@@ -14,7 +14,7 @@
         <in>Collision_detection.h</in>
         <in>Console.h</in>
         <in>Eventman.h</in>
-        <in>Exeption.h</in>
+        <in>Exception.h</in>
         <in>Fontc.h</in>
         <in>Functor.h</in>
         <in>Game_manager.h</in>
@@ -41,6 +41,7 @@
         <in>Collision_detection.cpp</in>
         <in>Console.cpp</in>
         <in>Eventman.cpp</in>
+        <in>Exception.cpp</in>
         <in>Fontc.cpp</in>
         <in>Game_manager.cpp</in>
         <in>Graphic_subsystem.cpp</in>

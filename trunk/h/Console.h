@@ -16,7 +16,7 @@
 #include "Graphic_subsystem.h"
 #include "Functor.h"
 #include "Fontc.h"
-#include "Exeption.h"
+#include "Exception.h"
 
 using std::string;
 using std::list;

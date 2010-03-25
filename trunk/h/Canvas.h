@@ -92,7 +92,7 @@ protected:
 public:
 	Canvas();
 	Canvas (const Canvas& orig);
-	Canvas (const char* file);
+	Canvas (const char* file, bool alpha = false);
 	//virtual ~Canvas();
 
 	/* helper methods */

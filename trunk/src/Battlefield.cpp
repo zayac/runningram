@@ -89,6 +89,7 @@ void Battlefield::Draw (Graphic_subsystem* c) const
             Draw_cage (canv, Point(i, j)*csize, Point (csize, csize),
                             Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), bkg);
         }
+        //test[0]->draw(canv, Point (100, 100));
 	sprites['1']->draw (canv, Point(120, 120));
 }
 //--------------------------------------------------------------------------------------------------
@@ -163,6 +164,8 @@ bool Battlefield::Load_from_file (const char* fname)
 	file >>size.x;
 	file >>size.y;
 	file >>csize;
+
+        //test.push_back( new Canvas ("textures/smile.png", true));
 
 	cells = new unsigned char[size.x*size.y];
 	if (cells == 0) return false;
