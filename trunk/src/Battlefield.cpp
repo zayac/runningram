@@ -11,6 +11,7 @@
 #include "initparser.h"
 #include "Battlefield.h"
 #include "Graphic_subsystem.h"
+#include "TileFactory.h"
 #include "Canvas.h"
 
 using std::ifstream;
@@ -39,15 +40,14 @@ public:
 
 Battlefield::Battlefield ():cells (0), parser (new Initialaiser("[Map]"))
 {
-	for (int i = 0; i < 256; ++i)
-		sprites[i] = 0;
+    _tileFactory.clear();
 }
 //--------------------------------------------------------------------------------------------------
 Battlefield::~Battlefield ()
 {
 	assert(Ok());
 
-	Clean_sprites();
+	_tileFactory.clear();
 	if (cells) delete [] cells;
 	delete parser;
 }
@@ -73,13 +73,25 @@ void Draw_cage (Canvas* c, Point start, Point full_size, Point num_cells, Color 
 		c->line (begin, end, col);
 	}
 }
+
+void Battlefield::drawField (Canvas* c) const
+{
+    for(int i = 0; i < size.x; i++)
+    {
+        for (int j = 0; j < size.y; j++)
+        {
+            _tileFactory.getTile(CELL(i, j))->getSprite()->draw(c, Point (i * csize - csize / 2, j * csize - csize / 2));
+        }
+    }
+}
 //----------------------------------------
 void Battlefield::Draw (Graphic_subsystem* c) const
 {
     assert(Ok());
-	Canvas *canv = c->Get_screen ();
+    Canvas *canv = c->Get_screen ();
 
-    for (int i = 0; i < size.x; ++i)
+    drawField(canv);
+    /*for (int i = 0; i < size.x; ++i)
         for (int j = 0; j < size.y; ++j)
         {
 			Color bkg =  Color (80, 80, 80);
@@ -88,9 +100,9 @@ void Battlefield::Draw (Graphic_subsystem* c) const
 
             Draw_cage (canv, Point(i, j)*csize, Point (csize, csize),
                             Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), bkg);
-        }
+        }*/
         //test[0]->draw(canv, Point (100, 100));
-	sprites['1']->draw (canv, Point(120, 120));
+	//sprites['1']->draw (canv, Point(120, 120));
 }
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::Init()
@@ -98,62 +110,6 @@ bool Battlefield::Init()
 	return Load_from_file (parser->filename.c_str());
 }
 //--------------------------------------------------------------------------------------------------
-class Field_set : public Sectionp
-{
-public:
-	string texture_fname;
-	Point texture_offset;
-	unsigned char sym;
-	float fric;
-	bool rough;
-
-	Sprite** sprites;
-	float* frics;
-	vector<unsigned char> *roughs;
-	vector<unsigned char> *sands;
-
-public:
-	virtual bool After_read (ifstream &file)
-	{
-		if (texture_fname.size() > 0)
-		{
-			Sprite *sp = new Sprite (texture_fname.c_str(), 1, 1);
-			sp->setPos (-texture_offset);
-			sprites[sym] = sp;
-		}
-		if (rough)
-			roughs->push_back (sym);
-
-		if ((-aboutnull > (fric - 1) || (fric - 1) > aboutnull) && !rough)
-			sands->push_back (sym);
-
-		frics[sym] = fric;
-		if ((-aboutnull < (fric - 1) && (fric - 1) < aboutnull) && rough)
-			frics[sym] = 0;//if rough then friction about null
-
-		texture_fname.clear();
-		fric = 1.0;
-		rough = false;
-		return true;
-	}
-
-	Field_set (string name, Sprite** sps, float* frics_, vector<unsigned char> *roughs_, vector<unsigned char> *sands_)
-	:Sectionp (name, '='), sprites(sps), frics(frics_), roughs(roughs_), sands(sands_), texture_fname(), sym(0),
-	fric(1.0), rough(false)
-	{
-		Add_param (new St_loader<unsigned char> ("character", &sym));
-		Add_param (new St_loader<string> ("texture", &texture_fname));
-		Add_param (new St_loader<int> ("texture centre x", &texture_offset.x));
-		Add_param (new St_loader<int> ("texture centre y", &texture_offset.y));
-		Add_param (new St_loader<float> ("friction", &fric));
-		Add_param (new St_loader<bool> ("rough", &rough));
-	}
-
-	virtual ~Field_set ()
-	{
-		Delete_props ();
-	}
-};
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::Load_from_file (const char* fname)
 {
@@ -167,11 +123,11 @@ bool Battlefield::Load_from_file (const char* fname)
 
         //test.push_back( new Canvas ("textures/smile.png", true));
 
-	cells = new unsigned char[size.x*size.y];
+	cells = new unsigned char[size.x * size.y];
 	if (cells == 0) return false;
 	Clean_field ('0');
 
-	for (int i = 0; i < size.y*size.x; )
+	for (int i = 0; i < size.y * size.x; )
 	{
 		char symb = file.get();
 		if (symb == '\n') continue;
@@ -188,10 +144,12 @@ bool Battlefield::Load_from_file (const char* fname)
 	}
 	cur_res_point = resur_points.begin();
 
-	Clean_sprites ();
+        _tileFactory.init(file);
+        _tileFactory.scale(csize);
+	/*Clean_sprites ();
 	Sectionp tile_props("gensec", '\n');
 	tile_props.Add_param (new Field_set ("tile", sprites, frics, &roughs, &sands));
-	tile_props.Unserialise (file);
+	tile_props.Unserialise (file);*/
 
 	file.close();
 	return Ok();
@@ -224,16 +182,11 @@ Point Battlefield::Get_next_res_point()
 	return *cur_res_point;
 }
 //--------------------------------------------------------------------------------------------------
-inline bool contain (const vector<unsigned char>& vec, unsigned char c)
-{
-	for (vector<unsigned char>::const_iterator i = vec.begin(); i != vec.end(); ++i)
-		if (*i == c)return true;
-	return false;
-}
-//--------------------------------------------------------------------------------------------------
+
 bool Battlefield::Is_rough (int x, int y) const
 {
-	return contain (roughs, CELL(x, y));
+
+    return  _tileFactory.getTile(CELL(x, y))->isObstacle();
 //	return CELL(x, y) != '1' && CELL(x, y) != '2' && CELL(x, y) != '3';
 }
 //--------------------------------------------------------------------------------------------------
@@ -245,13 +198,13 @@ bool Battlefield::No_road (int x, int y) const
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::Is_sand (int x, int y) const
 {
-	return contain (sands, CELL(x, y));
+	return _tileFactory.getTile(CELL(x, y))->isSand();
 //	return CELL(x, y) == '2' || CELL(x, y) == '3';
 }
 //--------------------------------------------------------------------------------------------------
 float Battlefield::Friction (int x, int y) const
 {
-	return frics[CELL(x, y)];
+	return _tileFactory.getTile(CELL(x, y))->getFriction();
 //	if (CELL(x, y) == '2')
 //		return 5;
 //	else if (CELL(x, y) = '3')
@@ -269,15 +222,6 @@ void Battlefield::Clean_field (char fill_cell)
 	}
 }
 //--------------------------------------------------------------------------------------------------
-void Battlefield::Clean_sprites()
-{
-	for (int i = 0; i < 256; ++i)
-		if (sprites[i] != 0)
-		{
-			delete sprites[i];
-			sprites[i] = 0;
-		}
-}
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::Ok() const
 {

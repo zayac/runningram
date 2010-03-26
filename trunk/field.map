@@ -35,7 +35,7 @@
 
 tile
 	character = 0
-	texture = textures/little_stones.bmp
+	texture = textures/bricks80.png
 	texture centre x = 40
 	texture centre y = 40
 	rough = true
@@ -43,20 +43,23 @@ tile
 
 tile
 	character = 1
-	texture = textures/yellow.bmp
+	texture = textures/road4.jpg
 	texture centre x = 40
 	texture centre y = 40
+	rough = false
 tile
 	character = 2
 	texture = textures/dirty_sand.bmp
 	texture centre x = 40
 	texture centre y = 40
+	rough = false
 tile
 	character = 3
 	texture = textures/forest.bmp
 	texture centre x = 40
 	texture centre y = 40
 	friction = 4
+	rough = false
 tile
 	character = 4
 	texture = textures/jungle.bmp
@@ -75,8 +78,10 @@ tile
 	texture = textures/swamp.bmp
 	texture centre x = 40
 	texture centre y = 40
+        rough = true
 tile
 	character = 7
 	texture = textures/stones.bmp
 	texture centre x = 40
 	texture centre y = 40
+        rough = true

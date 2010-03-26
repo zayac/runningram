@@ -13,6 +13,7 @@
 #include "Vec.h"
 #include "Graphic_subsystem.h"
 #include "IsometricField.h"
+#include "TileFactory.h"
 #include "Sprite.h"
 
 using std::vector;
@@ -28,7 +29,7 @@ class Battlefield
 	int csize;
 	vector<Point> resur_points;
 	vector<Point>::iterator cur_res_point;
-
+        TileFactory _tileFactory;
 
 	class Initialaiser;
 	Initialaiser* parser;
@@ -36,15 +37,9 @@ class Battlefield
 	void Clean_field (char fill_cell);
 	Point Read_respoint (ifstream& file);
 
-	void Clean_sprites();
 
+        void drawField(Canvas* c) const;
 public:
-	float frics[256];
-	vector<unsigned char> roughs;
-	vector<unsigned char> sands;
-        /* Vector for keeping ground textures */
-	Sprite* sprites[256];
-        vector<Canvas*> test;
 
 	Battlefield();
 	virtual ~Battlefield();
