@@ -9,14 +9,13 @@
 #define	_TILEFACTORY_H
 
 #include "Sprite.h"
-#include <map>
 
 enum TileType { GRASS, SAND, WATER };
 
 class Tile {
 public:
     virtual void draw(Canvas* buffer, Point point) const = 0;
-
+    inline virtual Sprite* getSprite() { return _sprite; }
 protected:
     Sprite* _sprite;
 };
@@ -24,25 +23,46 @@ protected:
 
 class MapTile : public Tile {
     bool _obstacle;
-    int _friction;
+    bool _sand;
+    float _friction;
+    unsigned char _symbol;
 public:
-    MapTile (char* fileName, int maxFrames, int animationSpeed, bool obstacle, int friction)
+    inline bool isObstacle() { return _obstacle; }
+    inline bool isSand() { return _sand; }
+    inline float getFriction() { return _friction; }
+
+    MapTile (char* fileName, int maxFrames, int animationSpeed, bool alpha = false, bool obstacle = false, float friction = 1.0f, bool sand = false)
     {
-        _sprite = new Sprite(fileName, maxFrames, animationSpeed);
+        _sprite = new Sprite(fileName, maxFrames, animationSpeed, alpha);
         _obstacle = obstacle;
         _friction = friction;
+        _sand = sand;
     }
 
-    MapTile (Canvas* canvas, int maxFrames,int animationSpeed, bool obstacle, int friction)
+    MapTile (Canvas* canvas, int maxFrames,int animationSpeed, bool obstacle = false, float friction = 1.0f, bool sand = false)
     {
         _sprite = new Sprite(canvas, maxFrames, animationSpeed);
         _obstacle = obstacle;
         _friction = friction;
+        _sand = sand;
+    }
+
+    MapTile (Sprite* sprite, bool obstacle = false, float friction = 1.0f, bool sand = false)
+    {
+        _sprite = sprite;
+        _obstacle = obstacle;
+        _friction = friction;
+        _sand = sand;
     }
 
     virtual void draw(Canvas* buffer, Point point) const
     {
         _sprite->draw(buffer, point);
+    }
+
+    ~MapTile ()
+    {
+        delete _sprite;
     }
 };
 
@@ -50,13 +70,14 @@ public:
 class TileFactory {
 public:
     TileFactory();
+    inline MapTile* getTile(char chr) const { return _tiles[chr]; }
+    void init (ifstream& file);
+    void scale(int size);
     virtual ~TileFactory();
-
-    const Tile& getCharacter( const TileType aKey );
-
+    void clear();
 private:
-    typedef std::map< TileType, Tile* > mTiles;
-    mTiles _tiles;
+    MapTile* _tiles[256];
+
 };
 
 #endif	/* _TILEFACTORY_H */

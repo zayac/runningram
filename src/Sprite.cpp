@@ -188,8 +188,12 @@ Color Sprite::getTransparency()
 void Sprite::zoom(double zoomx, double zoomy)
 {
     for(int i = 0; i < maxFrames; i++)
-        sprites[i].zoom(zoomx, zoomy);
-
+    {
+       sprites[i].zoom(zoomx, zoomy);
+        sprites[i].setPos( Point (sprites[i].getWidth() / 2, sprites[i].getHeight() / 2));
+    }
+    width = sprites[0].getWidth();
+    height = sprites[0].getHeight();
 }
 
 void Sprite::ortogonalToIsometric()
@@ -197,4 +201,16 @@ void Sprite::ortogonalToIsometric()
     for(int i = 0; i < maxFrames; i++)
         sprites[i].ortogonalToIsometric();
 
+    width = sprites[0].getWidth();
+    height = sprites[0].getHeight();
+}
+
+int Sprite::getWidth()
+{
+    return width;
+}
+
+int Sprite::getHeight()
+{
+    return height;
 }
