@@ -171,7 +171,12 @@ bool Canvas::Ok() const
 //--------------------------------------------------------------------------------------------------
 Color::operator SDL_Color() const
 {
-	return SDL_Color { r, g, b, unused };
+    SDL_Color tmp;
+    tmp.r = r;
+    tmp.g = g;
+    tmp.b = b;
+    tmp.unused = unused;
+    return tmp;
 }
 //--------------------------------------------------------------------------------------------------
 Color::Color (const SDL_Color& src) :r (src.r), g (src.g), b (src.b), unused (src.unused){}
@@ -216,7 +221,15 @@ Rect& Rect::operator = (const Rect& that) {x = that.x; y = that.y; w = that.w; h
 //--------------------------------------------------------------------------------------------------
 Rect::Rect (const SDL_Rect& that):x(that.x), y(that.y), w(that.w), h(that.h){}
 //--------------------------------------------------------------------------------------------------
-Rect::operator SDL_Rect() const {return SDL_Rect {x, y, w, h};}
+Rect::operator SDL_Rect() const
+{
+    SDL_Rect tmp;
+    tmp.x = x;
+    tmp.y = y;
+    tmp.w = w;
+    tmp.h = h;
+    return tmp;
+}
 //--------------------------------------------------------------------------------------------------
 void Rect::Draw (Canvas* screen, Color c) const
 {
