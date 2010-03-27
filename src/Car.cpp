@@ -71,7 +71,7 @@ void Car::Draw (Canvas* c)
 {
 	if (pic != 0)
 		pic->draw (c, pos.To<int>(), (PI + back.orient.Get_angle())/PI/2);
-	else	//if car hasn't sprite, it will be drawn schematically
+//	else	//if car hasn't sprite, it will be drawn schematically
 	{
 		dbgcanv = c;//deprecated;
 		assert(Ok());

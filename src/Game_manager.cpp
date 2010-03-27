@@ -116,12 +116,27 @@ bool Game_manager::Main_loop()
 
 		if (!look->Has_target()) look->Set_target (*cars->begin());
 		look->Actions();
-		bool found = cars->Delete_deadalives ();
+		bool found = cars->Delete_deadalives();
+
+		Draw_fps (dt);
 
 		pic->Draw (look);
 		players->Create_cars_for_poors (models, cars, ground);
     }
 	return Ok();
+}
+//--------------------------------------------------------------------------------------------------
+void Game_manager::Draw_fps (float dt) const
+{
+	Point screen_pos = pic->Get_screen()->getPos ();
+
+	static float mid_dt = dt;
+	mid_dt = (499*mid_dt + dt)/500;
+
+	Rect brd (screen_pos.x + 10, screen_pos.y + 10, 100, 100);
+	char buf[128];
+	sprintf (buf, "fps: %.2f", 1/mid_dt);
+	font.Draw_line (pic->Get_screen(), buf, &brd);
 }
 //--------------------------------------------------------------------------------------------------
 void Game_manager::tmpExport()
