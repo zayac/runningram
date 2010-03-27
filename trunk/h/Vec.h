@@ -29,3 +29,4 @@ typedef Vec<int, 2> Point;//!!! Take attention !!!
 typedef Vec<float, 2> Vector2f;
 
 const float aboutnull = 0.000000001;
+const float nearnull = 0.001;

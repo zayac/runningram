@@ -199,18 +199,11 @@ bool Battlefield::No_road (int x, int y) const
 bool Battlefield::Is_sand (int x, int y) const
 {
 	return _tileFactory.getTile(CELL(x, y))->isSand();
-//	return CELL(x, y) == '2' || CELL(x, y) == '3';
 }
 //--------------------------------------------------------------------------------------------------
 float Battlefield::Friction (int x, int y) const
 {
 	return _tileFactory.getTile(CELL(x, y))->getFriction();
-//	if (CELL(x, y) == '2')
-//		return 5;
-//	else if (CELL(x, y) = '3')
-//		return -0.2;
-//	else
-//		return 1;
 }
 //--------------------------------------------------------------------------------------------------
 void Battlefield::Clean_field (char fill_cell)

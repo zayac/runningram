@@ -133,6 +133,6 @@ Vector2f Orient::Rotate (Vector2f what)
 bool Orient::Ok() const
 {
 	return -PI <= ang && ang <= PI && (updated == true || updated == false) &&
-		   0.9999 < dir.Lensq() && dir.Lensq() < 1.00001;
+		   1 - nearnull < dir.Lensq() && dir.Lensq() < nearnull + 1;
 }
 //--------------------------------------------------------------------------------------------------

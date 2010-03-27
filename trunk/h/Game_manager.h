@@ -37,6 +37,8 @@ class Game_manager
 
 	char buffer[1048576];
 
+	void Draw_fps (float dt) const;
+
 public:
 	Game_manager (int argc, char *argv[]);
 	virtual ~Game_manager();
