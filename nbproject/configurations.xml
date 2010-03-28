@@ -11,6 +11,7 @@
         <in>Canvas.h</in>
         <in>Car.h</in>
         <in>Carman.h</in>
+        <in>ClientSocket.h</in>
         <in>Collision_detection.h</in>
         <in>Console.h</in>
         <in>Eventman.h</in>
@@ -23,6 +24,8 @@
         <in>Key_event.h</in>
         <in>Orient.h</in>
         <in>Player_manager.h</in>
+        <in>ServerSocket.h</in>
+        <in>Socket.h</in>
         <in>Sprite.h</in>
         <in>TileFactory.h</in>
         <in>UniId.h</in>
@@ -38,6 +41,7 @@
         <in>Canvas.cpp</in>
         <in>Car.cpp</in>
         <in>Carman.cpp</in>
+        <in>ClientSocket.cpp</in>
         <in>Collision_detection.cpp</in>
         <in>Console.cpp</in>
         <in>Eventman.cpp</in>
@@ -48,6 +52,8 @@
         <in>Key_event.cpp</in>
         <in>Orient.cpp</in>
         <in>Player_manager.cpp</in>
+        <in>ServerSocket.cpp</in>
+        <in>Socket.cpp</in>
         <in>Sprite.cpp</in>
         <in>TileFactory.cpp</in>
         <in>initparser.cpp</in>
