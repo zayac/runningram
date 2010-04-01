@@ -5,6 +5,7 @@
  * Created on January 7, 2010, 8:45 PM
  */
 
+#include <unistd.h>
 #include <SDL/SDL.h>
 
 #include "Console.h"
@@ -57,15 +58,15 @@ bool Game_manager::Init (int argc, char *argv[])
 		File_loader fl ((char*)"./settings.cfg");
 	    fl.Read_sector (&gen);
 		result = result && pic->Init();			//Graphic subsystem must be initialaised previously
-	
-		gen.Delete_props ();
+                pic->SplashScreen();
+//		gen.Delete_props ();
 		gen.Add_param (cmd->Get_parser ());
 		gen.Add_param (ground->Get_parser ());
 		gen.Add_param (models->Get_parser ());
 		gen.Add_param (players->Get_parser ());
 		fl.Read_sector (&gen);
 
-		sense->Register_key_action (new Arg_Function<void, void> (DBG_switch), EV_KEYDOWN, KI_s);
+                sense->Register_key_action (new Arg_Function<void, void> (DBG_switch), EV_KEYDOWN, KI_s);
 
 		sense->Register_key_action (new Arg_Method<void, void, Console> (cmd, &Console::Switch),
 																			EV_KEYDOWN, KI_BACKQUOTE);
@@ -86,6 +87,9 @@ bool Game_manager::Init (int argc, char *argv[])
 		if (co) delete co;
 		co = new Console_output (cmd);
 		Exception::Set_output (co);
+                
+                sleep(2); // temporary!!!
+                
 	}
 	catch (Exception& ex)
 	{
