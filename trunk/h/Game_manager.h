@@ -18,6 +18,9 @@ class Carman;
 class Player_manager;
 class Console_output;
 
+class Server;
+class Client;
+
 #include <Fontc.h>
 
 #include "Exception.h"//!!! deprecated
@@ -32,6 +35,8 @@ class Game_manager
 	Activeman* cars;
 	Carman* models;
 	Player_manager* players;
+	Server* serv;
+	Client* clie;
 
 	Std_output_err* co;//for Exceptions
 
@@ -49,6 +54,9 @@ public:
 
 	void tmpExport();
 	void tmpImport();
+
+	void Get_server_context();
+	void Send_context();
 
 	bool Ok() const;
 

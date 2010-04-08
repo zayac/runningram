@@ -22,14 +22,26 @@
 #include "Carman.h"
 #include "Player_manager.h"
 
+#include "Client.h"
+#include "Server.h"
+enum NET_STATUS
+{
+	net0,
+	netclient,
+	netserver
+} nstate = net0;
+
 Game_manager::Game_manager (int argc, char *argv[])
 :pic (new Graphic_subsystem), sense (new Eventman), look(new Camera), ground (new Battlefield),
- cmd (new Console), cars (new Activeman), players (new Player_manager)
+ cmd (new Console), cars (new Activeman), players (new Player_manager),
+ clie (new Client)
 {
 	co = new Output_cerr;
 	Exception::Set_output (co);
 
 	models = new Carman (sense);
+
+	if (nstate == netserver) serv =new Server(4334);
 
 	Init (argc, argv);
 	assert(Ok());
@@ -37,15 +49,18 @@ Game_manager::Game_manager (int argc, char *argv[])
 //--------------------------------------------------------------------------------------------------
 Game_manager::~Game_manager()
 {
-	if (!players) delete players; players = 0;
-	if (!ground) delete ground; ground = 0;
-	if (!models) delete models; models = 0;
-	if (!sense) delete sense; sense = 0;
-	if (!look) delete look; look = 0;
-	if (!cars) delete cars; cars = 0;
-	if (!cmd) delete cmd; cmd = 0;
-	if (!pic) delete pic; pic = 0;
-	if (!co) delete co; co = 0;
+	if (players) delete players; players = 0;
+	if (ground) delete ground; ground = 0;
+	if (models) delete models; models = 0;
+	if (sense) delete sense; sense = 0;
+	if (look) delete look; look = 0;
+	if (cars) delete cars; cars = 0;
+	if (cmd) delete cmd; cmd = 0;
+	if (pic) delete pic; pic = 0;
+	if (co) delete co; co = 0;
+	
+	if (serv) delete serv; serv = 0;
+	if (clie) delete clie; clie = 0;
 }
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Init (int argc, char *argv[])
@@ -84,11 +99,19 @@ bool Game_manager::Init (int argc, char *argv[])
 	    result = result && cmd->Init (pic);
 		result = result && ground->Init();
 
-		if (co) delete co;
-		co = new Console_output (cmd);
-		Exception::Set_output (co);
-                
-                sleep(2); // temporary!!!
+//		if (co) delete co;
+//		co = new Console_output (cmd);
+//		Exception::Set_output (co);
+		
+		switch (nstate)
+		{
+		case netclient:
+			clie->Connect ("localhost", 4334);
+			break;
+		case netserver:
+			serv->accept_one();
+			break;
+		};
                 
 	}
 	catch (Exception& ex)
@@ -101,32 +124,45 @@ bool Game_manager::Init (int argc, char *argv[])
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Main_loop()
 {
-	unsigned int last_time = SDL_GetTicks();
-	float dt = 0;
-    while (!sense->Stopped())
-    {
-		sense->Acts();
-		dt = 0.001*(SDL_GetTicks() - last_time);
-		cars->Activate (dt);
-				cars->Collis_brd (ground);
-                cars->Process_collisions();
+	try
+	{
+		unsigned int last_time = SDL_GetTicks ();
+		float dt = 0;
+		
+		while (!sense->Stopped ())
+		{
+			sense->Acts ();
+			dt = 0.001 * (SDL_GetTicks () - last_time);
+			cars->Activate (dt);
+			cars->Collis_brd (ground);
+			cars->Process_collisions ();
 
-		last_time = SDL_GetTicks();
-		ground->Draw (pic);
-		cars->Draw (pic->Get_screen ());
-		cmd->Draw (pic);
+			last_time = SDL_GetTicks ();
+			
+			
+			
+			ground->Draw (pic);
+			cars->Draw (pic->Get_screen ());
+			cmd->Draw (pic);
 
-		players->Draw_comp_table (pic->Get_screen (), &font);
+			players->Draw_comp_table (pic->Get_screen (), &font);
 
-		if (!look->Has_target()) look->Set_target (*cars->begin());
-		look->Actions();
-		bool found = cars->Delete_deadalives();
+			if (!look->Has_target ()) look->Set_target (*cars->begin ());
+			look->Actions ();
+			bool found = cars->Delete_deadalives ();
 
-		Draw_fps (dt);
+			Draw_fps (dt);
 
-		pic->Draw (look);
-		players->Create_cars_for_poors (models, cars, ground);
-    }
+			pic->Draw (look);
+			players->Create_cars_for_poors (models, cars, ground);
+			if (nstate == netclient) Get_server_context();
+			if (nstate == netserver) Send_context();
+		}
+	}
+	catch (Exception& ex)
+	{
+		ex.print();
+	}
 	return Ok();
 }
 //--------------------------------------------------------------------------------------------------
@@ -135,7 +171,7 @@ void Game_manager::Draw_fps (float dt) const
 	Point screen_pos = pic->Get_screen()->getPos ();
 
 	static float mid_dt = dt;
-	mid_dt = (499*mid_dt + dt)/500;
+	mid_dt = (49*mid_dt + dt)/50;
 
 	Rect brd (screen_pos.x + 10, screen_pos.y + 10, 100, 100);
 	char buf[128];
@@ -159,6 +195,34 @@ void Game_manager::tmpImport()
 {
 //	cars->Import (buffer, 1048576);
 	players->Import (buffer, 1048576);
+}
+//--------------------------------------------------------------------------------------------------
+void Game_manager::Get_server_context()
+{
+	static bool confirmed = false;
+//	if (!confirmed)
+		clie->Confirm (1);
+	int received = clie->Receive (buffer, 1048576);
+//	cmd->Push_string (buffer);
+	if (received != 0)
+	{
+		cars->Import (buffer, received);
+		confirmed = true;
+	}
+	else confirmed = false;
+}
+//--------------------------------------------------------------------------------------------------
+void Game_manager::Send_context()
+{
+//	static int guri = 0;
+//	guri++;
+//	sprintf (buffer, "guri: %d", guri);
+//	int size = strlen (buffer);
+	int conf = serv->Get_confirmation ();
+	if (conf != 1) throw Exception ("wrong confirmation");
+
+	int size = cars->Export (buffer, 1048576);
+	serv->send (buffer, size);
 }
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Cleanup()

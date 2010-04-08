@@ -9,49 +9,4 @@
             <line>34</line>
         </file>
     </editor-bookmarks>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/home/necto/proj/runningram/h/Car.h</file>
-        <file>file:/home/necto/proj/runningram/h/Fontc.h</file>
-        <file>file:/home/necto/proj/runningram/h/Eventman.h</file>
-        <file>file:/home/necto/proj/runningram/h/Orient.h</file>
-        <file>file:/home/necto/proj/runningram/src/Car.cpp</file>
-        <file>file:/home/necto/proj/runningram/src/Game_manager.cpp</file>
-        <file>file:/home/necto/proj/runningram/src/Orient.cpp</file>
-        <file>file:/home/necto/proj/runningram/src/Activeman.cpp</file>
-        <file>file:/home/necto/proj/runningram/src/Graphic_subsystem.cpp</file>
-        <file>file:/home/necto/proj/runningram/h/Graphic_subsystem.h</file>
-        <file>file:/home/necto/proj/runningram/main.cpp</file>
-        <file>file:/home/necto/proj/runningram/h/Key_event.h</file>
-        <file>file:/home/necto/proj/runningram/src/Eventman.cpp</file>
-        <file>file:/home/necto/proj/runningram/src/Console.cpp</file>
-        <file>file:/home/necto/proj/runningram/src/Key_event.cpp</file>
-        <file>file:/home/necto/proj/runningram/h/Battlefield.h</file>
-        <file>file:/home/necto/proj/runningram/h/Game_manager.h</file>
-        <file>file:/home/necto/proj/runningram/src/Camera.cpp</file>
-        <file>file:/home/necto/proj/runningram/h/Carman.h</file>
-        <file>file:/home/necto/proj/runningram/h/Activeman.h</file>
-        <file>file:/home/necto/proj/runningram/field.map</file>
-        <file>file:/home/necto/proj/runningram/h/Camera.h</file>
-        <file>file:/home/necto/proj/runningram/src/Battlefield.cpp</file>
-        <file>file:/home/necto/proj/runningram/h/Canvas.h</file>
-        <file>file:/home/necto/proj/runningram/h/IsometricField.h</file>
-        <file>file:/home/necto/proj/runningram/h/Console.h</file>
-        <file>file:/home/necto/proj/runningram/src/Canvas.cpp</file>
-        <file>file:/home/necto/proj/runningram/h/UniId.h</file>
-        <file>file:/home/necto/proj/runningram/h/Sprite.h</file>
-        <file>file:/home/necto/proj/runningram/h/Vec_spec.h</file>
-        <file>file:/home/necto/proj/runningram/h/Collision_detection.h</file>
-        <file>file:/home/necto/proj/runningram/src/Collision_detection.cpp</file>
-        <file>file:/home/necto/proj/runningram/h/Vec.h</file>
-        <file>file:/home/necto/proj/runningram/h/Player_manager.h</file>
-        <file>file:/home/necto/proj/runningram/src/Sprite.cpp</file>
-        <file>file:/home/necto/proj/runningram/src/Carman.cpp</file>
-        <file>file:/home/necto/proj/runningram/src/initparser.cpp</file>
-        <file>file:/home/necto/proj/runningram/h/initparser.h</file>
-        <file>file:/home/necto/proj/runningram/src/Player_manager.cpp</file>
-        <file>file:/home/necto/proj/runningram/src/Fontc.cpp</file>
-        <file>file:/home/necto/proj/runningram/h/TileFactory.h</file>
-        <file>file:/home/necto/proj/runningram/h/ClientSocket.h</file>
-        <file>file:/home/necto/proj/runningram/h/Socket.h</file>
-    </open-files>
 </project-private>
