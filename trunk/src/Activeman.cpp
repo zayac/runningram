@@ -183,29 +183,87 @@ int Activeman::Export (char* buffer, int size) const
 	int offset = 0;
 	for (const_iterator i = begin(); i != end(); ++i)
 	{
+		*(buffer + offset++) = 'c';//continue
+
+		*((int*)(buffer + offset)) = (**i).Id();
+		offset += sizeof (int);
+		
 		int cur_offs = (**i).Export (buffer + offset, size - offset);
 		if (cur_offs == -1) return -1;
 		offset += cur_offs;
-		*(buffer + cur_offs) = 'e';//existing car
-		++cur_offs;
+		
 		if (offset > size) return -1;
 	}
+	*(buffer + offset++) = 's';//stop
 	return offset;
 }
 //--------------------------------------------------------------------------------------------------
 int Activeman::Import (char* buffer, int size)
 {
 	int offset = 0;
-	for (const_iterator i = begin(); i != end(); ++i)
+	for (iterator i = begin();/* i != end()*/;)
 	{
-		int cur_offs = (**i).Import (buffer + offset, size - offset);
-		if (cur_offs == -1) return -1;
-		offset += cur_offs;
-		if (*(buffer + cur_offs) != 'e') return -1;//Unknown data
-		++cur_offs;
-		if (offset > size) return -1;
+		char next = *(buffer + offset++);
+		if (next == 's')		//stop
+		{
+			Erase (i, end());
+			return offset;
+		}
+		if (next != 'c') return -1;			//if not 's' and not 'c' I can't determine what it is
+		
+		int id = *((int*)(buffer + offset));
+		offset += sizeof(int);
+
+		int len = -1;
+
+		if (i == end() || id != (**i).Id())
+		{
+			bool found = false;
+			iterator j = i;
+			for (j = i; j != end(); ++j)
+				if ((**j).Id() == id)
+				{
+					found = true;
+					break;
+				}
+			if (found)
+			{
+				std::swap (*i, *j);
+				len = (**i).Import (buffer + offset, size - offset);
+			}
+//			else
+//			{
+//				j = insert (i, new Player ("no name", 0, Key_storage ()));
+//				len = (**j).Import (buffer + offset, size - offset);
+//			}
+		}
+		else	len = (**i).Import (buffer + offset, size - offset);
+		
+		if (len == -1) return -1;
+		offset += len;
+
+		if (i != end()) ++i;
 	}
 	return offset;
+	
+//	int offset = 0;
+//	for (const_iterator i = begin(); i != end(); ++i)
+//	{
+//		int cur_offs = (**i).Import (buffer + offset, size - offset);
+//		if (cur_offs == -1) return -1;
+//		offset += cur_offs;
+//		if (*(buffer + cur_offs) != 'e') return -1;//Unknown data
+//		++cur_offs;
+//		if (offset > size) return -1;
+//	}
+//	return offset;
+}
+//--------------------------------------------------------------------------------------------------
+void Activeman::Erase (iterator start, iterator finish)
+{
+	for (iterator i = start; i != finish; ++i)
+		delete *i;
+	erase (start, finish);
 }
 //--------------------------------------------------------------------------------------------------
 bool Activeman::Ok() const

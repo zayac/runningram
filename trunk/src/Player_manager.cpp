@@ -93,11 +93,15 @@ int Player_manager::Export (char* buffer, int size) const
 	for (const_iterator i = begin(); i != end(); ++i)
 	{
 		*(buffer + offset++) = 'c';//continue
-		*(buffer + offset) = (**i).Id ();
+
+		*((int*)(buffer + offset)) = (**i).Id ();
 		offset += sizeof(int);
+
 		int len = (**i).Export (buffer + offset, size - offset);
 		if (len == -1) return -1;
+		
 		offset += len;
+		if (offset > size) return -1;
 	}
 	*(buffer + offset++) = 's';//stop
 	return offset;
@@ -106,13 +110,21 @@ int Player_manager::Export (char* buffer, int size) const
 int Player_manager::Import (char* buffer, int size)
 {
 	int offset = 0;
-	for (iterator i = begin(); i != end(); ++i)
+	for (iterator i = begin();/* i != end()*/;)
 	{
-		if (*(buffer + offset++) != 'c') return -1;
-		int id = *(buffer + offset);
+		char next = *(buffer + offset++);
+		if (next == 's')
+		{
+			Erase (i, end());
+			return offset;
+		}
+		if (next != 'c') return -1;			//if not 's' and not 'c' I can't determine what it is
+		int id = *((int*)(buffer + offset));
 		offset += sizeof(int);
 
-		if (id != (**i).Id())
+		int len = -1;
+
+		if (i == end() || id != (**i).Id())
 		{
 			bool found = false;
 			iterator j = i;
@@ -125,20 +137,29 @@ int Player_manager::Import (char* buffer, int size)
 			if (found)
 			{
 				std::swap (*i, *j);
-				(**i).Import (buffer + offset, size - offset);
+				len = (**i).Import (buffer + offset, size - offset);
 			}
 			else
 			{
 				j = insert (i, new Player ("no name", 0, Key_storage ()));
-				(**j).Import (buffer + offset, size - offset);
+				len = (**j).Import (buffer + offset, size - offset);
 			}
 		}
+		else	len = (**i).Import (buffer + offset, size - offset);
 
-		int len = (**i).Import (buffer + offset, size - offset);
 		if (len == -1) return -1;
 		offset += len;
+
+		if (i != end()) ++i;
 	}
 	return offset;
+}
+//--------------------------------------------------------------------------------------------------
+void Player_manager::Erase (iterator start, iterator finish)
+{
+	for (iterator i = start; i != finish; ++i)
+		delete *i;
+	erase (start, finish);
 }
 //--------------------------------------------------------------------------------------------------
 #include "Canvas.h"
@@ -170,6 +191,8 @@ void Player_manager::Draw_comp_table (Canvas* where, Fontc* font)
 
 	where->setPos (where_pos);
 }
+//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
 int Player::max_id = 0;
 //--------------------------------------------------------------------------------------------------
 Player::Player (string name_, int pref_model, const Key_storage& ks_)

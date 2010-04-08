@@ -17,6 +17,8 @@ class Battlefield;
 
 class Activeman :public list <Active*>
 {
+	void Erase(iterator start, iterator finish);
+
 public:
 //	Activeman();
 //	Activeman(const Activeman& orig);

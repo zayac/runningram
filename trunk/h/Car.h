@@ -37,10 +37,13 @@ public:
 
 class Active :public Limited
 {
+	int id;
+	static int max_id;
+
 protected:
-	virtual int Sign_date_len() const {return sizeof(pos) + sizeof(r);}
+	virtual int Sign_data_len() const {return sizeof(pos) + sizeof(r);}
 public:
-	Active (Vector2f position, float r_):Limited (position, r_){}
+	Active (Vector2f position, float r_):Limited (position, r_), id(max_id++){}
 	virtual void Actions (float dt) = 0;
 	virtual void Draw (Canvas*) = 0;
 	virtual void Collis_brd (Rect width, float fric) = 0;
@@ -49,6 +52,8 @@ public:
 
 	virtual int Export (char* buffer, int size) const;
 	virtual int Import (char* buffer, int size);
+
+	inline int Id() const {return id;}
 	
 	virtual int My_type() const {return No_type;}
 	virtual bool Dead() const = 0;
@@ -201,7 +206,7 @@ class Car :public Active
 	void Move (Vector2f disp) {back.pos += disp; front.pos += disp;}
 
 protected:
-	virtual int Sign_date_len() const;
+	virtual int Sign_data_len() const;
 
 public:
 	Car (Vector2f pos, float health, float motor_force, float bouncy, float angular_vel, float rudder_spring,
