@@ -181,11 +181,11 @@ void Game_manager::Draw_fps (float dt) const
 //--------------------------------------------------------------------------------------------------
 void Game_manager::tmpExport()
 {
-//	cars->Export (buffer, 1048576);
-	players->Export (buffer, 1048576);
-	Player_manager::iterator i, j;
-	i = players->begin ();
-	j = players->begin();
+	cars->Export (buffer, 1048576);
+//	players->Export (buffer, 1048576);
+	Activeman::iterator i, j;
+	i = cars->begin ();
+	j = cars->begin();
 	++j;
 	std::swap (*i, *j);
 
@@ -193,23 +193,24 @@ void Game_manager::tmpExport()
 //--------------------------------------------------------------------------------------------------
 void Game_manager::tmpImport()
 {
-//	cars->Import (buffer, 1048576);
-	players->Import (buffer, 1048576);
+	cars->Import (buffer, 1048576);
+//	players->Import (buffer, 1048576);
 }
 //--------------------------------------------------------------------------------------------------
 void Game_manager::Get_server_context()
 {
-	static bool confirmed = false;
+//	static bool confirmed = false;
 //	if (!confirmed)
 		clie->Confirm (1);
 	int received = clie->Receive (buffer, 1048576);
 //	cmd->Push_string (buffer);
 	if (received != 0)
 	{
-		cars->Import (buffer, received);
-		confirmed = true;
+		int ccsize = cars->Import (buffer, received);
+		players->Import (buffer + ccsize, received - ccsize);
+//		confirmed = true;
 	}
-	else confirmed = false;
+//	else confirmed = false;
 }
 //--------------------------------------------------------------------------------------------------
 void Game_manager::Send_context()
@@ -222,6 +223,7 @@ void Game_manager::Send_context()
 	if (conf != 1) throw Exception ("wrong confirmation");
 
 	int size = cars->Export (buffer, 1048576);
+	size += players->Export (buffer + size, 1048576 - size);
 	serv->send (buffer, size);
 }
 //--------------------------------------------------------------------------------------------------

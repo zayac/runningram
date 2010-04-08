@@ -74,6 +74,8 @@ class Player_manager :public list<Player*>
 	class Initialaiser;
 	Initialaiser* parser;
 
+	void Erase(iterator start, iterator finish);
+
 public:
 	Player_manager();
 	virtual ~Player_manager();

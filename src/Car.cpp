@@ -482,9 +482,9 @@ void Car::Appl_force (Vector2f f, Vector2f papp, bool resistancive)
     front.Appl_force (acc_axis/front.rev_mass + ortho_fproj, resistancive);
 }
 //--------------------------------------------------------------------------------------------------
-int Car::Sign_date_len() const
+int Car::Sign_data_len() const
 {
-	return Active::Sign_date_len () + sizeof (back) + sizeof (front) + sizeof (rmass) + sizeof (lenght) +
+	return Active::Sign_data_len () + sizeof (back) + sizeof (front) + sizeof (rmass) + sizeof (lenght) +
 		sizeof (health) + sizeof (motor_force) + sizeof (bouncy) +
 		sizeof (angular_vel) + sizeof (rudder_spring);
 }
@@ -493,7 +493,7 @@ int Car::Export (char* buffer, int size) const
 {
 	int disp = Active::Export (buffer, size);
 	if (disp == -1) return -1;
-	if (Sign_date_len () > size) return -1;
+	if (Sign_data_len () > size) return -1;
 
 #define WRITE(field) memcpy (buffer + disp, &field, sizeof(field)); disp += sizeof(field);
 
@@ -514,7 +514,7 @@ int Car::Import (char* buffer, int size)
 {
 	int disp = Active::Import (buffer, size);
 	if (disp == -1) return -1;
-	if (Sign_date_len () > size) return -1;
+	if (Sign_data_len () > size) return -1;
 
 #define READ(field) memcpy (&field, buffer + disp, sizeof(field)); disp += sizeof(field);
 
@@ -582,6 +582,8 @@ bool Car::Ok() const
 //--------------------------------------------------------------------------------------------------
 
 
+//--------------------------------------------------------------------------------------------------
+int Active::max_id = 0;
 //--------------------------------------------------------------------------------------------------
 int Active::Export (char* buffer, int size) const
 {
