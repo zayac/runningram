@@ -2,6 +2,31 @@
 <configurationDescriptor version="65">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <df name="runningram" root=".">
+      <df name="for_net_tests">
+        <df name="sock" kind="SOURCE_LOGICAL_FOLDER">
+          <df name="bin">
+            <df name="Debug" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <df name="obj">
+            <df name="Debug" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <in>Client.cpp</in>
+          <in>Client.h</in>
+          <in>Exception.cpp</in>
+          <in>Exception.h</in>
+          <in>Server.cpp</in>
+          <in>Server.h</in>
+          <in>Socket.cpp</in>
+          <in>Socket.h</in>
+          <in>UniId.h</in>
+          <in>mainclie.cpp</in>
+          <in>mainserv.cpp</in>
+          <in>msock.cpp</in>
+          <in>msock.h</in>
+        </df>
+      </df>
       <df name="GNU-i386-Linux">
       </df>
       <df name="h">
@@ -11,6 +36,7 @@
         <in>Canvas.h</in>
         <in>Car.h</in>
         <in>Carman.h</in>
+        <in>Client.h</in>
         <in>ClientSocket.h</in>
         <in>Collision_detection.h</in>
         <in>Console.h</in>
@@ -24,6 +50,7 @@
         <in>Key_event.h</in>
         <in>Orient.h</in>
         <in>Player_manager.h</in>
+        <in>Server.h</in>
         <in>ServerSocket.h</in>
         <in>Socket.h</in>
         <in>Sprite.h</in>
@@ -41,6 +68,7 @@
         <in>Canvas.cpp</in>
         <in>Car.cpp</in>
         <in>Carman.cpp</in>
+        <in>Client.cpp</in>
         <in>ClientSocket.cpp</in>
         <in>Collision_detection.cpp</in>
         <in>Console.cpp</in>
@@ -52,6 +80,7 @@
         <in>Key_event.cpp</in>
         <in>Orient.cpp</in>
         <in>Player_manager.cpp</in>
+        <in>Server.cpp</in>
         <in>ServerSocket.cpp</in>
         <in>Socket.cpp</in>
         <in>Sprite.cpp</in>

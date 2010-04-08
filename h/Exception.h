@@ -30,16 +30,8 @@ class Exception
 	static Std_output_err* out;
 
 public:
-	Exception() :text("unnamed Exception"){}
-	Exception (const string& str, int line = 0, char* file = 0):text (str)
-	{
-		char buf[128] = "";
-		if (file != 0)
-			sprintf (buf, "(at line: %d; in file: %s)", line, file);
-		else if (line != 0)
-			sprintf (buf, "(at line: %d;)", line);
-		text += buf;
-	};
+	Exception();
+	Exception (const string& str, int line = 0, char* file = 0);
 
 	void print() {out->print (text);};
 
