@@ -49,25 +49,26 @@ public:
 
 public:
 	Car_creator (Eventman* sens);
-	Car* New_car (Vector2f pos, Orient start_orient, Player* host) const;
+	Car* New_car (Vector2f pos, Orient start_orient, Player* host, int id) const;
 
 	Car_creator* Create_copy() const;
 
 	inline void setPicture (Sprite* pic) {picture = pic;}
 };
 
-class Carman
+class Carman: public Transmitted
 {
 	struct Creation
 	{
 		int model;
 		Vector2f pos;
 		Orient start_orient;
+		int id;
 		int pl_id;
 
 		Creation();
 		Creation (const Creation&);
-		Creation (int model, Vector2f pos, Orient start_orient, int pl_id);
+		Creation (int model, Vector2f pos, Orient start_orient, int pl_id, int car_id);
 
 		int Export (char* buffer, int size) const;
 		int Import (char* buffer, int size);
@@ -83,6 +84,8 @@ class Carman
 	class Initialaiser;
 	Initialaiser* parser;
 
+	Player_manager* hosts;
+	Activeman* objs;
 
 public:
 	Carman (Eventman* sense);
@@ -92,11 +95,14 @@ public:
 
 	void Add_model (Car_creator* m) {models.push_back(m);}
 	
-	Car* Create_car (int model, Vector2f pos, Orient start_orient, Player* host);
+	Car* Create_car (int model, Vector2f pos, Orient start_orient, Player* host, int id = 0);
 	void Clear_last_creations();
+	
+	void Set_pm (Player_manager* pm) {hosts = pm;}
+	void Set_am (Activeman* am) {objs = am;}
 
 	int Export (char* buffer, int size) const;
-	int Import (char* buffer, int size, Player_manager* hosts, Activeman* objs);
+	int Import (char* buffer, int size);
 
 };
 

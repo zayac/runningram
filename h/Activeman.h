@@ -8,6 +8,7 @@
 #ifndef _ACTIVEMAN_H
 #define	_ACTIVEMAN_H
 #include <list>
+#include "Transmitted.h"
 
 using std::list;
 
@@ -15,12 +16,12 @@ class Canvas;
 class Active;
 class Battlefield;
 
-class Activeman :public list <Active*>
+class Activeman :public list <Active*>, public Transmitted
 {
-	void Erase(iterator start, iterator finish);
+	void Kill(iterator start, iterator finish);
 
 public:
-//	Activeman();
+	Activeman();
 //	Activeman(const Activeman& orig);
 //	virtual ~Activeman();
 

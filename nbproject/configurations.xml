@@ -37,7 +37,6 @@
         <in>Car.h</in>
         <in>Carman.h</in>
         <in>Client.h</in>
-        <in>ClientSocket.h</in>
         <in>Collision_detection.h</in>
         <in>Console.h</in>
         <in>Eventman.h</in>
@@ -51,10 +50,10 @@
         <in>Orient.h</in>
         <in>Player_manager.h</in>
         <in>Server.h</in>
-        <in>ServerSocket.h</in>
         <in>Socket.h</in>
         <in>Sprite.h</in>
         <in>TileFactory.h</in>
+        <in>Transmitted.h</in>
         <in>UniId.h</in>
         <in>Vec.h</in>
         <in>Vec_spec.h</in>
@@ -69,7 +68,6 @@
         <in>Car.cpp</in>
         <in>Carman.cpp</in>
         <in>Client.cpp</in>
-        <in>ClientSocket.cpp</in>
         <in>Collision_detection.cpp</in>
         <in>Console.cpp</in>
         <in>Eventman.cpp</in>
@@ -81,7 +79,6 @@
         <in>Orient.cpp</in>
         <in>Player_manager.cpp</in>
         <in>Server.cpp</in>
-        <in>ServerSocket.cpp</in>
         <in>Socket.cpp</in>
         <in>Sprite.cpp</in>
         <in>TileFactory.cpp</in>
@@ -105,6 +102,74 @@
   <projectmakefile>Makefile-runningram.mk</projectmakefile>
   <confs>
     <conf name="Default" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>$(MAKE) -f Makefile</buildCommand>
+          <cleanCommand>$(MAKE) -f Makefile clean</cleanCommand>
+          <executablePath>./GNU-i386-Linux/runningram</executablePath>
+          <ccTool>
+            <incDir>
+              <pElem>.</pElem>
+            </incDir>
+          </ccTool>
+        </makeTool>
+      </makefileType>
+      <folder path="runningram">
+        <ccTool>
+          <incDir>
+            <pElem>h</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <item path="main.cpp" ex="false" tool="1">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/include/SDL</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+    </conf>
+    <conf name="client" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>$(MAKE) -f Makefile</buildCommand>
+          <cleanCommand>$(MAKE) -f Makefile clean</cleanCommand>
+          <executablePath>./GNU-i386-Linux/runningram</executablePath>
+          <ccTool>
+            <incDir>
+              <pElem>.</pElem>
+            </incDir>
+          </ccTool>
+        </makeTool>
+      </makefileType>
+      <folder path="runningram">
+        <ccTool>
+          <incDir>
+            <pElem>h</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <item path="main.cpp" ex="false" tool="1">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/include/SDL</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+    </conf>
+    <conf name="server" type="0">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>GNU|GNU</compilerSet>

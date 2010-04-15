@@ -9,6 +9,7 @@
 #define	_PLAYER_MANAGER_H
 #include <list>
 #include <string>
+#include "Transmitted.h"
 #include "Key_event.h"
 #include "Vec.h"
 
@@ -68,7 +69,7 @@ public:
 	void Car_crashed() {mobile = 0;}
 };
 
-class Player_manager :public list<Player*>
+class Player_manager :public list<Player*>, public Transmitted
 {
 
 	class Initialaiser;

@@ -68,7 +68,8 @@ public:
 	}
 }; // </editor-fold>
 
-Carman::Carman (Eventman* sense):parser (new Carman::Initialaiser ("[Model]", this, sense)) { }
+Carman::Carman (Eventman* sense):Transmitted ('C', true),
+parser (new Carman::Initialaiser ("[Model]", this, sense)), hosts(0), objs(0) { }
 
 Carman::~Carman ()
 {
@@ -82,15 +83,17 @@ Serializator* Carman::Get_parser()
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
-Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient, Player* host)
+Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient, Player* host, int id)
 {
 	for (citer i = models.begin(); i != models.end(); ++i)
 	{
 		Car_creator* cc = *i;
 		if ((**i).model_id == model)
 		{
-			last_creations.push_back (Creation (model, pos, start_orient, host->Id()));
-			return (**i).New_car (pos, start_orient, host);
+			Car* ncar = (**i).New_car (pos, start_orient, host, id);
+			last_creations.push_back (Creation (model, pos, start_orient, host->Id(), ncar->Id()));
+			important = true;
+			return ncar;
 		}
 	}
 	return 0;
@@ -99,6 +102,7 @@ Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient, Player* h
 void Carman::Clear_last_creations()
 {
 	last_creations.clear();
+	important = false;
 }
 //--------------------------------------------------------------------------------------------------
 int Carman::Export (char* buffer, int size) const
@@ -117,7 +121,7 @@ int Carman::Export (char* buffer, int size) const
 	return offset;
 }
 //--------------------------------------------------------------------------------------------------
-int Carman::Import (char* buffer, int size, Player_manager* hosts, Activeman* objs)
+int Carman::Import (char* buffer, int size)
 {
 	int offset = 0;
 	Creation cur;
@@ -127,7 +131,7 @@ int Carman::Import (char* buffer, int size, Player_manager* hosts, Activeman* ob
 		if (len == -1) return -1;
 		offset += len;
 		if (offset > size) return -1;
-		objs->push_back (Create_car (cur.model, cur.pos, cur.start_orient, hosts->Get (cur.pl_id)));
+		objs->push_back (Create_car (cur.model, cur.pos, cur.start_orient, hosts->Get (cur.pl_id), cur.id));
 	}
 	return offset;
 }
@@ -148,10 +152,10 @@ Car_creator::Car_creator (Eventman* sens) :sense (sens),
 	picture(0)
 {}
 //--------------------------------------------------------------------------------------------------
-Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host) const
+Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host, int id) const
 {
 	Car* ret = new Car (pos, start_health, motor_force, bouncy, angular_vel,
-					 rudder_spring, rmass1, rmass2, lenght, r1, r2, fric, start_orient, picture, host);
+					 rudder_spring, rmass1, rmass2, lenght, r1, r2, fric, start_orient, id, picture, host);
 	Key_storage contr = host->Get_control ();
 	contr.Set_control (ret, sense);
 
@@ -181,13 +185,13 @@ Car_creator* Car_creator::Create_copy() const
 //--------------------------------------------------------------------------------------------------
 Carman::Creation::Creation() : model(0), pos(), start_orient(0), pl_id(0) {}
 //--------------------------------------------------------------------------------------------------
-Carman::Creation::Creation (int model_, Vector2f pos_, Orient start_orient_, int pl_id_)
-:model (model_), pos (pos_), start_orient (start_orient_), pl_id (pl_id_)
+Carman::Creation::Creation (int model_, Vector2f pos_, Orient start_orient_, int pl_id_, int car_id)
+:model (model_), pos (pos_), start_orient (start_orient_), pl_id (pl_id_), id (car_id)
 {
 }
 //--------------------------------------------------------------------------------------------------
 Carman::Creation::Creation (const Carman::Creation& orig)
-:model (orig.model), pos (orig.pos), start_orient (orig.start_orient), pl_id (orig.pl_id)
+:model (orig.model), pos (orig.pos), start_orient (orig.start_orient), pl_id (orig.pl_id), id (orig.id)
 {
 }
 //--------------------------------------------------------------------------------------------------

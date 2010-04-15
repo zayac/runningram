@@ -8,12 +8,16 @@
 #ifndef _CLIENT_H
 #define	_CLIENT_H
 #include <string>
+#include <list>
+#include "Transmitted.h"
 #include "Socket.h"
 
 using std::string;
+using std::list;
 
-class Client :protected Socket
+class Client :protected Socket, public list <Transmitted*>
 {
+	char buffer[Buffer_size];
 //	Socket my;
 public:
 	Client();
@@ -22,6 +26,8 @@ public:
 	void Connect (string adress, int port);
 	int Receive (char* data, int max_size);
 	void Confirm (int code);
+
+	void Receive_next();
 
 };
 

@@ -10,7 +10,7 @@
 #include "Battlefield.h"
 #include "initparser.h"
 //
-//Activeman::Activeman () { }
+Activeman::Activeman ():Transmitted ('A', false) { }
 //
 //Activeman::Activeman (const Activeman& orig) { }
 //
@@ -206,7 +206,7 @@ int Activeman::Import (char* buffer, int size)
 		char next = *(buffer + offset++);
 		if (next == 's')		//stop
 		{
-			Erase (i, end());
+			Kill (i, end());
 			return offset;
 		}
 		if (next != 'c') return -1;			//if not 's' and not 'c' I can't determine what it is
@@ -259,11 +259,12 @@ int Activeman::Import (char* buffer, int size)
 //	return offset;
 }
 //--------------------------------------------------------------------------------------------------
-void Activeman::Erase (iterator start, iterator finish)
+void Activeman::Kill (iterator start, iterator finish)
 {
 	for (iterator i = start; i != finish; ++i)
-		delete *i;
-	erase (start, finish);
+		(**i).Die();
+		//delete *i;
+//	erase (start, finish);
 }
 //--------------------------------------------------------------------------------------------------
 bool Activeman::Ok() const

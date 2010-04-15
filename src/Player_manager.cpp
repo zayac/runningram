@@ -62,7 +62,7 @@ public:
 	}
 }; // </editor-fold>
 
-Player_manager::Player_manager ():parser (new Initialaiser ("[Player]", this)) { }
+Player_manager::Player_manager ():Transmitted('P', false), parser (new Initialaiser ("[Player]", this)) { }
 
 Player_manager::~Player_manager ()
 {

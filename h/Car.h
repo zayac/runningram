@@ -43,7 +43,11 @@ class Active :public Limited
 protected:
 	virtual int Sign_data_len() const {return sizeof(pos) + sizeof(r);}
 public:
-	Active (Vector2f position, float r_):Limited (position, r_), id(max_id++){}
+	Active (Vector2f position, float r_, int id_ = 0):Limited (position, r_), id(max_id++)
+	{
+		if (id_ != 0) id = id_;
+		if (id_ >= max_id) max_id = id_ + 1;
+	}
 	virtual void Actions (float dt) = 0;
 	virtual void Draw (Canvas*) = 0;
 	virtual void Collis_brd (Rect width, float fric) = 0;
@@ -57,6 +61,7 @@ public:
 	
 	virtual int My_type() const {return No_type;}
 	virtual bool Dead() const = 0;
+	virtual void Die() = 0;
 
 	virtual bool Ok() const = 0;
 };
@@ -211,6 +216,7 @@ protected:
 public:
 	Car (Vector2f pos, float health, float motor_force, float bouncy, float angular_vel, float rudder_spring,
 		 float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient,
+		 int id_ = 0,
 		 Sprite* pic = 0, Player* host = 0);
 
 	virtual void Actions (float dt);
@@ -233,6 +239,7 @@ public:
 	
 	virtual int My_type() const {return Car_type;}
 	virtual bool Dead() const;
+	virtual void Die();
 
 //	Vector2f Collis_rectangle (Vector2f one, Vector2f two, Vector2f three, Vector2f four);
 

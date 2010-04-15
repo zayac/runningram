@@ -23,8 +23,9 @@ Exception::Exception (const string& str, int line, char* file)
 	else if (line != 0)
 		sprintf (buf, "(at line: %d;)", line);
 	text += buf;
-	text += "errno:";
+	text += ". errno:";
 	text += strerror(errno);
+	text += "\n";
 }
 
 void Output_cerr::print (const string& text)
