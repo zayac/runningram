@@ -31,7 +31,7 @@ DEFAULTCONF=Default
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=Default 
+ALLCONFS=Default client server 
 
 
 # build

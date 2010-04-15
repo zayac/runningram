@@ -14,6 +14,8 @@ const int MAXRECV = 500;
 
 struct soc_data
 {
+	int unreceived_size;
+
 	int m_sock;
 	sockaddr_in m_addr;
 	soc_data (int sock);
@@ -44,7 +46,7 @@ public:
 	bool send (const std::string&) const;
 	int recv (std::string&) const;
 
-	bool send (char* data, int size) const;
+	int send (char* data, int size) const;
 	int recv (char* buffer, int max_size) const;
 
 

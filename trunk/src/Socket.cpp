@@ -114,26 +114,46 @@ int Socket::recv (std::string& s) const
 	}
 }
 //--------------------------------------------------------------------------------------------------
-bool Socket::send (char* dat, int size) const
+int Socket::send (char* dat, int size) const
 {
-	if (size <= 0) return false;
+	if (size <= 0) return -1;
 	if (-1 == ::send (data()->m_sock, &size, sizeof (size), MSG_NOSIGNAL))
-		return false;
+		return -1;
 	if (-1 == ::send (data()->m_sock, dat, size, MSG_NOSIGNAL))
-		return false;
+		return -1;
 
-	return true;
+	return size;
 }
 //--------------------------------------------------------------------------------------------------
 int Socket::recv (char* buffer, int max_size) const
 {
+	if (data()->unreceived_size != 0)
+	{
+		char dev_null[1024];
+		while (data()->unreceived_size > 1024)
+		{
+			if (-1 == ::recv (data()->m_sock, dev_null, 1024, 0))//trash old packet
+				return -1;
+			data()->unreceived_size -= 1024;
+		}
+		if (-1 == ::recv (data()->m_sock, dev_null, data()->unreceived_size, 0))//trash old packet
+			return -1;
+		data()->unreceived_size = 0;
+	}
 	int size = 0;
 	if (-1 == :: recv (data()->m_sock, &size, sizeof (size), 0))
 		return -1;
 	if (size > max_size)
+	{
+		data()->unreceived_size = size;
 		return -1;
+	}
 	if (-1 == ::recv (data()->m_sock, buffer, size, 0))
+	{
+		data()->unreceived_size = size;
 		return -1;
+	}
+
 	return size;
 }
 //--------------------------------------------------------------------------------------------------
@@ -169,7 +189,7 @@ void Socket::set_non_blocking (bool b)
 }
 //--------------------------------------------------------------------------------------------------
 soc_data::soc_data (int sock)
-:m_sock(sock)
+:m_sock(sock), unreceived_size (0)
 {
 	memset (&m_addr, 0, sizeof (m_addr));
 }

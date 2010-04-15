@@ -13,9 +13,7 @@
 Client::Client ()
 {
 	if (!Socket::create ())
-	{
 		throw Exception ("Could not create client socket.");
-	}
 }
 //--------------------------------------------------------------------------------------------------
 Client::~Client () { }
@@ -23,9 +21,7 @@ Client::~Client () { }
 void Client::Connect (string adress, int port)
 {
 	if (!Socket::connect (adress, port))
-	{
 		throw Exception ("Could not connect.");
-	}
 	set_non_blocking (true);
 }
 //--------------------------------------------------------------------------------------------------
@@ -39,6 +35,36 @@ int Client::Receive (char* data, int max_size)
 		else throw Exception ("can\'t read from socket");
 	}
 	return rez;
+}
+//--------------------------------------------------------------------------------------------------
+void Client::Receive_next()
+{
+	static bool confirmed = false;
+	if (!confirmed)		Confirm (1);
+
+	int received = Receive (buffer, Buffer_size);
+
+	if (received == 0)
+	{
+		confirmed = false;
+		return;
+	}
+	int readed = 0;
+
+	while (readed < received)
+	{
+		char id = *(buffer + readed++);
+		if (id == 0) break;
+		for (iterator i = begin(); i != end(); ++i)
+			if ((**i).Id () == id)
+			{
+				int size = (**i).Import (buffer + readed, received - readed);
+				if (-1 == size) return;//!!!throw Exception ("Can\'t load package");
+				readed += size;
+				break;
+			}
+	}
+	confirmed = true;
 }
 //--------------------------------------------------------------------------------------------------
 void Client::Confirm (int code)

@@ -29,13 +29,13 @@ float Car::max_health = 0;
 
 //--------------------------------------------------------------------------------------------------
 Car::Car (Vector2f coor, float health_, float motor_force_, float bouncy_, float angular_vel_, float rudder_spring_,
-		  float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient,
+		  float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient, int id_,
 		 Sprite* pic_ , Player* host_)
-:Active (coor, len + max(r1, r2)), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)),
-	health (health_), motor_force (motor_force_), bouncy (bouncy_), angular_vel (angular_vel_),
-	rudder_spring (rudder_spring_), host (host_), pic(pic_),
-back (rmass1, r1, coor - start_orient.Get_dir()*len/(1 + rmass1/rmass2), fric, start_orient),
-front (rmass2, r2, coor + start_orient.Get_dir()*len/(1 + rmass2/rmass1), fric, start_orient)
+:Active (coor, len + max(r1, r2), id_), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)),
+ health (health_), motor_force (motor_force_), bouncy (bouncy_), angular_vel (angular_vel_),
+ rudder_spring (rudder_spring_), host (host_), pic(pic_),
+	back (rmass1, r1, coor - start_orient.Get_dir()*len/(1 + rmass1/rmass2), fric, start_orient),
+	front (rmass2, r2, coor + start_orient.Get_dir()*len/(1 + rmass2/rmass1), fric, start_orient)
 {
 	if (health_ > max_health) max_health = health_;
 	assert(Ok());
@@ -416,6 +416,11 @@ bool Car::Damage (Vector2f imp, Vector2f papp, float destructive_k)
 bool Car::Dead() const
 {
 	return health <= 0;
+}
+//--------------------------------------------------------------------------------------------------
+void Car::Die()
+{
+	health = -1;
 }
 //--------------------------------------------------------------------------------------------------
 void Car::Appl_impulse (Vector2f imp, Vector2f papp, float destructive_k)
