@@ -222,56 +222,11 @@ void Game_manager::tmpImport()
 //--------------------------------------------------------------------------------------------------
 void Game_manager::Get_server_context()
 {
-/*	static bool confirmed = false;
-	if (!confirmed)
-		clie->Confirm (1);
-	int received = clie->Receive (buffer, 1048576);
-
-	if (received != 0)
-	{
-		int ccsize = models->Import (buffer, received, players, cars);
-		ccsize += cars->Import (buffer + ccsize, received - ccsize);
-		if (ccsize + players->Import (buffer + ccsize, received - ccsize) != received)
-		{
-			int ggg = 0;
-			ggg = ggg - 3;
-		}
-		confirmed = true;
-	}
-	else confirmed = false;*/
 	clie->Receive_next ();
 }
 //--------------------------------------------------------------------------------------------------
 void Game_manager::Send_context()
 {
-//	static int guri = 0;
-//	guri++;
-//	sprintf (buffer, "guri: %d", guri);
-//	int size = strlen (buffer);
-//	int conf = serv->Get_confirmation ();
-//	if (conf != 1)
-//	{
-//		if (conf == -2)//wait
-//			return ;
-//
-//		if (errno == EAGAIN || errno == EWOULDBLOCK)
-//			printf ("errno conf %d", conf);
-//		throw Exception ("wrong confirmation");
-//	}
-//	int size = 0;
-
-//	*(buffer + size++) = 'm';
-//	size += models->Export (buffer + size, 1048576 - size);
-
-//	*(buffer + size++) = 'A';
-//	size += cars->Export (buffer + size, 1048576 - size);
-
-//	*(buffer + size++) = 'P';
-//	size += players->Export (buffer + size, 1048576 - size);
-
-//	serv->send (buffer, size);
-//	models->Clear_last_creations ();
-
 	serv->send_next ();
 }
 //--------------------------------------------------------------------------------------------------

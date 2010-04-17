@@ -12,6 +12,8 @@ const int MAXHOSTNAME = 200;
 const int MAXCONNECTIONS = 5;
 const int MAXRECV = 500;
 
+const int max_packets_in_net = 5;
+
 struct soc_data
 {
 	int unreceived_size;
@@ -43,11 +45,8 @@ public:
 	bool connect (const std::string& host, const int port);
 
 	// Data Transimission
-	bool send (const std::string&) const;
-	int recv (std::string&) const;
-
-	int send (char* data, int size) const;
-	int recv (char* buffer, int max_size) const;
+	int send (char* data, int size) const;		//-1 means error occured
+	int recv (char* buffer, int max_size) const;//-1 means error occured
 
 
 	void set_non_blocking (bool);

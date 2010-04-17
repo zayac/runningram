@@ -43,7 +43,13 @@ class Server :public list <Transmitted*>
 	struct Clie_sock :public Socket
 	{
 		vector <package> undelivered;
-		Clie_sock (const Socket& from) :Socket (from){}
+		int packets_in_net;
+		Clie_sock (const Socket& from) :Socket (from), packets_in_net(0){}
+
+		void Check_confirmation();
+		bool Send_if_possible (char* data, int size);
+
+		void Try_send_undelivered (char* buffer);
 	};
 	list<Clie_sock> clients;
 
