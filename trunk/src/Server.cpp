@@ -10,6 +10,8 @@
 #include "Server.h"
 #include "Exception.h"
 
+			#include <iostream>
+
 Server::Server (int port)
 {
 	if (!listening.create ())
@@ -47,6 +49,12 @@ void Server::Add_pack (package imp)
 //--------------------------------------------------------------------------------------------------
 void Server::send (char* data, int size)
 {
+	static int pid = 0;
+	pid++;
+	*(data + size++) = 'N';
+	*(int*)(data + size) = pid;
+	size += sizeof (int);
+//	std::cerr <<"sid = " <<pid <<std::endl;
 	for (list<Clie_sock>::iterator i = clients.begin(); i != clients.end(); ++i)
 		i->Send_if_possible (data, size);
 }
@@ -89,8 +97,6 @@ void Server::Clie_sock::Check_confirmation()
 	if (code == 1) --packets_in_net;
 }
 //--------------------------------------------------------------------------------------------------
-
-			#include <iostream>
 bool Server::Clie_sock::Send_if_possible (char* data, int size)
 {
 	Check_confirmation();
@@ -104,7 +110,7 @@ bool Server::Clie_sock::Send_if_possible (char* data, int size)
 			throw Exception ("Could not send");
 		}
 //		std::cerr <<"sended " <<pkgid;
-//		++packets_in_net;
+		++packets_in_net;
 //		std::cerr <<"   packs: "<<packets_in_net;
 //		std::cerr <<std::endl;
 		return true;

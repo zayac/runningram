@@ -51,13 +51,17 @@ void Client::Receive_next()
 		return;
 	}
 	Confirm (1);//allow next package
-//	std::cerr <<"received    -   ";
 	int readed = 0;
 
 	while (readed < received)
 	{
 		char id = *(buffer + readed++);
 		if (id == 0) break;
+		if (id == 'N')
+		{
+//			std::cerr <<"pid = " << *(int*)(buffer + readed) <<std::endl;
+			readed += sizeof (int);
+		}
 		for (iterator i = begin(); i != end(); ++i)
 			if ((**i).Id () == id)
 			{

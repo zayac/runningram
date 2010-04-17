@@ -12,7 +12,7 @@ const int MAXHOSTNAME = 200;
 const int MAXCONNECTIONS = 5;
 const int MAXRECV = 500;
 
-const int max_packets_in_net = 30;
+const int max_packets_in_net = 5;
 
 struct soc_data
 {
