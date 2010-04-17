@@ -89,6 +89,8 @@ void Server::Clie_sock::Check_confirmation()
 	if (code == 1) --packets_in_net;
 }
 //--------------------------------------------------------------------------------------------------
+
+			#include <iostream>
 bool Server::Clie_sock::Send_if_possible (char* data, int size)
 {
 	Check_confirmation();
@@ -96,11 +98,15 @@ bool Server::Clie_sock::Send_if_possible (char* data, int size)
 	{
 		if (-1 == send (data, size))
 		{
+//			std::cerr <<"cant send" <<pkgid <<std::endl;
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
 				return false;
 			throw Exception ("Could not send");
 		}
-		++packets_in_net;
+//		std::cerr <<"sended " <<pkgid;
+//		++packets_in_net;
+//		std::cerr <<"   packs: "<<packets_in_net;
+//		std::cerr <<std::endl;
 		return true;
 	}
 	return false;

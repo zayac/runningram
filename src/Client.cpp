@@ -24,9 +24,11 @@ void Client::Connect (string adress, int port)
 		throw Exception ("Could not connect.");
 	set_non_blocking (true);
 
-	for (int i = max_packets_in_net; i-- > 0;) Confirm(1);//allow sever max_packets_in_net packages to send
+// not needed	for (int i = max_packets_in_net; i-- > 0;) Confirm(1);//allow sever max_packets_in_net packages to send
 }
 //--------------------------------------------------------------------------------------------------
+
+			#include <iostream>
 int Client::Receive (char* data, int max_size)
 {
 	int rez = Socket::recv (data, max_size);
@@ -41,9 +43,6 @@ int Client::Receive (char* data, int max_size)
 //--------------------------------------------------------------------------------------------------
 void Client::Receive_next()
 {
-//	static bool confirmed = false;
-//	if (!confirmed)		Confirm (1);
-
 	int received = Receive (buffer, Buffer_size);
 
 	if (received == 0)
@@ -52,6 +51,7 @@ void Client::Receive_next()
 		return;
 	}
 	Confirm (1);//allow next package
+//	std::cerr <<"received    -   ";
 	int readed = 0;
 
 	while (readed < received)
@@ -67,7 +67,6 @@ void Client::Receive_next()
 				break;
 			}
 	}
-//	confirmed = true;
 }
 //--------------------------------------------------------------------------------------------------
 void Client::Confirm (int code)

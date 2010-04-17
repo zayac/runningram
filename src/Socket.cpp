@@ -2,6 +2,7 @@
 
 
 #include "Socket.h"
+#include "Exception.h"
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -81,13 +82,14 @@ bool Socket::accept (Socket& new_socket) const
 		return true;
 }
 //--------------------------------------------------------------------------------------------------
+#include <iostream>
 int Socket::send (char* dat, int size) const
 {
 	if (size <= 0) return -1;
 	if (-1 == ::send (data()->m_sock, &size, sizeof (size), MSG_NOSIGNAL))
 		return -1;
 	if (-1 == ::send (data()->m_sock, dat, size, MSG_NOSIGNAL))
-		return -1;
+		throw Exception ("couldn\'t send right package");//return -1;
 
 	return size;
 }
@@ -96,16 +98,14 @@ int Socket::recv (char* buffer, int max_size) const
 {
 	if (data()->unreceived_size != 0)
 	{
-		char dev_null[1024];
-		while (data()->unreceived_size > 1024)
-		{
-			if (-1 == ::recv (data()->m_sock, dev_null, 1024, 0))//trash old packet
-				return -1;
-			data()->unreceived_size -= 1024;
-		}
-		if (-1 == ::recv (data()->m_sock, dev_null, data()->unreceived_size, 0))//trash old packet
+		if (data()->unreceived_size > max_size) return -1;
+
+		int recved = ::recv (data()->m_sock, buffer, data()->unreceived_size, 0);//recv the old packet
+		if (-1 == recved)//data not ready yet
 			return -1;
+		GODFORBIDlf(recved != data()->unreceived_size, "Not provided situation: received size deffers from expected");
 		data()->unreceived_size = 0;
+		return recved;
 	}
 	int size = 0;
 	if (-1 == :: recv (data()->m_sock, &size, sizeof (size), 0))
@@ -115,11 +115,13 @@ int Socket::recv (char* buffer, int max_size) const
 		data()->unreceived_size = size;
 		return -1;
 	}
-	if (-1 == ::recv (data()->m_sock, buffer, size, 0))
+	int recved = ::recv (data()->m_sock, buffer, size, 0);
+	if (-1 == recved)
 	{
 		data()->unreceived_size = size;
 		return -1;
 	}
+	GODFORBIDlf(recved != size, "Not provided situation: received size deffers from expected");
 
 	return size;
 }
