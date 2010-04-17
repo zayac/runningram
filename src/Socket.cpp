@@ -89,7 +89,7 @@ int Socket::send (char* dat, int size) const
 	if (-1 == ::send (data()->m_sock, &size, sizeof (size), MSG_NOSIGNAL))
 		return -1;
 	if (-1 == ::send (data()->m_sock, dat, size, MSG_NOSIGNAL))
-		throw Exception ("couldn\'t send right package");//return -1;
+		throw Exception ("couldn\'t send right package", __LINE__, __FILE__);//return -1;
 
 	return size;
 }
