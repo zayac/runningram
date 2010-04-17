@@ -41,5 +41,8 @@ private:
 };
 string Sprintf (char* fmt, ...);
 
+#define GODFORBID(cond, msg) if (cond) throw Exception (msg);
+#define GODFORBIDlf(cond, msg) if (cond) throw Exception (msg, __LINE__, __FILE__);
+
 #endif	/* _Exception_H */
 
