@@ -20,12 +20,12 @@ public:
 	int win_x;
 	int win_y;
 	string win_name;
-        string splash_file;  
+        string splash_file;
 public:
 
 	Initialaiser (char* name)
 	: Sectionp (name, '='), win_x (640), win_y (480), win_name ("Banzay!")
-//        , splash_file ("textures/bricks.png")
+        , splash_file ("textures/bricks.png")
 	{
 		Add_param (new St_loader<int> ("X size", &win_x));
 		Add_param (new St_loader<int> ("Y size", &win_y));

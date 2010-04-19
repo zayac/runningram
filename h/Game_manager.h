@@ -17,6 +17,8 @@ class Activeman;
 class Carman;
 class Player_manager;
 class Console_output;
+class Effects_manager;
+//class Explosion;
 
 class Server;
 class Client;
@@ -35,6 +37,8 @@ class Game_manager
 	Activeman* cars;
 	Carman* models;
 	Player_manager* players;
+        Effects_manager* eff;
+//        Explosion* exp;
 	Server* serv;
 	Client* clie;
 

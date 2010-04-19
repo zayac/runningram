@@ -192,7 +192,7 @@ class Car :public Active
 	float rudder_spring;
 
 	Sprite* pic;
-
+        
 	static float max_health;
 
 	void Process_gestures (float dt);

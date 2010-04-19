@@ -5,7 +5,6 @@
  * Created on January 7, 2010, 8:45 PM
  */
 
-#include <unistd.h>
 #include <SDL/SDL.h>
 
 #include "Console.h"
@@ -21,6 +20,8 @@
 #include "Activeman.h"
 #include "Carman.h"
 #include "Player_manager.h"
+#include "Effects_manager.h"
+//#include "Explosion.h"
 
 #include "Client.h"
 #include "Server.h"
@@ -34,7 +35,7 @@ enum NET_STATUS
 Game_manager::Game_manager (int argc, char *argv[])
 :pic (new Graphic_subsystem), sense (new Eventman), look(new Camera), ground (new Battlefield),
  cmd (new Console), cars (new Activeman), players (new Player_manager),
- clie (new Client)
+ clie (new Client)//, eff(new Effects_manager)
 {
 	co = new Output_cerr;
 	Exception::Set_output (co);
@@ -56,6 +57,7 @@ Game_manager::~Game_manager()
 	if (cmd) delete cmd; cmd = 0;
 	if (pic) delete pic; pic = 0;
 	if (co) delete co; co = 0;
+        if (eff) delete eff; eff = 0;
 	
 	if (serv) delete serv; serv = 0;
 	if (clie) delete clie; clie = 0;
@@ -82,6 +84,7 @@ bool Game_manager::Init (int argc, char *argv[])
 		gen.Add_param (ground->Get_parser ());
 		gen.Add_param (models->Get_parser ());
 		gen.Add_param (players->Get_parser ());
+//                gen.Add_param(eff.Get_parser());
 		fl.Read_sector (&gen);
 
 		models->Set_am (cars);
@@ -104,7 +107,7 @@ bool Game_manager::Init (int argc, char *argv[])
 
 	    result = result && cmd->Init (pic);
 		result = result && ground->Init();
-
+//                result = result && eff->Init();
 //		if (co) delete co;
 //		co = new Console_output (cmd);
 //		Exception::Set_output (co);
@@ -142,7 +145,12 @@ bool Game_manager::Main_loop()
 	{
 		unsigned int last_time = SDL_GetTicks ();
 		float dt = 0;
-		
+
+                eff = new Effects_manager;
+
+//                Effects_manager efm;
+                bool a = false, b = false;
+                
 		while (!sense->Stopped ())
 		{
 				sense->Acts ();
@@ -161,6 +169,15 @@ bool Game_manager::Main_loop()
 			ground->Draw (pic);
 			cars->Draw (pic->Get_screen ());
 			cmd->Draw (pic);
+
+                        
+                        a = cars->Dead_m();
+                        if (a) b = true;
+
+                        if (b)
+                        {
+                            eff->exp_draw(pic->Get_screen(), 200, 200, &b);
+                        }
 
 			players->Draw_comp_table (pic->Get_screen (), &font);
 
