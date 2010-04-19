@@ -52,6 +52,7 @@ public:
     bool running();
     void stop();
     int getFrame();
+    int getMaxFrames();
     int getWidth();
     int getHeight();
     void animate();

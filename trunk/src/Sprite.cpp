@@ -27,6 +27,7 @@ Sprite::~Sprite()
 
 void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
 {
+    static int I = 0;
     if(surface == NULL || !surface->valid()) 
 	{
 		throw Exception ("failed to load sprite");
@@ -35,7 +36,7 @@ void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
     } else {
         width = surface->getWidth() / maxFrames;
         height = surface->getHeight();
-        clog << "successfully loaded sprite" << endl;
+        clog << "successfully loaded sprite " << ++I << endl; //
 
         for(int i = 0; i <  maxFrames; i++)
         {
@@ -78,6 +79,11 @@ void Sprite::stop() {
 
 int Sprite::getFrame() {
     return index;
+}
+
+int Sprite::getMaxFrames()
+{
+    return maxFrames;
 }
 
 void Sprite::animate() {

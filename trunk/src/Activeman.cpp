@@ -274,3 +274,11 @@ bool Activeman::Ok() const
 	return true;
 }
 //--------------------------------------------------------------------------------------------------
+bool Activeman::Dead_m()
+{
+    for(iterator i = begin(); i != end(); ++i)
+    {
+        if ( (**i).Dead()) return true;
+    }
+    return false;
+}
