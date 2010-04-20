@@ -1,3 +1,4 @@
+#labels Featured
 =Project installation=
 1. Install SDL with SDL_ttf and SDL_img. You can find it at http://www.libsdl.org/projects/<br>
 2. Install SDL_gfx, from http://www.ferzkopp.net/Software/SDL_gfx-2.0/SDL_gfx-2.0.20.tar.gz<br>
