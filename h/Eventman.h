@@ -8,10 +8,11 @@
 #ifndef _EVENTMAN_H
 #define	_EVENTMAN_H
 
-#include "Functor.h"
-#include "Key_event.h"
 #include <list>
 #include <assert.h>
+#include "Identified.h"
+#include "Functor.h"
+#include "Key_event.h"
 
 using std::list;
 
@@ -19,7 +20,7 @@ typedef Arg_Functor <void, Kbd_event>* Kbd_oper;
 
 class Eventman
 {
-	struct Kbd_action
+	struct Kbd_action :public Identified <Kbd_action>
 	{
 		Functor *fun;
 		Kbd_event ev;
@@ -45,8 +46,10 @@ public:
 	Eventman();
 	virtual ~Eventman();
 
-	void Register_key_action (Functor* fun, Uint8 event, Key_id key, Key_mode mod = KM_NONE);
+	int Register_key_action (Functor* fun, Uint8 event, Key_id key, Key_mode mod = KM_NONE);
 	void Register_key_oper (Kbd_oper op);
+
+	void Unregister_key_action (int id);
 
 	void Acts();
 	bool Stopped() const;

@@ -10,8 +10,10 @@
 #include <list>
 #include <string>
 #include "Transmitted.h"
+#include "Control.h"
 #include "Key_event.h"
 #include "Vec.h"
+#include "Identified.h"
 
 using std::string;
 using std::list;
@@ -24,31 +26,19 @@ class Canvas;
 class Fontc;
 class Battlefield;
 class Eventman;
+class Control;
 
-
-struct Key_storage
+struct Player :public Identified<Player>
 {
-	Key_id up;
-	Key_id down;
-	Key_id left;
-	Key_id right;
-
-	void Set_control (Car*, Eventman*);
-};
-
-struct Player
-{
-	int id;
 	int frags;
 	int prefered_model;
 	string name;
 	Car* mobile;
-	Key_storage ks;
-
-	static int max_id;
+	Control* ks;
 	
 public:
-	Player (string name, int pref_model, const Key_storage& ks);
+	Player (string name, int pref_model, Control* ks);
+	~Player() {delete ks;}
 	
 	Car* Create_car (Carman* shop, Vector2f where);
 	
@@ -61,12 +51,10 @@ public:
 	int Export (char* buffer, int size) const;
 	int Import (char* buffer, int size);
 
-	inline int Id() const {return id;}
-
-	Key_storage Get_control() const {return ks;}
+	inline Control* Get_control() const {return ks;}
 	
 	bool Is_poor() const {return mobile == 0;}
-	void Car_crashed() {mobile = 0;}
+	void Car_crashed() {if (ks) ks->Car_crushed (mobile); mobile = 0;}
 };
 
 class Player_manager :public list<Player*>, public Transmitted
@@ -75,14 +63,18 @@ class Player_manager :public list<Player*>, public Transmitted
 	class Initialaiser;
 	Initialaiser* parser;
 
-	void Erase(iterator start, iterator finish);
+	void Erase (iterator start, iterator finish);
 
 public:
-	Player_manager();
+	Player_manager (Eventman* sense);
 	virtual ~Player_manager();
 
 	Serializator* Get_parser();
 	void Draw_comp_table (Canvas* where, Fontc* font);
+
+	int Export_events (char* buffer, int size) const;
+	int Import_events (char* buffer, int size);
+	void Clear_events();
 
 	Player* Get (int id) const;
 

@@ -82,7 +82,6 @@ bool Socket::accept (Socket& new_socket) const
 		return true;
 }
 //--------------------------------------------------------------------------------------------------
-#include <iostream>
 int Socket::send (char* dat, int size) const
 {
 	if (size <= 0) return -1;
@@ -161,5 +160,45 @@ soc_data::soc_data (int sock)
 :m_sock(sock), unreceived_size (0)
 {
 	memset (&m_addr, 0, sizeof (m_addr));
+}
+//--------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------
+Socket::package::package (int size_, char* data_)
+:UniId<pkg_data>(new pkg_data, 0)
+{
+	data()->size = size_;
+	data()->data = new char[size_];
+	GODFORBIDlf(data()->data == 0, "can\'t allocate memory");
+	memcpy (data()->data, data_, data()->size);
+}
+//--------------------------------------------------------------------------------------------------
+Socket::package::package (Transmitted* from)
+:UniId<pkg_data>(new pkg_data, 0)
+{
+	char buffer[Buffer_size];
+	buffer[0] = from->Id ();
+	data()->size = from->Export (buffer + 1, Buffer_size - 1) + 1;
+
+	//if size == 0, export returned -1 = error
+	GODFORBIDlf(0 == data()->size, "can\'t export to buffer");
+
+	data()->data = new char[data()->size];
+	GODFORBIDlf(data()->data == 0, "can\'t allocate memory");
+
+	memcpy (data()->data, buffer, data()->size);
+}
+//--------------------------------------------------------------------------------------------------
+int Socket::package::copy_to (char* dst, int max_size)
+{
+	GODFORBIDlf(max_size < data()->size, "package is too big for this small buffer");
+	memcpy (dst, data()->data, data()->size);
+	return data()->size;
+}
+//--------------------------------------------------------------------------------------------------
+void Socket::package::Delete_data()
+{
+	if (data()->data) delete [] data()->data;
+	delete data();
 }
 //--------------------------------------------------------------------------------------------------

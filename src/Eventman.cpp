@@ -35,18 +35,32 @@ void Eventman::Clear_actions()
 	for (koiter i = kbd_opers.begin(); i != kbd_opers.end(); ++i)
 		delete *i;
 	kbdacts.clear();
+
+	kbd_opers.clear();//!!! not debugged
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::Register_key_action (Functor* fun, Uint8 event, Key_id key, Key_mode mod)
+int Eventman::Register_key_action (Functor* fun, Uint8 event, Key_id key, Key_mode mod)
 {
 	assert(Ok());
 	kbdacts.push_back (Kbd_action (fun, key, event, mod));
+	return kbdacts.rbegin()->Id();
 }
 //--------------------------------------------------------------------------------------------------
 void Eventman::Register_key_oper (Kbd_oper op)
 {
 	assert(Ok());
 	kbd_opers.push_back (op);
+}
+//--------------------------------------------------------------------------------------------------
+void Eventman::Unregister_key_action (int id)
+{
+	for (kiter i = kbdacts.begin(); i != kbdacts.end(); ++i)
+		if (i->Id() == id)
+		{
+			delete i->fun;
+			kbdacts.erase (i);
+			return;
+		}
 }
 //--------------------------------------------------------------------------------------------------
 void Eventman::Acts()

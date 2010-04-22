@@ -34,13 +34,12 @@ enum NET_STATUS
 
 Game_manager::Game_manager (int argc, char *argv[])
 :pic (new Graphic_subsystem), sense (new Eventman), look(new Camera), ground (new Battlefield),
- cmd (new Console), cars (new Activeman), players (new Player_manager),
- clie (new Client)//, eff(new Effects_manager)
+ cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman)//, eff(new Effects_manager)
 {
 	co = new Output_cerr;
 	Exception::Set_output (co);
-
-	models = new Carman (sense);
+	
+	players = new Player_manager (sense);
 
 	Init (argc, argv);
 	assert(Ok());
@@ -119,6 +118,7 @@ bool Game_manager::Init (int argc, char *argv[])
 			clie->push_back (players);
 			clie->push_back (cars);
 			clie->push_back (models);
+			clie->Set_pm (players);
 			break;
 		case netserver:
 			serv = new Server(4334);
@@ -127,6 +127,7 @@ bool Game_manager::Init (int argc, char *argv[])
 			serv->push_back (models);
 			serv->push_back (players);
 			serv->push_back (cars);
+			serv->Set_pm (players);
 			break;
 		};
                 
@@ -146,10 +147,9 @@ bool Game_manager::Main_loop()
 		unsigned int last_time = SDL_GetTicks ();
 		float dt = 0;
 
-                eff = new Effects_manager;
+						    eff = new Effects_manager;
 
-//                Effects_manager efm;
-                bool a = false, b = false;
+			                bool a = false, b = false;
                 
 		while (!sense->Stopped ())
 		{
@@ -171,13 +171,13 @@ bool Game_manager::Main_loop()
 			cmd->Draw (pic);
 
                         
-                        a = cars->Dead_m();
-                        if (a) b = true;
+	                       a = cars->Dead_m();
+		                    if (a) b = true;
 
-                        if (b)
-                        {
-                            eff->exp_draw(pic->Get_screen(), 200, 200, &b);
-                        }
+			                if (b)
+				            {
+					            eff->exp_draw(pic->Get_screen(), 200, 200, &b);
+						    }
 
 			players->Draw_comp_table (pic->Get_screen (), &font);
 
@@ -193,6 +193,7 @@ bool Game_manager::Main_loop()
 			if (nstate == netclient) Get_server_context();
 			if (nstate == netserver) Send_context();
 			models->Clear_last_creations ();
+			players->Clear_events();
 		}
 	}
 	catch (Exception& ex)
@@ -219,9 +220,11 @@ void Game_manager::tmpExport()
 {
 //	cars->Export (buffer, 1048576);
 //	players->Export (buffer, 1048576);
-	models->Export (buffer, 1048576);
-	models->Clear_last_creations ();
-	cars->clear ();
+//	models->Export (buffer, 1048576);
+//	models->Clear_last_creations ();
+//	cars->clear ();
+//	players->Export_events (buffer, 1048576);
+//	players->Clear_events();
 //	Activeman::iterator i, j;
 //	i = cars->begin ();
 //	j = cars->begin();
@@ -234,12 +237,15 @@ void Game_manager::tmpImport()
 {
 //	cars->Import (buffer, 1048576);
 //	players->Import (buffer, 1048576);
-	models->Import (buffer, 1048576);
+//	models->Import (buffer, 1048576);
+//	players->Clear_events();
+//	players->Import_events (buffer, 1048576);
 }
 //--------------------------------------------------------------------------------------------------
 void Game_manager::Get_server_context()
 {
-	clie->Receive_next ();
+	char buffer[Buffer_size];
+	clie->Receive_next (buffer, Buffer_size);
 }
 //--------------------------------------------------------------------------------------------------
 void Game_manager::Send_context()
