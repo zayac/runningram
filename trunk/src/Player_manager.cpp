@@ -11,6 +11,7 @@
 #include "Car.h"
 #include "Battlefield.h"
 #include "Eventman.h"
+#include "Control.h"
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
 
@@ -40,14 +41,15 @@ public:
 protected:
 	virtual bool After_read (ifstream &file)
 	{
-		host->push_back (new Player (pname, model, ks));
+		host->push_back (new Player (pname, model, ks.Create_copy ()));
 		return true;
 	}
 public:
 
-	Initialaiser (char* name, Player_manager* chost)
+	Initialaiser (char* name, Player_manager* chost, Eventman* sense)
 	: Sectionp (name, '='), host (chost)
 	{
+		ks.evman = sense;
 		Add_param (new St_loader<string> ("name", &pname));
 		Add_param (new St_loader<int>	("model", &model));
 		Add_param (new St_loader<Key_id> ("up key", &ks.up));
@@ -62,7 +64,8 @@ public:
 	}
 }; // </editor-fold>
 
-Player_manager::Player_manager ():Transmitted('P', false), parser (new Initialaiser ("[Player]", this)) { }
+Player_manager::Player_manager (Eventman* sense)
+:Transmitted('P', false), parser (new Initialaiser ("[Player]", this, sense)) { }
 
 Player_manager::~Player_manager ()
 {
@@ -141,7 +144,7 @@ int Player_manager::Import (char* buffer, int size)
 			}
 			else
 			{
-				j = insert (i, new Player ("no name", 0, Key_storage ()));
+				j = insert (i, new Player ("no name", 0, new Key_storage));
 				len = (**j).Import (buffer + offset, size - offset);
 			}
 		}
@@ -192,11 +195,60 @@ void Player_manager::Draw_comp_table (Canvas* where, Fontc* font)
 	where->setPos (where_pos);
 }
 //--------------------------------------------------------------------------------------------------
+int Player_manager::Export_events (char* buffer, int size) const
+{
+	int offset = 0;
+	for (const_iterator i = begin(); i != end(); ++i)
+		if ((**i).Get_control()->Event_exists())			//only considerable events
+		{
+
+			*(buffer + offset++) = 'c';//continue
+
+			*((	int*)(buffer + offset)) = (**i).Id ();
+			offset += sizeof(int);
+
+			int len = (**i).Get_control()->Export (buffer + offset, size - offset);
+			if (len == -1) return -1;
+
+			offset += len;
+			if (offset > size) return -1;
+		}
+	*(buffer + offset++) = 's';//stop
+	return offset;
+}
 //--------------------------------------------------------------------------------------------------
-int Player::max_id = 0;
+int Player_manager::Import_events (char* buffer, int size)
+{
+	int offset = 0;
+	int cur_id = 0;
+	int len = -1;
+	for (const_iterator i = begin(); ; ++i)
+		if (*(buffer + offset++) == 'c')
+		{
+			cur_id = *(int*)(buffer + offset);
+			offset += sizeof (int);
+
+			while ((**i).Id() != cur_id) ++i;//corresponding player must be here!!!
+			len = (**i).Get_control ()->Import (buffer + offset, size - offset);
+
+			if (-1 == len) return -1;
+			offset += len;
+
+			(**i).Get_control ()->Applay_events ();
+		}
+		else break;
+	return offset;
+}
 //--------------------------------------------------------------------------------------------------
-Player::Player (string name_, int pref_model, const Key_storage& ks_)
-	:name (name_), prefered_model (pref_model), mobile(0), frags(0), ks (ks_), id (++max_id)
+void Player_manager::Clear_events()
+{
+	for (iterator i = begin(); i != end(); ++i)
+		(**i).Get_control()->Clear_events();
+}
+//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
+Player::Player (string name_, int pref_model, Control* ks_)
+	:name (name_), prefered_model (pref_model), mobile(0), frags(0), ks (ks_)
 {
 }
 //--------------------------------------------------------------------------------------------------
@@ -241,18 +293,5 @@ int Player::Import (char* buffer, int size)
 		name += c;
 	}
 	return offset;
-}
-//--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-void Key_storage::Set_control (Car* c, Eventman* sense)
-{
-	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Forwards), EV_KEYDOWN, up);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Forwardf), EV_KEYUP, up);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Backwards), EV_KEYDOWN, down);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Backwardf), EV_KEYUP, down);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Turn_lefts), EV_KEYDOWN, left);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Turn_leftf), EV_KEYUP, left);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Turn_rights), EV_KEYDOWN, right);
-	sense->Register_key_action (new Arg_Method<void, void, Car> (c, &Car::Turn_rightf), EV_KEYUP, right);
 }
 //--------------------------------------------------------------------------------------------------

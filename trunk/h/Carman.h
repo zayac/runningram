@@ -31,7 +31,7 @@ public:
 	string model_name;
 	int model_id;
 
-	Eventman* sense;
+//	Eventman* sense;
 
 	float start_health;
 	float motor_force;
@@ -48,7 +48,7 @@ public:
 	Sprite* picture;
 
 public:
-	Car_creator (Eventman* sens);
+	Car_creator();
 	Car* New_car (Vector2f pos, Orient start_orient, Player* host, int id) const;
 
 	Car_creator* Create_copy() const;
@@ -88,7 +88,7 @@ class Carman: public Transmitted
 	Activeman* objs;
 
 public:
-	Carman (Eventman* sense);
+	Carman();
 	virtual ~Carman();
 
 	Serializator* Get_parser();

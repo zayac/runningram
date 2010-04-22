@@ -86,25 +86,34 @@ int Sprite::getMaxFrames()
     return maxFrames;
 }
 
-void Sprite::animate() {
-    if(run) {
-        if(SDL_GetTicks() - lastAnimated > speed) {
-            lastAnimated = SDL_GetTicks();
-            index += indexIterator;
-            if(index >= maxFrames) {
-                if(loopToBeginning) {
-                    indexIterator = 1;
-                    index = 0;
-                } else {
-                    indexIterator = -1;
-                    index = maxFrames - 1;
-                }
-            } else if(index < 0) {
-                indexIterator = 1;
-                index = 0;
-            }
-        }
-    }
+void Sprite::animate()
+{
+	if (run)
+	{
+		if (SDL_GetTicks () - lastAnimated > speed)
+		{
+			lastAnimated = SDL_GetTicks ();
+			index += indexIterator;
+			if (index >= maxFrames)
+			{
+				if (loopToBeginning)
+				{
+					indexIterator = 1;
+					index = 0;
+				}
+				else
+				{
+					indexIterator = -1;
+					index = maxFrames - 1;
+				}
+			}
+			else if (index < 0)
+			{
+				indexIterator = 1;
+				index = 0;
+			}
+		}
+	}
 }
 
 void Sprite::draw(Canvas* buffer, Point point) {

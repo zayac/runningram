@@ -10,12 +10,13 @@
 
 #include "Socket.h"
 #include "Game_manager.h"
-#include "Transmitted.h"
+#include "Client.h"
 #include <list>
 #include <vector>
 
 using std::list;
 using std::vector;
+class Player_manager;
 
 class Server :public list <Transmitted*>
 {
@@ -23,37 +24,23 @@ class Server :public list <Transmitted*>
 
 	Socket listening;
 
-	struct pkg_data
-	{
-		int size;
-		char* data;
-	};
-
-	struct package: public UniId<pkg_data>
-	{
-		package (int size, char* data);
-		package (Transmitted* from);
-
-		int copy_to (char* dst, int max_size);
-	protected:
-		void Delete_data();
-
-	};
-
 	struct Clie_sock :public Socket
 	{
 		vector <package> undelivered;
 		int packets_in_net;
 		Clie_sock (const Socket& from) :Socket (from), packets_in_net(0){}
 
-		void Check_confirmation();
-		bool Send_if_possible (char* data, int size);
+		//void Check_confirmation();
+		void Receive_answer (Player_manager* pm);
+		bool Send_if_possible (char* data, int size, Player_manager* pm = 0);
 
-		void Try_send_undelivered (char* buffer);
+		void Try_send_undelivered (char* buffer, Player_manager* pm = 0);
 	};
 	list<Clie_sock> clients;
 
-	void Add_pack (package imp);
+	Player_manager* pm;
+
+	void Add_pack (Socket::package imp);
 
 public:
 	Server (int port);
@@ -65,7 +52,7 @@ public:
 	void send_next();
 	void send_important();
 
-//	void Add_important
+	void Set_pm (Player_manager* _pm) {pm = _pm;}
 
 };
 

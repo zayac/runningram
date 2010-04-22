@@ -11,6 +11,7 @@
 #include "Canvas.h"
 #include "Orient.h"
 #include "Collision_detection.h"
+#include "Identified.h"
 //#include "Console.h"
 
 const float VeryBigMass = 1e10;
@@ -35,19 +36,12 @@ public:
 	virtual bool Ok() const {return r >= 0;}
 };
 
-class Active :public Limited
+class Active :public Limited, public Identified<Active>
 {
-	int id;
-	static int max_id;
-
 protected:
 	virtual int Sign_data_len() const {return sizeof(pos) + sizeof(r);}
 public:
-	Active (Vector2f position, float r_, int id_ = 0):Limited (position, r_), id(max_id++)
-	{
-		if (id_ != 0) id = id_;
-		if (id_ >= max_id) max_id = id_ + 1;
-	}
+	Active (Vector2f position, float r_, int id = 0):Limited (position, r_), Identified<Active> (id) {}
 	virtual void Actions (float dt) = 0;
 	virtual void Draw (Canvas*) = 0;
 	virtual void Collis_brd (Rect width, float fric) = 0;
@@ -56,8 +50,6 @@ public:
 
 	virtual int Export (char* buffer, int size) const;
 	virtual int Import (char* buffer, int size);
-
-	inline int Id() const {return id;}
 	
 	virtual int My_type() const {return No_type;}
 	virtual bool Dead() const = 0;

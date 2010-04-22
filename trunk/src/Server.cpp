@@ -9,10 +9,12 @@
 
 #include "Server.h"
 #include "Exception.h"
+#include "Control.h"
+#include "Player_manager.h"
 
 			#include <iostream>
 
-Server::Server (int port)
+Server::Server (int port):pm (0)
 {
 	if (!listening.create ())
 	{
@@ -41,7 +43,7 @@ void Server::accept_one()
 	clients.push_back (s);
 }
 //--------------------------------------------------------------------------------------------------
-void Server::Add_pack (package imp)
+void Server::Add_pack (Socket::package imp)
 {
 	for (list<Clie_sock>::iterator i = clients.begin(); i != clients.end(); ++i)
 		i->undelivered.push_back (imp);
@@ -56,7 +58,7 @@ void Server::send (char* data, int size)
 	size += sizeof (int);
 //	std::cerr <<"sid = " <<pid <<std::endl;
 	for (list<Clie_sock>::iterator i = clients.begin(); i != clients.end(); ++i)
-		i->Send_if_possible (data, size);
+		i->Send_if_possible (data, size, pm);
 }
 //--------------------------------------------------------------------------------------------------
 void Server::send_important()
@@ -85,40 +87,56 @@ void Server::send_next()
 }
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-void Server::Clie_sock::Check_confirmation()
+void Server::Clie_sock::Receive_answer (Player_manager* pm)
 {
 	int code = 0;
-	if (-1 == recv ((char*) & code, sizeof (code)))
+	char buffer[Buffer_size];
+
+	int size = recv (buffer, Buffer_size);
+	if (-1 == size)
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return;
 		throw Exception ("Could not get confirmation");
 	}
+	int offset = 0;
+	while (offset < size)
+	{
+		char pkg_id = *(buffer + offset++);
+		if (pkg_id == 'c')//"confirmation" id
+		{
+			code = *(int*)(buffer + offset);
+			offset += sizeof (int);
+			continue;
+		}
+		if (pkg_id == 'e')
+		{
+			int len = pm->Import_events (buffer + offset, size - offset);
+			GODFORBIDlf(len == -1, "events not imported");
+			offset += len;
+		}
+	}
 	if (code == 1) --packets_in_net;
 }
 //--------------------------------------------------------------------------------------------------
-bool Server::Clie_sock::Send_if_possible (char* data, int size)
+bool Server::Clie_sock::Send_if_possible (char* data, int size, Player_manager* pm)
 {
-	Check_confirmation();
+	Receive_answer (pm);
 	if (packets_in_net < max_packets_in_net)
 	{
 		if (-1 == send (data, size))
 		{
-//			std::cerr <<"cant send" <<pkgid <<std::endl;
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
 				return false;
-			throw Exception ("Could not send");
+			throw Exception ("Could not send", __LINE__, __FILE__);
 		}
-//		std::cerr <<"sended " <<pkgid;
 		++packets_in_net;
-//		std::cerr <<"   packs: "<<packets_in_net;
-//		std::cerr <<std::endl;
 		return true;
 	}
 	return false;
 }
 //--------------------------------------------------------------------------------------------------
-void Server::Clie_sock::Try_send_undelivered (char* buffer)
+void Server::Clie_sock::Try_send_undelivered (char* buffer, Player_manager* pm)
 {
 	if (undelivered.empty ()) return;
 
@@ -129,46 +147,7 @@ void Server::Clie_sock::Try_send_undelivered (char* buffer)
 		GODFORBIDlf (-1 == size, "can\'t write important packet")
 		writed += size;
 	}
-	if (Send_if_possible (buffer, writed))
+	if (Send_if_possible (buffer, writed, pm))
 		undelivered.clear (); //all important packages are delivered
-}
-//--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-Server::package::package (int size_, char* data_)
-:UniId<pkg_data>(new pkg_data, 0)
-{
-	data()->size = size_;
-	data()->data = new char[size_];
-	GODFORBIDlf(data()->data == 0, "can\'t allocate memory");
-	memcpy (data()->data, data_, data()->size);
-}
-//--------------------------------------------------------------------------------------------------
-Server::package::package (Transmitted* from)
-:UniId<pkg_data>(new pkg_data, 0)
-{
-	char buffer[Buffer_size];
-	buffer[0] = from->Id ();
-	data()->size = from->Export (buffer + 1, Buffer_size - 1) + 1;
-
-	//if size == 0, export returned -1 = error
-	GODFORBIDlf(0 == data()->size, "can\'t export to buffer");
-
-	data()->data = new char[data()->size];
-	GODFORBIDlf(data()->data == 0, "can\'t allocate memory");
-
-	memcpy (data()->data, buffer, data()->size);
-}
-//--------------------------------------------------------------------------------------------------
-int Server::package::copy_to (char* dst, int max_size)
-{
-	GODFORBIDlf(max_size < data()->size, "package is too big for this small buffer");
-	memcpy (dst, data()->data, data()->size);
-	return data()->size;
-}
-//--------------------------------------------------------------------------------------------------
-void Server::package::Delete_data()
-{
-	if (data()->data) delete [] data()->data;
-	delete data();
 }
 //--------------------------------------------------------------------------------------------------

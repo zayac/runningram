@@ -7,6 +7,7 @@
 #include <string>
 #include <arpa/inet.h>
 #include "UniId.h"
+#include "Transmitted.h"
 
 const int MAXHOSTNAME = 200;
 const int MAXCONNECTIONS = 5;
@@ -24,9 +25,24 @@ struct soc_data
 };
 
 class Socket: public UniId <soc_data>
-{//public:
-//	int m_sock;
-//	sockaddr_in m_addr;
+{
+public:
+	struct pkg_data
+	{
+		int size;
+		char* data;
+	};
+
+	struct package: public UniId<pkg_data>
+	{
+		package (int size, char* data);
+		package (Transmitted* from);
+
+		int copy_to (char* dst, int max_size);
+	protected:
+		void Delete_data();
+
+	};
 
 protected:
     void Delete_data();

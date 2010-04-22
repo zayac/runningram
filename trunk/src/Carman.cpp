@@ -11,6 +11,7 @@
 #include "Player_manager.h"
 #include "Sprite.h"
 #include "Activeman.h"
+#include "Control.h"
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
 
@@ -39,8 +40,8 @@ protected:
 	}
 public:
 
-	Initialaiser (char* name, Carman* chost, Eventman* sense)
-	: Sectionp (name, '='), host (chost), data (sense), spritefname (""), nsprites(0)
+	Initialaiser (char* name, Carman* chost)
+	: Sectionp (name, '='), host (chost), data(), spritefname (""), nsprites(0)
 	{
 		Add_param (new St_loader<string> ("name", &data.model_name));
 		Add_param (new St_loader<int>	("id", &data.model_id));
@@ -68,8 +69,8 @@ public:
 	}
 }; // </editor-fold>
 
-Carman::Carman (Eventman* sense):Transmitted ('C', true),
-parser (new Carman::Initialaiser ("[Model]", this, sense)), hosts(0), objs(0) { }
+Carman::Carman():Transmitted ('C', true),
+parser (new Carman::Initialaiser ("[Model]", this)), hosts(0), objs(0) { }
 
 Carman::~Carman ()
 {
@@ -137,7 +138,7 @@ int Carman::Import (char* buffer, int size)
 }
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-Car_creator::Car_creator (Eventman* sens) :sense (sens),
+Car_creator::Car_creator() :
 	start_health (100),
 	motor_force (10),
 	bouncy (1.44),
@@ -156,15 +157,16 @@ Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host, int 
 {
 	Car* ret = new Car (pos, start_health, motor_force, bouncy, angular_vel,
 					 rudder_spring, rmass1, rmass2, lenght, r1, r2, fric, start_orient, id, picture, host);
-	Key_storage contr = host->Get_control ();
-	contr.Set_control (ret, sense);
+	Control* contr = host->Get_control ();
+//	contr->evman = sense;
+	contr->Set_control (ret);
 
 	return ret;
 }
 //--------------------------------------------------------------------------------------------------
 Car_creator* Car_creator::Create_copy() const
 {
-	Car_creator* ret = new Car_creator (sense);
+	Car_creator* ret = new Car_creator();
 	ret->model_name = model_name;
 	ret->model_id = model_id;
 	ret->start_health = start_health;

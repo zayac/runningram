@@ -13,7 +13,7 @@
 Explosion::Explosion()
 {
 //    texture = Canvas("textures/explosion.png");
-    spr = new Sprite("textures/image2_alpha.png", 33, 1, true);
+    spr = new Sprite("textures/image2_alpha.png", 33, 1000, true);
 }
 
 Explosion::Explosion(Sprite* spr_): spr(spr_) {}
