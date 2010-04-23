@@ -5,6 +5,8 @@
  * Created on January 8, 2010, 12:58 PM
  */
 
+//#define FULL_DEBUG
+
 #include <time.h>
 #include "initparser.h"
 #include "Console.h"
@@ -38,7 +40,7 @@ public:
 //!!! only for debug
 Console* interface = 0;
 
-Console::Console () :parser (new Initialaiser ("[Console]")), history (font), input (font)
+Console::Console () :parser (new Initialaiser ("[Console]")), history (font, 50), input (font)
 {
     //!!! only for debug
     interface = this;
@@ -427,6 +429,8 @@ void Lines_view::Push_string (const string &what)
 {
 	assert(Ok());
 	data.push_back (Stringc (what, font));
+	if (data.size () > max_lines)
+		data.erase (data.begin());
 }
 //--------------------------------------------------------------------------------------------------
 int Lines_view::Get_height (const Stringc& what) const
@@ -514,8 +518,10 @@ void Lines_view::Draw (Canvas* c) const
 //--------------------------------------------------------------------------------------------------
 bool Lines_view::Ok() const
 {
+#ifdef FULL_DEBUG
 	for (list<Stringc>::const_iterator i = data.begin(); i != data.end(); ++i)
 		if (!i->Ok ()) return false;
+#endif
 	return font.Ok();
 }
 //--------------------------------------------------------------------------------------------------

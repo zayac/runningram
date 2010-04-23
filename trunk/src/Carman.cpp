@@ -55,6 +55,7 @@ public:
 		Add_param (new St_loader<float> ("bouncy", &data.bouncy));
 		Add_param (new St_loader<float> ("rudder speed", &data.angular_vel));
 		Add_param (new St_loader<float> ("rudder spring", &data.rudder_spring));
+		Add_param (new St_loader<float> ("turn transfer", &data.turn_transfer));
 		Add_param (new St_loader<float> ("along friction", &data.fric.x));
 		Add_param (new St_loader<float> ("across friction", &data.fric.y));
 		Add_param (new St_loader<string> ("sprite file", &spritefname));
@@ -70,7 +71,7 @@ public:
 }; // </editor-fold>
 
 Carman::Carman():Transmitted ('C', true),
-parser (new Carman::Initialaiser ("[Model]", this)), hosts(0), objs(0) { }
+parser (new Carman::Initialaiser ("[Model]", this)), hosts(0), objs(0), effm(0) { }
 
 Carman::~Carman ()
 {
@@ -91,7 +92,7 @@ Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient, Player* h
 		Car_creator* cc = *i;
 		if ((**i).model_id == model)
 		{
-			Car* ncar = (**i).New_car (pos, start_orient, host, id);
+			Car* ncar = (**i).New_car (pos, start_orient, host, effm, id);
 			last_creations.push_back (Creation (model, pos, start_orient, host->Id(), ncar->Id()));
 			important = true;
 			return ncar;
@@ -149,14 +150,15 @@ Car_creator::Car_creator() :
 	lenght (30),
 	r1 (10),
 	r2 (10),
+	turn_transfer (0.1),
 	fric (0.01, 1.0),
 	picture(0)
 {}
 //--------------------------------------------------------------------------------------------------
-Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host, int id) const
+Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host, Effects_manager* em, int id) const
 {
 	Car* ret = new Car (pos, start_health, motor_force, bouncy, angular_vel,
-					 rudder_spring, rmass1, rmass2, lenght, r1, r2, fric, start_orient, id, picture, host);
+					 rudder_spring, rmass1, rmass2, lenght, r1, r2, turn_transfer, fric, start_orient, id, picture, host, em);
 	Control* contr = host->Get_control ();
 //	contr->evman = sense;
 	contr->Set_control (ret);
@@ -179,6 +181,7 @@ Car_creator* Car_creator::Create_copy() const
 	ret->lenght = lenght;
 	ret->r1 = r1;
 	ret->r2 = r2;
+	ret->turn_transfer = turn_transfer;
 	ret->fric = fric;
 	ret->picture = picture;
 	return ret;

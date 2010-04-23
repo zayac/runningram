@@ -12,6 +12,7 @@
 #include "Orient.h"
 #include "Collision_detection.h"
 #include "Identified.h"
+#include "Effects_manager.h"
 //#include "Console.h"
 
 const float VeryBigMass = 1e10;
@@ -139,6 +140,7 @@ protected:
 	{
 		Vector2f dir = orient.Get_dir();
 		Vector2f proj = (Get_vel()^dir)*dir;
+
 		return -fric[0]*proj - fric[1]*(Get_vel() - proj);
 	}
 public:
@@ -161,6 +163,7 @@ const float Max_ang_dev = 1.;
 //const float Bouncy = 2.0;
 
 class Player;
+class Effects_manager;
 class Sprite;
 const int Health_indicator_len = 50;
 const int Health_indicator_offset = -20;
@@ -169,6 +172,7 @@ const int Health_indicator_height = 5;
 class Car :public Active
 {
 	Player* host;
+	Effects_manager* em;
 
 	bool rp, lp, fp, bp;//right, left, forward, backward procedure states
 
@@ -182,6 +186,7 @@ class Car :public Active
 	float bouncy;
 	float angular_vel;
 	float rudder_spring;
+	float turn_transfer;
 
 	Sprite* pic;
         
@@ -207,9 +212,9 @@ protected:
 
 public:
 	Car (Vector2f pos, float health, float motor_force, float bouncy, float angular_vel, float rudder_spring,
-		 float rmass1, float rmass2, float lenght, float r1, float r2, Vector2f fric, Orient start_orient,
-		 int id_ = 0,
-		 Sprite* pic = 0, Player* host = 0);
+		 float rmass1, float rmass2, float lenght, float r1, float r2, float turn_transfer, Vector2f fric,
+		 Orient start_orient, int id_ = 0,
+		 Sprite* pic = 0, Player* host = 0, Effects_manager* em_ = 0);
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);
@@ -223,7 +228,7 @@ public:
 	Vector2f Get_vel (Vector2f p);
 	Vector2f Get_imp (Vector2f p);
 	bool Damage (Vector2f imp, Vector2f papp, float destructive_k);			//returns true if killed
-	void Appl_impulse (Vector2f imp, Vector2f papp, float destructive_k = 1);
+	void Appl_impulse (Vector2f imp, Vector2f papp, float destructive_k = 2);
 	void Appl_force (Vector2f f, Vector2f papp, bool resistancive);
 
 	virtual int Export (char* buffer, int size) const;

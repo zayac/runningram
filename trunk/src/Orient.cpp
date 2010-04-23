@@ -101,7 +101,7 @@ Orient Orient::operator + (const Orient& that) const
 	ret.updated = updated && that.updated;
 	if (ret.updated)
 	{
-		ret.dir.x = dir.x*that.dir.x - dir.y*that.dir.x;
+		ret.dir.x = dir.x*that.dir.x - dir.y*that.dir.y;
 		ret.dir.y = dir.y*that.dir.x + dir.x*that.dir.y;
 	}
 	return ret;
@@ -118,6 +118,12 @@ Orient& Orient::operator += (const Orient& that)
 {
 	assert(Ok());
 	*this = operator + (that);
+	
+	if (!Ok())
+	{
+		bool gagaga = ( !updated || (1 - nearnull < dir.Lensq() && dir.Lensq() < nearnull + 1));
+		bool re = !gagaga;
+	}
 	return *this;
 }
 //--------------------------------------------------------------------------------------------------
@@ -133,6 +139,6 @@ Vector2f Orient::Rotate (Vector2f what)
 bool Orient::Ok() const
 {
 	return -PI <= ang && ang <= PI && (updated == true || updated == false) &&
-		   1 - nearnull < dir.Lensq() && dir.Lensq() < nearnull + 1;
+		   ( !updated || (1 - nearnull < dir.Lensq() && dir.Lensq() < nearnull + 1));
 }
 //--------------------------------------------------------------------------------------------------
