@@ -52,6 +52,7 @@ public:
 
 class Lines_view
 {
+	int max_lines;
 	Fontc& font;
 	Rect borders;
 	list <Stringc> data;
@@ -63,7 +64,7 @@ class Lines_view
 	int Get_height (const Stringc& what) const;
 
 public:
-	Lines_view (Fontc& f) :font(f){}
+	Lines_view (Fontc& f, int max_lines_) :font(f), max_lines (max_lines_){}
 
 	void Init (const Rect&);
 	void Push_string (const string&);

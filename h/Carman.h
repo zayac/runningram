@@ -13,6 +13,7 @@
 #include "initparser.h"
 #include "Key_event.h"
 #include "Player_manager.h"
+#include "Effects_manager.h"
 
 using std::list;
 using std::string;
@@ -24,6 +25,7 @@ class Key_storage;
 class Sprite;
 class Activeman;
 class Player_manager;
+class Effects_manager;
 
 class Car_creator
 {
@@ -44,12 +46,13 @@ public:
 	float bouncy;
 	float angular_vel;
 	float rudder_spring;
+	float turn_transfer;
 
 	Sprite* picture;
 
 public:
 	Car_creator();
-	Car* New_car (Vector2f pos, Orient start_orient, Player* host, int id) const;
+	Car* New_car (Vector2f pos, Orient start_orient, Player* host, Effects_manager* em, int id) const;
 
 	Car_creator* Create_copy() const;
 
@@ -85,6 +88,7 @@ class Carman: public Transmitted
 	Initialaiser* parser;
 
 	Player_manager* hosts;
+	Effects_manager* effm;
 	Activeman* objs;
 
 public:
@@ -100,6 +104,7 @@ public:
 	
 	void Set_pm (Player_manager* pm) {hosts = pm;}
 	void Set_am (Activeman* am) {objs = am;}
+	void Set_em (Effects_manager* em_) {effm = em_;}
 
 	int Export (char* buffer, int size) const;
 	int Import (char* buffer, int size);

@@ -21,6 +21,8 @@ class Effects_manager
 public:
     Effects_manager();
     virtual ~Effects_manager();
+
+	void Create_explosion (Vector2f pos, float size){}
     
     Serializator* Get_parser();
     bool Init();

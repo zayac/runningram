@@ -77,8 +77,8 @@ bool Game_manager::Init (int argc, char *argv[])
 		File_loader fl ((char*)"./settings.cfg");
 	    fl.Read_sector (&gen);
 		result = result && pic->Init();			//Graphic subsystem must be initialaised previously
-                pic->SplashScreen();
-//		gen.Delete_props ();
+		pic->SplashScreen();
+
 		gen.Add_param (cmd->Get_parser ());
 		gen.Add_param (ground->Get_parser ());
 		gen.Add_param (models->Get_parser ());
@@ -89,12 +89,12 @@ bool Game_manager::Init (int argc, char *argv[])
 		models->Set_am (cars);
 		models->Set_pm (players);
 
-        sense->Register_key_action (new Arg_Function<void, void> (DBG_switch), EV_KEYDOWN, KI_s);
-
+		sense->Register_key_oper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::Operate));
 		sense->Register_key_action (new Arg_Method<void, void, Console> (cmd, &Console::Switch),
 																			EV_KEYDOWN, KI_BACKQUOTE);
-		sense->Register_key_oper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::Operate));
 
+        sense->Register_key_action (new Arg_Function<void, void> (DBG_switch),
+																			EV_KEYDOWN, KI_s);
 		sense->Register_key_action (new Arg_Method<void, void, Game_manager> (this, &Game_manager::tmpExport),
 																			EV_KEYDOWN, KI_z);
 		sense->Register_key_action (new Arg_Method<void, void, Game_manager> (this, &Game_manager::tmpImport),
@@ -110,6 +110,9 @@ bool Game_manager::Init (int argc, char *argv[])
 //		if (co) delete co;
 //		co = new Console_output (cmd);
 //		Exception::Set_output (co);
+
+		for (int i = 0; i < 500; ++i)
+			cmd->Push_string ("bla");
 		
 		switch (nstate)
 		{

@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include "Eventman.h"
 #include "Player_manager.h"
+#include "Effects_manager.h"
 
 #ifndef max
 inline float max (float a, float b) {return a < b ? b : a;}
@@ -29,11 +30,11 @@ float Car::max_health = 0;
 
 //--------------------------------------------------------------------------------------------------
 Car::Car (Vector2f coor, float health_, float motor_force_, float bouncy_, float angular_vel_, float rudder_spring_,
-		  float rmass1, float rmass2, float len, float r1, float r2, Vector2f fric, Orient start_orient, int id_,
-		 Sprite* pic_ , Player* host_)
+		  float rmass1, float rmass2, float len, float r1, float r2, float turn_transfer_, Vector2f fric, Orient start_orient, int id_,
+		 Sprite* pic_ , Player* host_, Effects_manager* em_)
 :Active (coor, len + max(r1, r2), id_), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)),
  health (health_), motor_force (motor_force_), bouncy (bouncy_), angular_vel (angular_vel_),
- rudder_spring (rudder_spring_), host (host_), pic(pic_),
+ rudder_spring (rudder_spring_), host (host_), em(em_), pic(pic_), turn_transfer (turn_transfer_),
 	back (rmass1, r1, coor - start_orient.Get_dir()*len/(1 + rmass1/rmass2), fric, start_orient),
 	front (rmass2, r2, coor + start_orient.Get_dir()*len/(1 + rmass2/rmass1), fric, start_orient)
 {
@@ -55,7 +56,10 @@ void Car::Actions (float dt)
 	front.pos = pos + ori.Get_dir()*lenght/(1 + back.rev_mass/front.rev_mass);
 	back.pos = pos - ori.Get_dir()*lenght/(1 + front.rev_mass/back.rev_mass);
 
+	Orient delta = ori - back.orient;
+
 	back.orient = ori;
+	front.orient += delta.Get_angle ()*(1 - turn_transfer);
 	Process_gestures (dt);
 	Normalise_front_orient();
 
@@ -308,12 +312,12 @@ void Car::Applay_brd_collision (Collision_vector cv, float fric)
 
     if ((imp_along^cv.depth) < 0)
 	{
-        Appl_impulse (imp_along*(-1 - bouncy), cv.papp, 0.1);
+        Appl_impulse (imp_along*(-1 - bouncy), cv.papp, 0.3);
 
 		Vector2f vell = Get_vel (cv.papp);
 		Vector2f vel_across = vell - vell.Proj (cv.depth);
 
-		Appl_impulse (-fric*vel_across*imp_along.Lensq (), cv.papp, 0.1);//!!! here must be an impules, not force
+		Appl_impulse (-fric*vel_across*imp_along.Lensq (), cv.papp, 0.3);
 		if (Dead() && host != 0)
 			host->Sub_frag ();
 	}
@@ -401,13 +405,16 @@ Vector2f Car::Get_imp (Vector2f p)
 //--------------------------------------------------------------------------------------------------
 bool Car::Damage (Vector2f imp, Vector2f papp, float destructive_k)
 {
-	float val = imp.Lensq ()*destructive_k;//!!! too plain formula
+	Vector2f proj = (papp - pos).Proj (back.orient.Get_dir());
+	Vector2f norm = papp - pos - proj;
+	float k = (2*norm.Lensq ()/r - ((papp - pos)^back.orient.Get_dir()) + r/2)/r;
+	float val = imp.Lensq ()*k*destructive_k;//!!! too plain formula
 
 	health -= val;
 	if (Dead())
 	{
 		if (host) host->Car_crashed ();
-		host = 0;
+		if (em) em->Create_explosion (pos, r);
 		return true;
 	}
 	return false;
