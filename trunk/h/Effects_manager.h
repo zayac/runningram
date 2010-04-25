@@ -10,23 +10,28 @@
 
 #include "Canvas.h"
 #include "Explosion.h"
+#include "Vec.h"
 
 class Serializator;
+using std::list;
 
 class Effects_manager
 {
     class Initialaiser;
     Initialaiser* parser;
-    Explosion exp;
+    Sprite* boom;
+    list <Explosion*> exp;
+    list <Explosion*>::iterator i;
 public:
     Effects_manager();
+    Effects_manager(const Effects_manager&);
     virtual ~Effects_manager();
 
-	void Create_explosion (Vector2f pos, float size){}
+    void Create_explosion (Vector2f pos, float size);
     
     Serializator* Get_parser();
     bool Init();
-    void exp_draw(Canvas*, int, int, bool *);
+    void exp_draw(Canvas* );
 };
 
 

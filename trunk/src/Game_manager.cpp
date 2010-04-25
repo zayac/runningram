@@ -21,7 +21,6 @@
 #include "Carman.h"
 #include "Player_manager.h"
 #include "Effects_manager.h"
-//#include "Explosion.h"
 
 #include "Client.h"
 #include "Server.h"
@@ -34,7 +33,8 @@ enum NET_STATUS
 
 Game_manager::Game_manager (int argc, char *argv[])
 :pic (new Graphic_subsystem), sense (new Eventman), look(new Camera), ground (new Battlefield),
- cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman)//, eff(new Effects_manager)
+ cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman)
+, eff(new Effects_manager)
 {
 	co = new Output_cerr;
 	Exception::Set_output (co);
@@ -88,6 +88,7 @@ bool Game_manager::Init (int argc, char *argv[])
 
 		models->Set_am (cars);
 		models->Set_pm (players);
+                models->Set_em (eff);
 
 		sense->Register_key_oper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::Operate));
 		sense->Register_key_action (new Arg_Method<void, void, Console> (cmd, &Console::Switch),
@@ -106,6 +107,7 @@ bool Game_manager::Init (int argc, char *argv[])
 
 	    result = result && cmd->Init (pic);
 		result = result && ground->Init();
+                eff->Init();
 //                result = result && eff->Init();
 //		if (co) delete co;
 //		co = new Console_output (cmd);
@@ -150,9 +152,6 @@ bool Game_manager::Main_loop()
 		unsigned int last_time = SDL_GetTicks ();
 		float dt = 0;
 
-						    eff = new Effects_manager;
-
-			                bool a = false, b = false;
                 
 		while (!sense->Stopped ())
 		{
@@ -173,14 +172,15 @@ bool Game_manager::Main_loop()
 			cars->Draw (pic->Get_screen ());
 			cmd->Draw (pic);
 
-                        
-	                       a = cars->Dead_m();
-		                    if (a) b = true;
 
-			                if (b)
-				            {
-					            eff->exp_draw(pic->Get_screen(), 200, 200, &b);
-						    }
+
+
+                        
+                        eff->exp_draw(pic->Get_screen());
+
+
+
+
 
 			players->Draw_comp_table (pic->Get_screen (), &font);
 
