@@ -11,17 +11,20 @@
 
 class Canvas;
 class Sprite;
+#include "Vec.h"
 
 
 class Explosion
 {
     Sprite *spr;
+    Point pos;
 public:
     Explosion();
-    Explosion(Sprite*);
     virtual ~Explosion();
 
-    void Draw(Canvas*, int, int, bool *);
+    bool Draw(Canvas*);
+    void Set_position(Point );
+    void Set_sprite(Sprite* );
 };
 
 #endif	/* _EXPLOSION_H */

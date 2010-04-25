@@ -9,56 +9,41 @@
 #include "Sprite.h"
 #include "Canvas.h"
 #include <unistd.h>
+#include "Vec.h"
 
 Explosion::Explosion()
 {
-//    texture = Canvas("textures/explosion.png");
-    spr = new Sprite("textures/image2_alpha.png", 33, 1000, true);
+//    spr = new Sprite("textures/image2_alpha.png", 33, 1, true);
 }
-
-Explosion::Explosion(Sprite* spr_): spr(spr_) {}
 
 Explosion::~Explosion()
 {
-    delete spr;
+//    delete spr;
 }
 
-void Explosion::Draw(Canvas* c, int x, int y, bool * b)
+bool Explosion::Draw(Canvas* c)
 {
-
-
-/*
-    static int i = 0;
-        if (i <= max_frames) spr->draw(c, Point( x, y));
-
-        if (i == 0) spr->start();
-        
-        if (i > (max_frames - 1) )
-        {
-            spr->stop();
-            b = false;
-            i = -1;
-        }
-        spr->animate();
-        
-        printf("%d , %d\n", spr->getFrame(), i);
-        c->update();
-
-        if (i < (max_frames + 1) ) i++;
-
- */
-    static int max = spr->getMaxFrames(), frame;
-    
-    frame = spr->getFrame();
+    static int max = spr->getMaxFrames();
 
     
-    if (frame == 0) spr->start();
-    spr->draw(c,Point(x, y));
+    if (spr->getFrame() == 0) spr->start();
+    spr->draw(c, pos);
     c->update();
     spr->animate();
     if (spr->getFrame() == 0)
     {
         spr->stop();
-        *b = false;
+        return true;
     }
+    return false;
+}
+
+void Explosion::Set_position(Point pos_)
+{
+    pos = pos_;
+}
+
+void Explosion::Set_sprite(Sprite* spr_)
+{
+    spr = spr_;
 }

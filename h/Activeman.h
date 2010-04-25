@@ -31,7 +31,6 @@ public:
 	void Process_collisions();
 	bool Delete_deadalives();//returns true when one or more of Deadalives have found and deleted
 
-        bool Dead_m();
         int Export (char* buffer, int size) const;
 	int Import (char* buffer, int size);
 
