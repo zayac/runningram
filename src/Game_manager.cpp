@@ -83,7 +83,7 @@ bool Game_manager::Init (int argc, char *argv[])
 		gen.Add_param (ground->Get_parser ());
 		gen.Add_param (models->Get_parser ());
 		gen.Add_param (players->Get_parser ());
-//                gen.Add_param(eff.Get_parser());
+                gen.Add_param(eff->Get_parser());
 		fl.Read_sector (&gen);
 
 		models->Set_am (cars);
@@ -107,7 +107,9 @@ bool Game_manager::Init (int argc, char *argv[])
 
 	    result = result && cmd->Init (pic);
 		result = result && ground->Init();
+
                 eff->Init();
+                
 //                result = result && eff->Init();
 //		if (co) delete co;
 //		co = new Console_output (cmd);

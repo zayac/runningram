@@ -18,7 +18,6 @@ class Carman;
 class Player_manager;
 class Console_output;
 class Effects_manager;
-//class Explosion;
 
 class Server;
 class Client;
