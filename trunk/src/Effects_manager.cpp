@@ -17,13 +17,17 @@
 class Effects_manager::Initialaiser : public Sectionp
 {
 public:
-        string explosion;
+        string exp_file;
+        int exp_frames;
+        int exp_speed;
 public:
 
 	Initialaiser (string name)
 	: Sectionp (name, '=')
 	{
-                Add_param (new St_loader<string> ("explosion", &explosion));
+                Add_param (new St_loader<string> ("explosion file", &exp_file));
+                Add_param (new St_loader<int> ("explosion frames", &exp_frames));
+                Add_param (new St_loader<int> ("explosion speed", &exp_speed));
 	}
 
 	virtual ~Initialaiser ()
@@ -51,7 +55,7 @@ Effects_manager::Effects_manager(const Effects_manager& any)
 
 bool Effects_manager::Init()
 {
-    boom = new Sprite("textures/image2_alpha.png", 33, 500, true);
+    boom = new Sprite(parser->exp_file.c_str(), parser->exp_frames, parser->exp_speed, true);
 //    return Ok();
 }
 
