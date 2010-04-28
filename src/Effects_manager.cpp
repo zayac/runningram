@@ -77,9 +77,16 @@ Serializator* Effects_manager::Get_parser()
 void Effects_manager::Create_explosion (Vector2f pos, float size)
 {
     Explosion* a = new Explosion;
+    static Point pos_new;
+    static int x_os = boom->getWidth(), y_os = boom->getHeight();
 
     a->Set_sprite(boom);
-    a->Set_position(pos.To<int>());
+
+    pos_new = pos.To<int>();
+    pos_new.x -= x_os/2;
+    pos_new.y -= y_os/2;
+
+    a->Set_position(pos_new);
     exp.push_back(a);
     
 }
@@ -94,6 +101,6 @@ void Effects_manager::exp_clean()
             delete (*i);
             i = exp.erase(i);
         }
-        else ++i;
+        else break; //++i;
     }
 }
