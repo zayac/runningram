@@ -62,6 +62,7 @@ public:
     void restart();
     void setSpeed(int i);
     int getSpeed();
+    void setFrame(int );
 
 	void setPos (Point npos);
 
