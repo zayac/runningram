@@ -31,7 +31,9 @@ public:
     
     Serializator* Get_parser();
     bool Init();
+    
     void exp_draw(Canvas* );
+    void exp_clean();
 };
 
 

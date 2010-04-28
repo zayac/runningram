@@ -86,6 +86,11 @@ int Sprite::getMaxFrames()
     return maxFrames;
 }
 
+void Sprite::setFrame(int index_)
+{
+    index = index_;
+}
+
 void Sprite::animate()
 {
 	if (run)

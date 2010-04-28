@@ -179,6 +179,7 @@ bool Game_manager::Main_loop()
 
                         
                         eff->exp_draw(pic->Get_screen());
+                        eff->exp_clean();
 
 
 

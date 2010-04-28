@@ -61,16 +61,12 @@ bool Effects_manager::Init()
 
 void Effects_manager::exp_draw(Canvas* can)
 {
-    i = exp.begin();
-    while( i != exp.end())
+    for(i = exp.begin(); i != exp.end(); ++i)
     {
-        if( (**i).Draw(can ))
-        {
-            delete (*i);
-            i = exp.erase(i);
-        }
-        else ++i;
+        (**i).Draw(can );
+        (**i).Animate();
     }
+    
 }
 
 Serializator* Effects_manager::Get_parser()
@@ -81,20 +77,23 @@ Serializator* Effects_manager::Get_parser()
 void Effects_manager::Create_explosion (Vector2f pos, float size)
 {
     Explosion* a = new Explosion;
-    
-    a->Set_sprite( boom);
-    a->Set_position( pos.To<int>());
+
+    a->Set_sprite(boom);
+    a->Set_position(pos.To<int>());
     exp.push_back(a);
+    
+}
 
-
-        /* hello stl
-        int a;
-        list <int> li;
-        list <int>::iterator it;
-        for(a = 0; a<10; a++) li.push_back(a);
-        li.erase(li.begin(), li.end());
-        for(it = li.begin(); it != li.end(); ++it) printf("%d\n", *it);
-
-*/
-
+void Effects_manager::exp_clean()
+{
+    i = exp.begin();
+    while( i != exp.end())
+    {
+        if( !(**i).Get_run())
+        {
+            delete (*i);
+            i = exp.erase(i);
+        }
+        else ++i;
+    }
 }
