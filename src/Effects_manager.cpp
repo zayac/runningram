@@ -20,14 +20,21 @@ public:
         string exp_file;
         int exp_frames;
         int exp_speed;
-public:
-
-	Initialaiser (string name)
-	: Sectionp (name, '=')
+        Effects_manager* efm;
+protected:
+	virtual bool After_read (ifstream &file)
 	{
-                Add_param (new St_loader<string> ("explosion file", &exp_file));
-                Add_param (new St_loader<int> ("explosion frames", &exp_frames));
-                Add_param (new St_loader<int> ("explosion speed", &exp_speed));
+            Sprite *sp = new Sprite(exp_file.c_str(), exp_frames, exp_speed, true);
+            efm->exp_add(sp);
+            return true;
+	}
+public:
+	Initialaiser (string name, Effects_manager* effect)
+	: Sectionp (name, '='), efm(effect)
+	{
+                Add_param (new St_loader<string> ("sprite file", &exp_file));
+                Add_param (new St_loader<int> ("number of frames", &exp_frames));
+                Add_param (new St_loader<int> ("speed", &exp_speed));
 	}
 
 	virtual ~Initialaiser ()
@@ -37,7 +44,7 @@ public:
 };
 
 
-Effects_manager::Effects_manager() : parser(new Initialaiser ("[Effects]"))
+Effects_manager::Effects_manager() : parser(new Initialaiser ("[Explosion]", this))
 {
     
 }
@@ -45,7 +52,12 @@ Effects_manager::Effects_manager() : parser(new Initialaiser ("[Effects]"))
 Effects_manager::~Effects_manager()
 {
     delete parser;
-    delete boom;
+    for(is = boom.begin(); is != boom.end(); ++is)
+    {
+        delete (*is);
+    }
+    boom.erase(boom.begin(), boom.end());
+
 }
 
 Effects_manager::Effects_manager(const Effects_manager& any)
@@ -55,8 +67,16 @@ Effects_manager::Effects_manager(const Effects_manager& any)
 
 bool Effects_manager::Init()
 {
-    boom = new Sprite(parser->exp_file.c_str(), parser->exp_frames, parser->exp_speed, true);
+    /*
+    boom.push_back(new Sprite(parser->exp_file.c_str(), parser->exp_frames, parser->exp_speed, true));
+    boom.push_back(new Sprite("textures/image1.png", 31, 100, true));
+    boom.push_back(new Sprite("textures/image2.png", 36, 100, true));
+    boom.push_back(new Sprite("textures/image3.png", 36, 100, true));
+    boom.push_back(new Sprite("textures/image4.png", 48, 100, true));
+    
+     */
 //    return Ok();
+    k = boom.size();
 }
 
 void Effects_manager::exp_draw(Canvas* can)
@@ -77,18 +97,28 @@ Serializator* Effects_manager::Get_parser()
 void Effects_manager::Create_explosion (Vector2f pos, float size)
 {
     Explosion* a = new Explosion;
+    static int x_os, y_os, j, b = 1;
     static Point pos_new;
-    static int x_os = boom->getWidth(), y_os = boom->getHeight();
 
-    a->Set_sprite(boom);
+    is = boom.begin();
 
+    for(j = 1; j<b; ++j)
+    {
+        ++is;
+    }
+    b++;
+    if(b>k) b = 1;
+
+    x_os = (*is)->getWidth();
+    y_os = (*is)->getHeight();
+
+    a->Set_sprite( (*is) );
     pos_new = pos.To<int>();
     pos_new.x -= x_os/2;
     pos_new.y -= y_os/2;
 
     a->Set_position(pos_new);
     exp.push_back(a);
-    
 }
 
 void Effects_manager::exp_clean()
@@ -101,6 +131,11 @@ void Effects_manager::exp_clean()
             delete (*i);
             i = exp.erase(i);
         }
-        else break; //++i;
+        else ++i;
     }
+}
+
+void Effects_manager::exp_add(Sprite* sp)
+{
+    boom.push_back(sp);
 }
