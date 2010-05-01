@@ -26,28 +26,12 @@ Explosion::~Explosion()
 
 bool Explosion::Draw(Canvas* c)
 {
-//    static int max = spr->getMaxFrames();
-
     if(run)
     {
         spr->setFrame(index);
         spr->draw(c, pos);
         c->update();
     }
-
-/*
-    if (spr->getFrame() == 0) spr->start();
-    spr->draw(c, pos);
-    c->update();
-    spr->animate();
-    if (spr->getFrame() == 0)
-    {
-        spr->stop();
-        return true;
-    }
-    return false;
-*/
-
 }
 
 void Explosion::Set_position(Point pos_)
@@ -67,7 +51,10 @@ bool Explosion::Get_run(void )
 
 void Explosion::Animate(void )
 {
-    static int MaxFrames = spr->getMaxFrames(), speed = spr->getSpeed();
+    static int MaxFrames, speed;
+
+    MaxFrames = spr->getMaxFrames();
+    speed = spr->getSpeed();
     
     if(index == (MaxFrames - 1))
     {

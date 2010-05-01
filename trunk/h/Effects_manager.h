@@ -19,7 +19,9 @@ class Effects_manager
 {
     class Initialaiser;
     Initialaiser* parser;
-    Sprite* boom;
+    list <Sprite*> boom;
+    int k;// number of sprites
+    list <Sprite*>::iterator is;
     list <Explosion*> exp;
     list <Explosion*>::iterator i;
 public:
@@ -31,6 +33,7 @@ public:
     
     Serializator* Get_parser();
     bool Init();
+    void exp_add(Sprite* );
     
     void exp_draw(Canvas* );
     void exp_clean();
