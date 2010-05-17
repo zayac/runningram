@@ -65,10 +65,10 @@ Game_manager::~Game_manager()
 bool Game_manager::Init (int argc, char *argv[])
 {
 	if (argc > 1)
-		if (*argv[1] == '1')
-			nstate = netclient;
-		else
+		if (strlen(argv[1]) < 8)
 			nstate = netserver;
+		else
+			nstate = netclient;
 	bool result = true;
 	try
 	{
@@ -115,13 +115,11 @@ bool Game_manager::Init (int argc, char *argv[])
 //		co = new Console_output (cmd);
 //		Exception::Set_output (co);
 
-		for (int i = 0; i < 500; ++i)
-			cmd->Push_string ("bla");
 		
 		switch (nstate)
 		{
 		case netclient:
-			clie->Connect ("10.55.91.67", 4334);
+			clie->Connect (argv[1], 4334);
 			clie->push_back (players);
 			clie->push_back (cars);
 			clie->push_back (models);
@@ -129,8 +127,11 @@ bool Game_manager::Init (int argc, char *argv[])
 			break;
 		case netserver:
 			serv = new Server(4334);
-			
-			serv->accept_one();
+
+			int nclients = atoi (argv[1]);
+			while (nclients-- > 0)
+				serv->accept_one();
+
 			serv->push_back (models);
 			serv->push_back (players);
 			serv->push_back (cars);
