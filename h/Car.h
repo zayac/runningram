@@ -43,6 +43,7 @@ protected:
 	virtual int Sign_data_len() const {return sizeof(pos) + sizeof(r);}
 public:
 	Active (Vector2f position, float r_, int id = 0):Limited (position, r_), Identified<Active> (id) {}
+	virtual ~Active() {}
 	virtual void Actions (float dt) = 0;
 	virtual void Draw (Canvas*) = 0;
 	virtual void Collis_brd (Rect width, float fric) = 0;
@@ -215,6 +216,8 @@ public:
 		 float rmass1, float rmass2, float lenght, float r1, float r2, float turn_transfer, Vector2f fric,
 		 Orient start_orient, int id_ = 0,
 		 Sprite* pic = 0, Player* host = 0, Effects_manager* em_ = 0);
+
+	~Car();
 
 	virtual void Actions (float dt);
 	virtual void Draw (Canvas*);

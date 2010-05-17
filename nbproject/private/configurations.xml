@@ -31,7 +31,7 @@
         <configurationname>GizmoSimple</configurationname>
       </gizmo_options>
       <runprofile version="6">
-        <args>1</args>
+        <args>127.0.0.1</args>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <console-type>2</console-type>
@@ -50,7 +50,7 @@
         <configurationname>GizmoSimple</configurationname>
       </gizmo_options>
       <runprofile version="6">
-        <args>2</args>
+        <args>1</args>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <console-type>2</console-type>

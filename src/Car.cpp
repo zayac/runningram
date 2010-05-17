@@ -41,6 +41,10 @@ Car::Car (Vector2f coor, float health_, float motor_force_, float bouncy_, float
 	if (health_ > max_health) max_health = health_;
 	assert(Ok());
 }
+Car::~Car()
+{
+	if (em) em->Create_explosion (pos, r);
+}
 //--------------------------------------------------------------------------------------------------
 void Car::Actions (float dt)
 {
@@ -73,8 +77,10 @@ void DBG_switch() { collis_brd = ! collis_brd;}
 //--------------------------------------------------------------------------------------------------
 void Car::Draw (Canvas* c)
 {
+	back.orient.Update ();
+	Orient primary_o = back.orient;
 	if (pic != 0)
-		pic->draw (c, pos.To<int>(), (PI + back.orient.Get_angle())/PI/2);
+		pic->draw (c, pos.To<int>(), (PI + primary_o.Get_angle())/PI/2);
 //	else	//if car hasn't sprite, it will be drawn schematically
 	{
 		dbgcanv = c;//deprecated;
@@ -82,10 +88,10 @@ void Car::Draw (Canvas* c)
 		Point begin = back.pos.To<int>();
 		Point end = front.pos.To<int>();//(front.orient.Get_dir()*front.r + pos).To<int> ();
 
-		Point leftback = Point (back.r*back.orient.Get_dir().y, -back.r*back.orient.Get_dir().x) + begin;
-		Point leftfront = Point (front.r*back.orient.Get_dir().y, -front.r*back.orient.Get_dir().x) + end;
-		Point rightback = Point (-back.r*back.orient.Get_dir().y, back.r*back.orient.Get_dir().x) + begin;
-		Point rightfront = Point (-front.r*back.orient.Get_dir().y, front.r*back.orient.Get_dir().x) + end;
+		Point leftback = Point (back.r*primary_o.Get_dir().y, -back.r*primary_o.Get_dir().x) + begin;
+		Point leftfront = Point (front.r*primary_o.Get_dir().y, -front.r*primary_o.Get_dir().x) + end;
+		Point rightback = Point (-back.r*primary_o.Get_dir().y, back.r*primary_o.Get_dir().x) + begin;
+		Point rightfront = Point (-front.r*primary_o.Get_dir().y, front.r*primary_o.Get_dir().x) + end;
 
 		Point one_trg = (front.r*front.orient.Get_dir() + front.pos).To<int>();
 		Point two_trg = (front.r*(front.orient + Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
@@ -408,13 +414,15 @@ bool Car::Damage (Vector2f imp, Vector2f papp, float destructive_k)
 	Vector2f proj = (papp - pos).Proj (back.orient.Get_dir());
 	Vector2f norm = papp - pos - proj;
 	float k = (2*norm.Lensq ()/r - ((papp - pos)^back.orient.Get_dir()) + r/2)/r;
-	float val = imp.Lensq ()*k*destructive_k;//!!! too plain formula
+	float val = imp.Lensq ()*k*destructive_k;
+
+	if (Dead()) return true;//crushed allready dead car
 
 	health -= val;
 	if (Dead())
 	{
 		if (host) host->Car_crashed ();
-		if (em) em->Create_explosion (pos, r);
+//		if (em) em->Create_explosion (pos, r); // this line moved to destructor, because client explosions
 		return true;
 	}
 	return false;
