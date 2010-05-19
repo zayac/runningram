@@ -64,6 +64,8 @@
         <in>initparser.h</in>
         <in>mstdint.h</in>
       </df>
+      <df name="lib">
+      </df>
       <df name="src">
         <in>Activeman.cpp</in>
         <in>Battlefield.cpp</in>

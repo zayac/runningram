@@ -48,6 +48,8 @@ public:
     void setTransparency (Color colorkey);
     Color getTransparency();
     void zoom(double zoomx, double zoomy); // percentage to zoom in
+	void saveToBmp(string filename);
+	SDL_Surface* getSurface(int i);
 
     bool running();
     void stop();

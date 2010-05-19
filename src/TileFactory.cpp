@@ -31,7 +31,6 @@ public:
     	if (texture_fname.size() > 0)
     	{
             sp = new Sprite (texture_fname.c_str(), 1, 1);
-            sp->setPos (Point (sp->getWidth() / 2, sp->getHeight() / 2));
             //_tiles[sym] = sp;
         }
 
@@ -67,15 +66,27 @@ TileFactory::TileFactory()
     
 }
 
-void TileFactory::scale(int size)
+void TileFactory::scale(Point size)
 {
     for( int i = 0; i < 256; i++)
     {
         if ( _tiles[i])
         {
-            double rate = (double) size / _tiles[i]->getSprite()->getWidth();
-            _tiles[i]->getSprite()->zoom(rate, rate);
+            double ratex = (double) size.x / _tiles[i]->getSprite()->getWidth();
+			double ratey = (double) size.y/ _tiles[i]->getSprite()->getHeight();
+            _tiles[i]->getSprite()->zoom(ratex, ratey);
         }
+    }
+}
+
+void TileFactory::toIsometric()
+{
+    for( int i = 0; i < 256; i++)
+    {
+        if ( _tiles[i])
+        {
+			_tiles[i]->getSprite()->ortogonalToIsometric();
+		}
     }
 }
 

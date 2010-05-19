@@ -44,9 +44,9 @@ void Activeman::Collis_brd (const Battlefield* bf)
 
 	const unsigned char* cells = bf->Get_cells ();
 	Point size = bf->Get_size ();
-	int csize = bf->Get_cell_size();
+	Point csize = bf->Get_cell_size();
 
-	Point full_size = csize*size;
+	Point full_size = Point (csize.x * size.x, csize.y * size.y);
 
 	for (iterator i = begin(); i != end(); ++i)
 	{
@@ -69,10 +69,10 @@ void Activeman::Collis_brd (const Battlefield* bf)
 			for (int y = 0; y < size.y; ++y)
 				if (bf->No_road(x, y))
 				{
-					int left = x*csize;
-					int right = left + csize;//cell borders
-					int up = y*csize;
-					int down = up + csize;
+					int left = x*csize.x;
+					int right = left + csize.x;//cell borders
+					int up = y*csize.y;
+					int down = up + csize.y;
 
 					if (right < lup.x) continue;
 					if (left > rdown.x) continue;//necessary conditions
@@ -95,7 +95,7 @@ void Activeman::Collis_brd (const Battlefield* bf)
 							if (bf->Is_rough (nx, y)||
 								(pos.y < up && y - 1 >=  0 && bf->Is_rough(nx, y-1)) ||	//for gnawed corners
 								(pos.y > down && y + 1 < size.y && bf->Is_rough(nx, y+1)))
-								right += csize;			//cell alliance expansion
+								right += csize.x;			//cell alliance expansion
 							else break;
 						}
 						nx = x;
@@ -104,7 +104,7 @@ void Activeman::Collis_brd (const Battlefield* bf)
 							if (bf->Is_rough (nx, y) && bf->Is_rough (nx, y)||
 								(pos.y < up && y - 1 >=  0 && bf->Is_rough (nx, y-1)) ||	//for gnawed corners
 								(pos.y > down && y + 1 < size.y && bf->Is_rough (nx, y+1)))
-								left -= csize;			//cell alliance expansion
+								left -= csize.x;			//cell alliance expansion
 							else break;
 						}
 					}
@@ -116,7 +116,7 @@ void Activeman::Collis_brd (const Battlefield* bf)
 							if (bf->Is_rough (x, ny)||
 								(pos.x < left && x - 1 >=  0 && bf->Is_rough (x-1, ny)) ||	//for gnawed corners
 								(pos.x > right && x + 1 < size.x && bf->Is_rough (x+1, ny)))
-								down += csize;			//cell alliance expansion
+								down += csize.y;			//cell alliance expansion
 							else break;
 						}
 						ny = y;
@@ -125,7 +125,7 @@ void Activeman::Collis_brd (const Battlefield* bf)
 							if (bf->Is_rough (x, ny) ||
 								(pos.x < left && x - 1 >=  0 && bf->Is_rough (x-1, ny)) ||	//for gnawed corners
 								(pos.x > right && x + 1 < size.x && bf->Is_rough (x+1, ny)))
-								up -= csize;			//cell alliance expansion
+								up -= csize.y;			//cell alliance expansion
 							else break;
 						}
 					}

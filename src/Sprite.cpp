@@ -6,6 +6,7 @@
  */
 
 #include <SDL/SDL.h>
+#include <sstream>
 #include "Sprite.h"
 #include "Exception.h"
 using namespace std;
@@ -210,7 +211,6 @@ void Sprite::zoom(double zoomx, double zoomy)
     for(int i = 0; i < maxFrames; i++)
     {
        sprites[i].zoom(zoomx, zoomy);
-        sprites[i].setPos( Point (sprites[i].getWidth() / 2, sprites[i].getHeight() / 2));
     }
     width = sprites[0].getWidth();
     height = sprites[0].getHeight();
@@ -233,4 +233,21 @@ int Sprite::getWidth()
 int Sprite::getHeight()
 {
     return height;
+}
+
+void Sprite::saveToBmp (string filename)
+{
+	std::stringstream ss;
+    std::string str;
+	for(int i = 0; i < maxFrames;i++)
+	{
+		ss<<i;
+		ss>>str;
+		sprites[i].saveToBmp (filename.insert(filename.length() - 4, str));
+	}
+}
+
+SDL_Surface* Sprite::getSurface (int i)
+{
+	sprites[i].getSurface ();
 }

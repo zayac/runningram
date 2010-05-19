@@ -72,7 +72,8 @@ public:
     TileFactory();
     inline MapTile* getTile(char chr) const { return _tiles[chr]; }
     void init (ifstream& file);
-    void scale(int size);
+    void scale(Point size);
+    void toIsometric();
     virtual ~TileFactory();
     void clear();
 private:

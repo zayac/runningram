@@ -76,13 +76,22 @@ void Draw_cage (Canvas* c, Point start, Point full_size, Point num_cells, Color 
 
 void Battlefield::drawField (Canvas* c) const
 {
-    for(int i = 0; i < size.x; i++)
+    int start = 0;
+    for(int i = 0; i < size.y; i++)
     {
-        for (int j = 0; j < size.y; j++)
+        Point pos = Point (0, i);
+        int j = 0;
+        while (( pos.x < size.x) && (pos.y < size.y) && (pos.x >= 0) && (pos.y >= 0))
         {
-            _tileFactory.getTile(CELL(i, j))->getSprite()->draw(c, Point (i * csize - csize / 2, j * csize - csize / 2));
+            //cout << "pos: " << pos.x << ", "<< pos.y << "map: "<< start + j * csize.x << ", " << i * csize.y / 2 << endl;
+            _tileFactory.getTile(CELL(pos.x, pos.y))->getSprite()->draw(c, Point (start + j* csize.x, i * csize.y / 2));
+            pos.x++;
+            pos.y--;
+            j++;
         }
+        start -= csize.x / 2;
     }
+
 }
 //----------------------------------------
 void Battlefield::Draw (Graphic_subsystem* c) const
@@ -119,8 +128,8 @@ bool Battlefield::Load_from_file (const char* fname)
 
 	file >>size.x;
 	file >>size.y;
-	file >>csize;
-
+	file >>csize.x;
+    file >>csize.y;
         //test.push_back( new Canvas ("textures/smile.png", true));
 
 	cells = new unsigned char[size.x * size.y];
@@ -144,9 +153,13 @@ bool Battlefield::Load_from_file (const char* fname)
 	}
 	cur_res_point = resur_points.begin();
 
-        _tileFactory.init(file);
-        _tileFactory.scale(csize);
-	/*Clean_sprites ();
+	_tileFactory.init(file);
+	_tileFactory.scale(csize);
+	_tileFactory.toIsometric();
+	//Point test = Canvas::transformPointToOrtogonal (Point (2, 3), Point (4, 4));
+	csize.x = csize.x * 4 - 2;
+	csize.y = csize.y * 2;
+	 /*Clean_sprites ();
 	Sectionp tile_props("gensec", '\n');
 	tile_props.Add_param (new Field_set ("tile", sprites, frics, &roughs, &sands));
 	tile_props.Unserialise (file);*/
@@ -163,12 +176,12 @@ Point Battlefield::Read_respoint (ifstream& file)
 
 	file.getline (buf, 512, ',');
 	if (buf[0] == '(') buf[0] = ' ';
-	ret.x = atoi (buf)*csize + csize/2;
+	ret.x = atoi (buf)*csize.x + csize.y / 2;
 
 	file.getline (buf, 512, ')');
 	if (buf[0] == ',') buf[0] = ' ';
-	ret.y = atoi (buf)*csize + csize/2;
-
+	ret.y = atoi (buf)*csize.x + csize.y / 2;
+ 
 	return ret;
 }
 //--------------------------------------------------------------------------------------------------
