@@ -111,7 +111,10 @@ public:
 	void setPixel (Point point, Color color);
 	bool isTransparentPixel (Point point);
 	void setTransparentPixel (Point point);
-        void ortogonalToIsometric();
+    void ortogonalToIsometric();
+	void saveToBmp( string filename);
+
+	static Point transformPointToOrtogonal(Point old, Point size);
 
 	void setPos (Point npos) {pos = npos;}
 	Point getPos () const   {return pos;}
@@ -127,6 +130,8 @@ public:
 	int getWidth();
 	int getHeight();
 	SDL_Surface* getSurface() { return data(); }
+	//void getSurfaceInformation();
+
 	inline bool valid() {return data() != 0;}
 	//void setSurface (SDL_Surface* surf) {data = surf};
 	Canvas createCompatible (Point size = Point()) const;

@@ -43,7 +43,7 @@ all: $(TARGETDIR)/runningram
 
 # Link
 $(TARGETDIR)/runningram: $(TARGETDIR) $(OBJS) $(DEPLIBS_runningram)
-	$(LINK.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ $(OBJS) $(LDLIBS_runningram)
+	$(LINK.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -L=./lib -o $@ $(OBJS) $(LDLIBS_runningram)
 
 
 # Compile source files into .o files

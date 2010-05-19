@@ -14,7 +14,6 @@
 #include "Battlefield.h"
 #include "Orient.h"
 #include "Exception.h"
-
 //SDL_Surface* Canvas::screen_p = 0;
 //Canvas::base* Canvas::screen_t = 0;
 
@@ -253,6 +252,8 @@ Color Canvas::getPixel (Point point)
 	point -= pos;
     Uint32* pixels = (Uint32*)data()->pixels;
     Uint8 r, g, b, a;
+	assert(point.y * data()->w + point.x < data()->w*data()->h);
+	assert (point.y * data()->w + point.x >= 0);
     SDL_GetRGBA(pixels[point.y * data()->w + point.x], data()->format, &r, &g, &b, &a);
     return Color (r, g, b, a);
 }
@@ -287,7 +288,7 @@ void Canvas::zoom (double zoomx, double zoomy)  // percentage to zoom in
 {
 	pos.x *= zoomx;
 	pos.y *= zoomy;
-	Substitute_data (zoomSurface (data(), zoomx, zoomy, SMOOTHING_ON));
+	Substitute_data (zoomSurface (data(), zoomx, zoomy, SMOOTHING_OFF));
 }
 //--------------------------------------------------------------------------------------------------
 Canvas Canvas::cropRect (Point point, int w, int h, bool remember_pos)
@@ -367,10 +368,10 @@ void Canvas::ortogonalToIsometric()
             else
             {
                 vector<Color> tmp_vec;
-                tmp_vec.push_back( getPixel(Point (i - dj - 1, dj    )));
+                tmp_vec.push_back( getPixel(Point (i - dj - 1, dj   )));
                 tmp_vec.push_back( getPixel(Point (i - dj    , dj    )));
-                tmp_vec.push_back( getPixel(Point (i - dj - 1, dj + 1)));
-                tmp_vec.push_back( getPixel(Point (i - dj    , dj + 1)));
+                tmp_vec.push_back( getPixel(Point (i - dj - 1, dj + 1 )));
+                tmp_vec.push_back( getPixel(Point (i - dj    , dj + 1 )));
                 color = color.average(&tmp_vec);
             }
             new_surf.setPixel(new_cell, color);
@@ -407,7 +408,37 @@ void Canvas::ortogonalToIsometric()
     }
 	Reinit (new_surf);
     setTransparency(Color (255, 0, 255));
-    //SDL_SetColorKey( data(), SDL_SRCCOLORKEY|SDL_RLEACCEL, SDL_MapRGB( data()->format,0, 0, 0 ) );
-    //data() = SDL_DisplayFormat(data());
+	pos = transformPointToOrtogonal(pos, (new_surf.getWidth (), new_surf.getHeight ()));
 
+}
+
+void Canvas::saveToBmp(string filename)
+{
+	SDL_SaveBMP(this->getSurface (), filename.c_str ());
+}
+
+Point Canvas::transformPointToOrtogonal(Point old, Point size)
+{
+	Point tmp, pnew;
+	if (old.x + old.y <= size.x)
+	{
+		tmp.y = old.x;
+		tmp.x = old.x + old.y;
+		pnew.y = tmp.x;
+		pnew.x = tmp.y * 4 + (size.y *2 - 2 - tmp.x * 2);
+	}
+	else
+	{
+		old.x = size.x - old.x - 1;
+		old.y = size.x - old.y - 1;
+		tmp.y = old.x;
+		tmp.x = old.x + old.y;
+		pnew.y = tmp.x;
+		pnew.x = tmp.y * 4 + (size.y *2 - 2 - tmp.x * 2);
+		pnew.y = size.x * 2 - 1 - pnew.y;
+		pnew.x = size.x * 4 - 4 - pnew.x;
+		//pnew.y = (size.x - 1) * 2 - tmp.x - 1;
+		//pnew.x = size.x * 4 - 2 - (tmp.y * 4 + ((size.y-1) *2 - 2 - tmp.x * 2));
+	}
+	return pnew;
 }

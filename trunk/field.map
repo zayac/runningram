@@ -1,6 +1,7 @@
 26
 30
-80
+64
+64
 00000000000000000000000000
 01111111111111111111111110
 01111111111111111111111110
@@ -35,53 +36,53 @@
 
 tile
 	character = 0
-	texture = textures/bricks80.png
-	texture centre x = 40
-	texture centre y = 40
+	texture = textures/bricks64.png
+	texture centre x = 32
+	texture centre y = 32
 	rough = true
 	friction = 0.00001
 
 tile
 	character = 1
-	texture = textures/road4.jpg
-	texture centre x = 40
-	texture centre y = 40
+	texture = textures/road60.bmp
+	texture centre x = 32
+	texture centre y = 32
 	rough = false
 tile
 	character = 2
-	texture = textures/dirty_sand.bmp
-	texture centre x = 40
-	texture centre y = 40
+	texture = textures/dirty_sand64.bmp
+	texture centre x = 32
+	texture centre y = 32
 	rough = false
 tile
 	character = 3
-	texture = textures/forest.bmp
-	texture centre x = 40
-	texture centre y = 40
+	texture = textures/forest64.bmp
+	texture centre x = 32
+	texture centre y = 32
 	friction = 4
 	rough = false
 tile
 	character = 4
-	texture = textures/jungle.bmp
-	texture centre x = 40
-	texture centre y = 40
+	texture = textures/jungle64.bmp
+	texture centre x = 32
+	texture centre y = 32
 	rough = true
 	friction = 0.00001
 tile
 	character = 5
-	texture = textures/curly_stone.bmp
-	texture centre x = 40
-	texture centre y = 40
+	texture = textures/border.bmp
+	texture centre x = 32
+	texture centre y = 32
 	rough = true
 tile
 	character = 6
-	texture = textures/swamp.bmp
-	texture centre x = 40
-	texture centre y = 40
+	texture = textures/swamp64.bmp
+	texture centre x = 32
+	texture centre y = 32
         rough = true
 tile
 	character = 7
-	texture = textures/stones.bmp
-	texture centre x = 40
-	texture centre y = 40
+	texture = textures/border.bmp
+	texture centre x = 32
+	texture centre y = 32
         rough = true

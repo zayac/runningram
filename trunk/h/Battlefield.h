@@ -26,10 +26,10 @@ class Battlefield
 {
 	unsigned char* cells;
 	Point size;
-	int csize;
+	Point csize;
 	vector<Point> resur_points;
 	vector<Point>::iterator cur_res_point;
-        TileFactory _tileFactory;
+    TileFactory _tileFactory;
 
 	class Initialaiser;
 	Initialaiser* parser;
@@ -38,7 +38,7 @@ class Battlefield
 	Point Read_respoint (ifstream& file);
 
 
-        void drawField(Canvas* c) const;
+    void drawField(Canvas* c) const;
 public:
 
 	Battlefield();
@@ -50,7 +50,7 @@ public:
 
 	const unsigned char* Get_cells() const {return cells;}
 	Point Get_size() const {return size;}
-	int Get_cell_size() const {return csize;}
+	Point Get_cell_size() const {return csize;}
 	Point Get_next_res_point();
 
 	bool Is_rough (int x, int y) const;
