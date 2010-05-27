@@ -40,7 +40,7 @@ public:
 
 Battlefield::Battlefield ():cells (0), parser (new Initialaiser("[Map]"))
 {
-    _tileFactory.clear();
+//    _tileFactory.clear();
 }
 //--------------------------------------------------------------------------------------------------
 Battlefield::~Battlefield ()

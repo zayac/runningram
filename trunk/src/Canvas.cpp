@@ -95,7 +95,7 @@ void Canvas::copy (Canvas from, Rect src_brd, Point to)
 	SDL_BlitSurface (from.data(), src_brdp, data(), addSdl (&my_brd));
 }
 //--------------------------------------------------------------------------------------------------
-void Canvas::draw (Canvas* buffer, Point position)
+void Canvas::draw (Canvas* buffer, Point position) const
 {
     position += pos - buffer->pos;
     SDL_Rect dstrect;
@@ -125,44 +125,6 @@ void Canvas::update()
 {
 	SDL_UpdateRect (data(), 0, 0, 0, 0);
 }
-//--------------------------------------------------------------------------------------------------
-//bool Canvas::May_not_draw (Point& start, Point& finish) const
-//{
-//	return	(start.x >= w && finish.x >= w) ||
-//			(start.x < 0 && finish.x < 0) ||
-//			(start.y >= h && finish.y >= h) ||
-//			(start.y < 0 && finish.y < 0);
-//}
-////--------------------------------------------------------------------------------------------------
-//bool Canvas::May_draw (Point& start, Point& finish) const
-//{
-//	return	(start.x < w && finish.x < w) &&
-//			(start.x >= 0 && finish.x >= 0) &&
-//			(start.y < h && finish.y < h) &&
-//			(start.y >= 0 && finish.y >= 0);
-//}
-////--------------------------------------------------------------------------------------------------
-//bool Canvas::In_brd (Point& start, Point& finish, Point& delta) const
-//{
-//	if (May_not_draw (start, finish)) return false;
-//
-//	delta = finish - start;
-//	if (finish.x >= w)	delta = delta*(w - 1 - start.x)/delta.x;
-//	if (finish.y >= h && delta.x != 0)	delta = delta*(h - 1 - start.y)/delta.y;
-//	if (finish.x < 0 && delta.x != 0)	delta = -delta*start.x/delta.x;
-//	if (finish.y < 0 && delta.y != 0)	delta = -delta*start.y/delta.y;
-//	finish = start + delta;
-//
-//	if (May_not_draw (start, finish)) return false;
-//
-//	if (start.x >= w)	delta = -delta*(w - 1 - finish.x)/delta.x;
-//	if (start.y >= h && delta.x != 0)	delta = -delta*(h - 1 - finish.y)/delta.y;
-//	if (start.x < 0 && delta.x != 0)	delta = delta*finish.x/delta.x;
-//	if (start.y < 0 && delta.y != 0)	delta = delta*finish.y/delta.y;
-//	start = finish - delta;
-//
-//	return May_draw (start, finish);
-//}
 //--------------------------------------------------------------------------------------------------
 bool Canvas::Ok() const
 {
@@ -344,6 +306,7 @@ Color Canvas::getTransparency() const
 //--------------------------------------------------------------------------------------------------
 Canvas* Canvas::getScreenCanvas (Point size)
 {
+	assert(Screen == 0);//Run once
 	if (Screen == 0)
 		Screen = new Canvas (SDL_SetVideoMode (size.x, size.y, 0, 0));
 	return Screen;

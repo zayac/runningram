@@ -16,6 +16,10 @@
 class TTF_Font;
 #endif
 
+#ifndef min
+inline int min(int a, int b) {return a < b ? a : b;}
+#endif
+
 class Fontc :public UniId<TTF_Font>
 {
 	Color col;
@@ -24,8 +28,18 @@ class Fontc :public UniId<TTF_Font>
 	virtual void Delete_data();
 
 public:
+	enum Font_quality
+	{
+		fqBAD,
+		fqGOOD,
+		fqTRANSPARENT
+	};
+private:
+	Font_quality fq;
+
+public:
 	Fontc ();
-	Fontc (int height, const char* fname, Color fg = Color(), Color bg = Color());
+	Fontc (int height, const char* fname, Font_quality fq = fqBAD, Color fg = Color(), Color bg = Color());
 	Fontc (const Fontc& orig);
 	~Fontc();
 
@@ -34,7 +48,7 @@ public:
 
 	void Set_bg (const Color& b) {bgcol = b;}
 	void Set_fg (const Color& f) {col = f;}
-
+	void Set_fq (Font_quality nfq) {fq = nfq;}
 
 	const Color& bg;
 	const Color& fg;
@@ -44,6 +58,7 @@ public:
 	inline int Str_len (const char* str) const    {return Str_size (str).x;}
 	int Height() const;
 	int Approximate_num_symbols (int width) const;
+	Canvas Create_label (const char* line, bool color_reverse = false, Rect* brd = 0) const;
 	int Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_reverse = false) const;
 
 	bool Ok() const;

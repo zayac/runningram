@@ -1,0 +1,73 @@
+15
+15
+80
+000000000000000
+011111111111110
+011111111111110
+011111111111110
+011111111111110
+011222211111110
+011122111111110
+011111111111110
+011111111111110
+011111111111110
+011111111111110
+011111111111110
+011111111111110
+011111111111110
+000000000000000
+(1, 1) (2, 3) (5, 8)
+
+tile
+	character = 0
+	texture = textures/kate/brick2.jpeg
+	texture centre x = 40
+	texture centre y = 40
+	rough = true
+	friction = 0.00001
+
+tile
+	character = 1
+	texture = textures/kate/herb.jpg
+	texture centre x = 40
+	texture centre y = 40
+	rough = false
+tile
+	character = 2
+	texture = textures/dirty_sand.bmp
+	texture centre x = 40
+	texture centre y = 40
+	rough = false
+	friction = 0.00001
+tile
+	character = 3
+	texture = textures/forest.bmp
+	texture centre x = 40
+	texture centre y = 40
+	friction = 4
+	rough = false
+tile
+	character = 4
+	texture = textures/jungle.bmp
+	texture centre x = 40
+	texture centre y = 40
+	rough = true
+	friction = 0.00001
+tile
+	character = 5
+	texture = textures/curly_stone.bmp
+	texture centre x = 40
+	texture centre y = 40
+	rough = true
+tile
+	character = 6
+	texture = textures/swamp.bmp
+	texture centre x = 40
+	texture centre y = 40
+        rough = true
+tile
+	character = 7
+	texture = textures/stones.bmp
+	texture centre x = 40
+	texture centre y = 40
+        rough = true

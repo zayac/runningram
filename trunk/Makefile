@@ -4,16 +4,18 @@
 ## Time: Jan 7, 2010 9:50:40 PM
 ## Makefile created by Sun Studio.
 ##
-## This file is generated automatically, but edited manually.
+## This file is generated automatically, but edited manually by abovementioned.
 ##
 
+LUA_LIB_FILE = lua/liblua5.1.a
+LINK_LIBS = $(LUA_LIB_FILE) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx -lSDL_image
 
 #### Compiler and tool definitions shared by all build targets #####
 CCC = g++
 CXX = g++
 BASICOPTS = -g
-CCFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx -lSDL_image
-CXXFLAGS = $(BASICOPTS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx -lSDL_image
+CCFLAGS = $(BASICOPTS)
+CXXFLAGS = $(BASICOPTS)
 CCADMIN =
 
 # Define a lookup dir
@@ -23,7 +25,7 @@ vpath %.cpp .:src
 # Define the target directories.
 TARGETDIR=GNU-i386-Linux
 ## Target: runningram
-CPPFLAGS_runningram = -Ih
+CPPFLAGS_runningram = -Ih -Ilua/include/
 OBJS =  $(patsubst src/%.cpp,$(TARGETDIR)/%.o,$(wildcard src/*.cpp)) \
         $(patsubst %.cpp, $(TARGETDIR)/%.o, $(wildcard *.cpp))
 
@@ -43,7 +45,7 @@ all: $(TARGETDIR)/runningram
 
 # Link
 $(TARGETDIR)/runningram: $(TARGETDIR) $(OBJS) $(DEPLIBS_runningram)
-	$(LINK.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -L=./lib -o $@ $(OBJS) $(LDLIBS_runningram)
+	$(LINK.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ $(OBJS) $(LDLIBS_runningram) $(LINK_LIBS)
 
 
 # Compile source files into .o files

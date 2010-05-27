@@ -64,7 +64,14 @@
         <in>initparser.h</in>
         <in>mstdint.h</in>
       </df>
-      <df name="lib">
+      <df name="lua">
+        <df name="include" kind="SOURCE_LOGICAL_FOLDER">
+          <in>lauxlib.h</in>
+          <in>lua.h</in>
+          <in>lua.hpp</in>
+          <in>luaconf.h</in>
+          <in>lualib.h</in>
+        </df>
       </df>
       <df name="src">
         <in>Activeman.cpp</in>

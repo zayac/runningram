@@ -21,6 +21,8 @@
 using std::string;
 using std::list;
 
+class lua_State;
+
 const int cursor_width = 2;
 const int blink_interval = 300;
 
@@ -28,15 +30,30 @@ class Stringc :public string
 {
 	Fontc font;
 
-public:
-	Stringc (){}//:font(){}
-	Stringc (const string& str, Fontc f) :string(str), font(f) {}
+	Canvas lab;
+	bool lab_upd;
 
-	Stringc& operator = (const string& str) {string::operator =(str);}
-	void Set_font (Fontc f) {font = f;}
+public:
+	Stringc ():lab_upd(false){}//:font(){}
+	Stringc (const string& str, Fontc f) :string(str), font(f), lab_upd(false) {}
+
+	Stringc& operator = (const string& str) {string::operator =(str); lab_upd = false;}
+	void Set_font (Fontc f) {font = f; lab_upd = false;}
 
 	inline int Draw (Canvas* screen, Rect* brd, int offset = 0, bool color_reverse = false) const//!!!??? Offset may be is tooish
-		{return font.Draw_line (screen, c_str() + offset, brd, color_reverse);}
+	{
+		assert(brd != 0);
+		if (lab_upd && !color_reverse)//!!! Not debugged yet
+		{
+			int pos = font.Str_len (substr(0, offset).c_str());
+			screen->copy (lab, Point(pos, 0), Rect (brd->x, brd->y, brd->w - pos, brd->h));
+			return min (brd->h, lab.getHeight());
+		}
+		else
+			return font.Draw_line (screen, c_str() + offset, brd, color_reverse);
+	}
+
+	void Update_lab();
 
 	inline Point pSize (int offset = 0) const {return font.Str_size (c_str() + offset);}
 	inline int Height (int offset = 0) const {return pSize (offset).y;}
@@ -47,7 +64,7 @@ public:
 
 	operator string& () {return *(string*)this;}
 
-	bool Ok() const {return font.Ok();}
+	bool Ok() const {return font.Ok() && (!lab_upd || lab.Ok());}
 };
 
 class Lines_view
@@ -120,6 +137,8 @@ class Console
 	Fontc font;
 	Lines_view history;
 	Line_edit input;
+
+	lua_State* vm;
 
 	class Initialaiser;
 	Initialaiser* parser;
