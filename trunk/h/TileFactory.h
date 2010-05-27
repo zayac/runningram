@@ -27,10 +27,9 @@ class MapTile : public Tile {
     float _friction;
     unsigned char _symbol;
 public:
-    inline bool isObstacle() { return _obstacle; }
-    inline bool isSand() { return _sand; }
-    inline float getFriction() { return _friction; }
-
+    inline bool isObstacle() const { return _obstacle; }
+    inline bool isSand() const { return _sand; }
+    inline float getFriction() const { return _friction; }
     MapTile (char* fileName, int maxFrames, int animationSpeed, bool alpha = false, bool obstacle = false, float friction = 1.0f, bool sand = false)
     {
         _sprite = new Sprite(fileName, maxFrames, animationSpeed, alpha);
@@ -71,14 +70,15 @@ class TileFactory {
 public:
     TileFactory();
     inline MapTile* getTile(char chr) const { return _tiles[chr]; }
-    void init (ifstream& file);
+    inline Point getSize() const { return _size; }
+	void init (ifstream& file, Point size);
     void scale(Point size);
     void toIsometric();
     virtual ~TileFactory();
     void clear();
 private:
     MapTile* _tiles[256];
-
+	Point _size;
 };
 
 #endif	/* _TILEFACTORY_H */
