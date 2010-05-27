@@ -87,6 +87,7 @@ bool Game_manager::Init (int argc, char *argv[])
 		fl.Read_sector (&gen);
 
 		models->Set_am (cars);
+		int ggg = cars->size();
 		models->Set_pm (players);
                 models->Set_em (eff);
 
@@ -188,7 +189,7 @@ bool Game_manager::Main_loop()
 
 			players->Draw_comp_table (pic->Get_screen (), &font);
 
-			if (!look->Has_target ()) look->Set_target (*cars->begin ());
+			if (!look->Has_target () && cars->size() > 0) look->Set_target (*cars->begin ());
 			look->Actions ();
 			cars->Delete_deadalives ();
 

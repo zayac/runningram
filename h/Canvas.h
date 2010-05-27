@@ -10,6 +10,7 @@
 #include "mstdint.h"
 #include "Vec.h"
 #include "UniId.h"
+#include "initparser.h"
 #include <string>
 #include <vector>
 class Canvas;
@@ -24,6 +25,8 @@ public:
 	Uint8 g;
 	Uint8 b;
 	Uint8 unused;
+
+	class Initialiser;
 
 public:
 	Color (Uint8 red = 0, Uint8 green = 0, Uint8 blue = 0, Uint8 alpha = 255)
@@ -147,6 +150,38 @@ public:
 
 	static Canvas* getScreenCanvas (Point size);//Run once!!!
 };
+
+
+#ifdef INITPARSER_H_INCLUDED
+// <editor-fold defaultstate="collapsed" desc="From file initialaiser">
+class Color::Initialiser : public Sectionp
+{
+public:
+	int r, g, b, unused;
+	Color* object;
+protected:
+	virtual bool After_read (ifstream &file)
+	{
+		*object = Color (r, g, b, unused);
+		return true;
+	}
+public:
+
+	Initialiser (string name, Color* what)
+	: Sectionp (name, '='), object (what), r (what->r), g (what->g), b (what->b), unused (what->unused)
+	{
+		Add_param (new St_loader<int > ("red", &r));
+		Add_param (new St_loader<int > ("green", &g));
+		Add_param (new St_loader<int > ("blue", &b));
+		Add_param (new St_loader<int > ("alpha", &unused));
+	}
+
+	virtual ~Initialiser ()
+	{
+		Delete_props ();
+	}
+}; // </editor-fold>
+#endif //INITPARSER_H_INCLUDED
 
 #endif	/* _CANVAS_H */
 

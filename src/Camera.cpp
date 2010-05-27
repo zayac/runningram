@@ -30,6 +30,6 @@ void Camera::Actions()
 		return;
 	}
 
-	pos += (target->Get_pos().To<int>() - Point (300, 300) - pos)/50;
+	pos += (Canvas::transform (target->Get_pos().To<int>()) - Point (300, 300) - pos)/50;
 }
 //--------------------------------------------------------------------------------------------------

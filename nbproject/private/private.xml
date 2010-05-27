@@ -3,10 +3,28 @@
     <code-assistance-data xmlns="http://www.netbeans.org/ns/make-project-private/1">
         <code-model-enabled>true</code-model-enabled>
     </code-assistance-data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1">
-        <file>
-            <url>src/Game_manager.cpp</url>
-            <line>31</line>
-        </file>
-    </editor-bookmarks>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/home/necto/proj/runningram/h/Fontc.h</file>
+        <file>file:/home/necto/proj/runningram/src/Fontc.cpp</file>
+        <file>file:/home/necto/proj/runningram/src/Graphic_subsystem.cpp</file>
+        <file>file:/home/necto/proj/runningram/h/Console.h</file>
+        <file>file:/home/necto/proj/runningram/src/Game_manager.cpp</file>
+        <file>file:/home/necto/proj/runningram/src/Eventman.cpp</file>
+        <file>file:/home/necto/proj/runningram/h/Eventman.h</file>
+        <file>file:/home/necto/proj/runningram/Makefile</file>
+        <file>file:/home/necto/proj/runningram/main.cpp</file>
+        <file>file:/home/necto/proj/runningram/src/Sprite.cpp</file>
+        <file>file:/home/necto/proj/runningram/src/TileFactory.cpp</file>
+        <file>file:/home/necto/proj/runningram/h/TileFactory.h</file>
+        <file>file:/home/necto/proj/runningram/lua/include/lua.h</file>
+        <file>file:/home/necto/proj/runningram/src/Car.cpp</file>
+        <file>file:/home/necto/proj/runningram/src/Console.cpp</file>
+        <file>file:/home/necto/proj/runningram/settings.cfg</file>
+        <file>file:/home/necto/proj/runningram/h/initparser.h</file>
+        <file>file:/home/necto/proj/runningram/h/Canvas.h</file>
+        <file>file:/home/necto/proj/runningram/src/Canvas.cpp</file>
+        <file>file:/home/necto/proj/runningram/src/initparser.cpp</file>
+        <file>file:/home/necto/proj/runningram/src/Camera.cpp</file>
+    </open-files>
 </project-private>
