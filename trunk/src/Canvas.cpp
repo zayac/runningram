@@ -76,12 +76,12 @@ Rect Canvas::getClipRect() const
 	return rez;
 }
 //--------------------------------------------------------------------------------------------------
-int Canvas::getWidth()
+int Canvas::getWidth() const
 {
 	return data()->w;
 }
 //--------------------------------------------------------------------------------------------------
-int Canvas::getHeight()
+int Canvas::getHeight() const
 {
 	return data()->h;
 }
@@ -115,10 +115,11 @@ Canvas Canvas::createCompatible (Point size) const
 	if (size == Point()) size = Point (data()->w, data()->h);
         
 	return Canvas (SDL_CreateRGBSurface (data()->flags, size.x, size.y, data()->format->BitsPerPixel,
-										 data()->format->Rmask, data()->format->Gmask,
-                                						 data()->format->Bmask, data()->format->Amask));
+													  data()->format->Rmask, data()->format->Gmask,
+                                					  data()->format->Bmask, data()->format->Amask));
 
 }
+
 //--------------------------------------------------------------------------------------------------
 void Canvas::update()
 {
@@ -180,12 +181,12 @@ Color::operator SDL_Color() const
 //--------------------------------------------------------------------------------------------------
 Color::Color (const SDL_Color& src) :r (src.r), g (src.g), b (src.b), unused (src.unused){}
 //--------------------------------------------------------------------------------------------------
-Uint32 Color::Toint (Canvas* screen) const
+Uint32 Color::Toint (const Canvas* screen) const
 {
 	return SDL_MapRGBA (screen->data()->format, r,g,b,unused);
 }
 //--------------------------------------------------------------------------------------------------
-Uint32 Color::Toint (SDL_Surface* screen) const
+Uint32 Color::Toint (const SDL_Surface* screen) const
 {
 	return SDL_MapRGBA (screen->format, r,g,b,unused);
 }
@@ -247,7 +248,7 @@ void Rect::Cut_top (int what)
 	h -= what;
 }
 //--------------------------------------------------------------------------------------------------
-Color Canvas::getPixel (Point point)
+Color Canvas::getPixel (Point point) const
 {
 	point -= pos;
     Uint32* pixels = (Uint32*)data()->pixels;
@@ -326,15 +327,15 @@ void Canvas::setTransparentPixel (Point point)
     setPixel (point, data()->format->colorkey);
 }
 //--------------------------------------------------------------------------------------------------
-bool Canvas::isTransparentPixel (Point point)
+bool Canvas::isTransparentPixel (Point point) const
 {
 	point -= pos;
-    Uint32 pixelcolor = getPixel(point).Toint(this);
+    Uint32 pixelcolor = getPixel(point).Toint( this);
 	//test whether pixels color == color of transparent pixels for that surface
 	return (pixelcolor == data()->format->colorkey);
 }
 //--------------------------------------------------------------------------------------------------
-Color Canvas::getTransparency()
+Color Canvas::getTransparency() const
 {
     Uint8 r, g, b, a;
     SDL_GetRGBA(data()->format->colorkey, data()->format, &r, &g, &b, &a);
@@ -352,8 +353,12 @@ Canvas* Canvas::getScreenCanvas (Point size)
 void Canvas::ortogonalToIsometric()
 {
     Canvas new_surf = createCompatible( Point (getWidth() * 4 - 2, getHeight() * 2));
-    new_surf.fillRect(Rect (0, 0, new_surf.getWidth(), new_surf.getHeight()), Color (255, 0, 255));
-    for (int i = 0; i < getHeight(); i++)
+	/* Set transparent background on the new tile */
+	new_surf.fillRect(Rect (0, 0, new_surf.getWidth(), new_surf.getHeight()), Color (255, 0, 255));
+	new_surf.setTransparency (Color (255, 0, 255));
+	
+	/* Set filling */
+	for (int i = 0; i < getHeight(); i++)
     {
         for(int j = 0; j < 2 * i +1; j++)
         {
@@ -406,10 +411,7 @@ void Canvas::ortogonalToIsometric()
             new_surf.setPixel(new_cell, color);
         }
     }
-	Reinit (new_surf);
-    setTransparency(Color (255, 0, 255));
-	pos = transformPointToOrtogonal(pos, (new_surf.getWidth (), new_surf.getHeight ()));
-
+    Reinit (new_surf);
 }
 
 void Canvas::saveToBmp(string filename)
