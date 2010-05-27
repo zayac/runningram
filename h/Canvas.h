@@ -97,6 +97,8 @@ public:
 
 	/* helper methods */
 	Canvas cropRect (Point point, int width, int height, bool remember_pos = false);
+	inline Canvas cropRect (Rect tgt, bool remember_pos = false)
+			{return cropRect (Point (tgt.x, tgt.y), tgt.w, tgt.h, remember_pos);}
 	void rotate (double angle);
 	void rotate90() { rotate(90); }
 	void rotate180() { rotate(180); };
@@ -119,11 +121,15 @@ public:
 	void setPos (Point npos) {pos = npos;}
 	Point getPos () const   {return pos;} 
 
-	void draw (Canvas* sprite, Point pos);
+	void draw (Canvas* buffer, Point pos) const;
 	void fillRect (Rect r, Color col);
 	void fill (Color col);
 
 	void copy (Canvas from, Rect src_brd = Rect (0, 0, 0, 0), Point to = Point());
+	inline void copy (Canvas from, Point src_from, Rect dst_brd = Rect (0, 0, 0, 0))
+	{
+		copy (from, Rect(src_from.x, src_from.y, dst_brd.w, dst_brd.h), Point (dst_brd.x, dst_brd.y));
+	}
 	void update();
 	
 	Rect getClipRect() const;

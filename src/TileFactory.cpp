@@ -60,7 +60,14 @@ public:
     }
 };
 
-TileFactory::TileFactory() {}
+TileFactory::TileFactory()
+{
+    for (int i = 0; i < 256; ++i)
+        if (_tiles[i] != 0)
+		{
+            _tiles[i] = 0;
+		}
+}
 
 void TileFactory::scale(Point size)
 {

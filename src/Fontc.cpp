@@ -1,19 +1,21 @@
 #include <SDL/SDL_ttf.h>
 #include "Fontc.h"
+#include "Player_manager.h"
 
 //--------------------------------------------------------------------------------------------------
 
-Fontc::Fontc():UniId<TTF_Font> (0, 0), col (Color()), bgcol (Color()), bg (bgcol), fg (col)
+Fontc::Fontc():UniId<TTF_Font> (0, 0), col (Color()), bgcol (Color()), fq(fqBAD), bg (bgcol), fg (col)
 {
 }
 //--------------------------------------------------------------------------------------------------
-Fontc::Fontc (int height, const char* fname, Color f, Color b)
-	:UniId<TTF_Font>(TTF_OpenFont (fname, height), 0), col (f), bgcol (b), bg (bgcol), fg (col)
+Fontc::Fontc (int height, const char* fname, Font_quality fq_, Color f, Color b)
+	:UniId<TTF_Font>(TTF_OpenFont (fname, height), 0), col (f), bgcol (b), fq (fq_), bg (bgcol), fg (col)
 {
 	assert (Ok());
 }
 //--------------------------------------------------------------------------------------------------
-Fontc::Fontc (const Fontc& orig):UniId<TTF_Font> (orig), bgcol (orig.bgcol), col (orig.col), bg(bgcol), fg (col)
+Fontc::Fontc (const Fontc& orig):UniId<TTF_Font> (orig),
+	bgcol (orig.bgcol), col (orig.col), fq (orig.fq), bg(bgcol), fg (col)
 {
 	assert (Ok());
 }
@@ -42,33 +44,60 @@ Fontc& Fontc::operator= (const Fontc& orig)
 	bgcol = orig.bgcol;
 }
 //--------------------------------------------------------------------------------------------------
-int Fontc::Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_reverse) const
+Canvas Fontc::Create_label (const char* line, bool color_reverse, Rect* brd) const
 {
     assert(Ok());
     SDL_Surface *text_surface;
 	if (color_reverse)
-		text_surface = TTF_RenderUTF8_Shaded (data(), line, bgcol, col);
+		switch (fq)
+		{
+		case fqBAD:
+			text_surface = TTF_RenderUTF8_Solid (data(), line, bgcol);
+			break;
+		case fqGOOD:
+			text_surface = TTF_RenderUTF8_Shaded (data(), line, bgcol, col);
+			break;
+		case fqTRANSPARENT:
+			text_surface = TTF_RenderUTF8_Blended (data(), line, bgcol);
+			break;
+		}
 	else
-		text_surface = TTF_RenderUTF8_Shaded (data(), line, col, bgcol);
+		switch (fq)
+		{
+		case fqBAD:
+			text_surface = TTF_RenderUTF8_Solid (data(), line, col);
+			break;
+		case fqGOOD:
+			text_surface = TTF_RenderUTF8_Shaded (data(), line, col, bgcol);
+			break;
+		case fqTRANSPARENT:
+			text_surface = TTF_RenderUTF8_Blended (data(), line, col);
+			break;
+		}
+	Canvas ret (text_surface);
+	if (brd && ret.Ok()) ret.setPos (Point (brd->x, brd->y));
 
-    Point size;
-    if (text_surface != NULL)
-    {
-	size = Str_size (line);
+	if (brd && ret.Ok() && (brd->w < text_surface->w || brd->h < text_surface->h))
+	{
+		ret.cropRect (Point (brd->x, brd->y), min(brd->w, text_surface->w), min(brd->h, text_surface->h), true);
+	}
 
-	Rect src_brd = *brd;
-	src_brd.x = 0;
-	src_brd.y = 0;
-	if (src_brd.w > size.x) src_brd.w = size.x;
-	if (src_brd.h > size.y) src_brd.h = size.y;
-	brd->x -= screen->getPos ().x;
-	brd->y -= screen->getPos ().y;
-    SDL_BlitSurface (text_surface, addSdl (&src_brd), screen->getSurface(), addSdl (brd));
-    SDL_FreeSurface (text_surface);
+	return ret;
+}
+//--------------------------------------------------------------------------------------------------
+int Fontc::Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_reverse) const
+{
+    assert(Ok());
+	Canvas txt = Create_label (line, color_reverse);
+	if (!txt.Ok()) return 0;
 
-        return size.y;
-    }
-    return 0;
+	Rect real_brd;
+	if (brd) real_brd = *brd;
+	else
+		real_brd = txt.getClipRect ();
+
+	screen->copy (txt, Point(), real_brd);
+	return min(txt.getHeight (), real_brd.y);
 }
 //--------------------------------------------------------------------------------------------------
 Point Fontc::Str_size (const char* str) const

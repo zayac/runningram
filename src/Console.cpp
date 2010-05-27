@@ -12,6 +12,12 @@
 #include "Console.h"
 #include "Graphic_subsystem.h"
 
+extern "C"
+{
+	#include "lua.h"
+	#include "lauxlib.h"
+}
+
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
 
 class Console::Initialaiser : public Sectionp
@@ -40,7 +46,13 @@ public:
 //!!! only for debug
 Console* interface = 0;
 
-Console::Console () :parser (new Initialaiser ("[Console]")), history (font, 50), input (font)
+int dbg_print (lua_State* lss)
+{
+	if (interface)	interface->Push_string (lua_tostring (lss, -1));
+	return 0;
+}
+
+Console::Console () :parser (new Initialaiser ("[Console]")), history (font, 50), input (font), vm(lua_open())
 {
     //!!! only for debug
     interface = this;
@@ -48,6 +60,7 @@ Console::Console () :parser (new Initialaiser ("[Console]")), history (font, 50)
 //--------------------------------------------------------------------------------------------------
 Console::~Console ()
 {
+	lua_close (vm);
 	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
@@ -67,6 +80,12 @@ bool Console::Init (Graphic_subsystem* c)
 	borders.h = 210;
 	history.Init (borders);
 	history.Push_string ("You are welcome!");
+
+//	lua_baselibopen (vm);
+//	lua_iolibopen (vm);
+//	lua_strlibopen (vm);
+//	lua_mathlibopen (vm);
+	lua_register (vm, "print", dbg_print);
 
 	borders.y = borders.h;
 	borders.h = font.Height ();
@@ -118,6 +137,7 @@ void Console::On_enter_string (const string& str)
 {
 	assert(Ok());
 	history.Push_string (input.Get_greeting() + str);
+	luaL_dostring (vm, str.c_str());
 }
 //--------------------------------------------------------------------------------------------------
 void Console::Push_string (const string& str)
@@ -523,6 +543,12 @@ bool Lines_view::Ok() const
 		if (!i->Ok ()) return false;
 #endif
 	return font.Ok();
+}
+//--------------------------------------------------------------------------------------------------
+void Stringc::Update_lab()
+{
+	lab = font.Create_label (c_str(), false);
+	lab_upd = true;
 }
 //--------------------------------------------------------------------------------------------------
 Stringc Stringc::Get_bordered_substring (int width, int offset) const
