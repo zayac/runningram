@@ -28,14 +28,14 @@ public:
 public:
 	Color (Uint8 red = 0, Uint8 green = 0, Uint8 blue = 0, Uint8 alpha = 255)
 	 :r(red), g(green), b(blue), unused(alpha) {}
-	Uint32 Toint (Canvas* screen) const;
+	Uint32 Toint (const Canvas* screen) const;
 
-        static Color average(vector<Color>* colors);
+	static Color average(vector<Color>* colors);
 	#ifdef _SDL_H
 	operator SDL_Color() const;
 	Color (const SDL_Color& src);
 
-	Uint32 Toint (SDL_Surface* screen) const;
+	Uint32 Toint (const SDL_Surface* screen) const;
 	#endif
 };
 
@@ -104,12 +104,12 @@ public:
 	void flipHorizontal();
 	void flipVertical();
 	void setTransparency (Color colorkey);
-	Color getTransparency();
+	Color getTransparency() const;
 	void zoom (double zoomx, double zoomy); // percentage to zoom in
 	void line (Point start, Point finish, Color c);
-	inline Color getPixel (Point point);
+	inline Color getPixel (Point point)  const;
 	void setPixel (Point point, Color color);
-	bool isTransparentPixel (Point point);
+	bool isTransparentPixel (Point point) const;
 	void setTransparentPixel (Point point);
     void ortogonalToIsometric();
 	void saveToBmp( string filename);
@@ -117,7 +117,7 @@ public:
 	static Point transformPointToOrtogonal(Point old, Point size);
 
 	void setPos (Point npos) {pos = npos;}
-	Point getPos () const   {return pos;}
+	Point getPos () const   {return pos;} 
 
 	void draw (Canvas* sprite, Point pos);
 	void fillRect (Rect r, Color col);
@@ -127,8 +127,8 @@ public:
 	void update();
 	
 	Rect getClipRect() const;
-	int getWidth();
-	int getHeight();
+	int getWidth() const;
+	int getHeight() const;
 	SDL_Surface* getSurface() { return data(); }
 	//void getSurfaceInformation();
 
