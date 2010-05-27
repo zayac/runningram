@@ -26,7 +26,7 @@ class Battlefield
 {
 	unsigned char* cells;
 	Point size;
-	Point csize;
+	int csize;
 	vector<Point> resur_points;
 	vector<Point>::iterator cur_res_point;
     TileFactory _tileFactory;

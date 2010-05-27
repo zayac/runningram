@@ -412,6 +412,7 @@ void Canvas::ortogonalToIsometric()
         }
     }
     Reinit (new_surf);
+	pos = transformPointToOrtogonal(pos, (new_surf.getWidth (), new_surf.getHeight ()));
 }
 
 void Canvas::saveToBmp(string filename)

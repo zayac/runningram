@@ -84,12 +84,12 @@ void Battlefield::drawField (Canvas* c) const
         while (( pos.x < size.x) && (pos.y < size.y) && (pos.x >= 0) && (pos.y >= 0))
         {
             //cout << "pos: " << pos.x << ", "<< pos.y << "map: "<< start + j * csize.x << ", " << i * csize.y / 2 << endl;
-            _tileFactory.getTile(CELL(pos.x, pos.y))->getSprite()->draw(c, Point (start + j* csize.x, i * csize.y / 2));
+            _tileFactory.getTile(CELL(pos.x, pos.y))->getSprite()->draw(c, Point (start + j* _tileFactory.getSize().x, i * _tileFactory.getSize().y / 2));
             pos.x++;
             pos.y--;
             j++;
         }
-        start -= csize.x / 2;
+        start -= _tileFactory.getSize().x / 2;
     }
 
 }
@@ -128,9 +128,9 @@ bool Battlefield::Load_from_file (const char* fname)
 
 	file >>size.x;
 	file >>size.y;
-	file >>csize.x;
-    file >>csize.y;
-        //test.push_back( new Canvas ("textures/smile.png", true));
+	file >>csize;
+	    
+	//test.push_back( new Canvas ("textures/smile.png", true));
 
 	cells = new unsigned char[size.x * size.y];
 	if (cells == 0) return false;
@@ -153,12 +153,12 @@ bool Battlefield::Load_from_file (const char* fname)
 	}
 	cur_res_point = resur_points.begin();
 
-	_tileFactory.init(file);
-	_tileFactory.scale(csize);
+	_tileFactory.init(file, Point (csize, csize));
+	//_tileFactory.scale(csize);
 	_tileFactory.toIsometric();
 	//Point test = Canvas::transformPointToOrtogonal (Point (2, 3), Point (4, 4));
-	csize.x = csize.x * 4 - 2;
-	csize.y = csize.y * 2;
+	//csize.x = csize.x * 4 - 2;
+	//csize.y = csize.y * 2;
 	 /*Clean_sprites ();
 	Sectionp tile_props("gensec", '\n');
 	tile_props.Add_param (new Field_set ("tile", sprites, frics, &roughs, &sands));
@@ -176,11 +176,11 @@ Point Battlefield::Read_respoint (ifstream& file)
 
 	file.getline (buf, 512, ',');
 	if (buf[0] == '(') buf[0] = ' ';
-	ret.x = atoi (buf)*csize.x + csize.y / 2;
+	ret.x = atoi (buf)*csize + csize / 2;
 
 	file.getline (buf, 512, ')');
 	if (buf[0] == ',') buf[0] = ' ';
-	ret.y = atoi (buf)*csize.x + csize.y / 2;
+	ret.y = atoi (buf)*csize + csize / 2;
  
 	return ret;
 }

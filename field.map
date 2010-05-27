@@ -1,7 +1,6 @@
 26
 30
 64
-64
 00000000000000000000000000
 01111111111111111111111110
 01111111111111111111111110
@@ -70,7 +69,7 @@ tile
 	friction = 0.00001
 tile
 	character = 5
-	texture = textures/border.bmp
+	texture = textures/grass_small.bmp
 	texture centre x = 32
 	texture centre y = 32
 	rough = true
@@ -82,7 +81,7 @@ tile
         rough = true
 tile
 	character = 7
-	texture = textures/border.bmp
+	texture = textures/grass_small.bmp
 	texture centre x = 32
 	texture centre y = 32
         rough = true

@@ -31,43 +31,40 @@ public:
     	if (texture_fname.size() > 0)
     	{
             sp = new Sprite (texture_fname.c_str(), 1, 1);
-            //_tiles[sym] = sp;
         }
+
 
         bool sand = false;
         if ((-aboutnull > (fric - 1) || (fric - 1) > aboutnull) && !rough)
             sand = true;
 
         _tiles[sym] = new MapTile(sp, rough, fric, sand);
-        //cout << "[ " << sym << " ] " << rough << endl;
+		//cout << "[ " << sym << " ] " << rough << endl;
         texture_fname.clear();
         return true;
     }
 
-    Field_set (string name, MapTile** tiles)
-        : Sectionp (name, '='), _tiles(tiles)
-    {
-        Add_param (new St_loader<unsigned char> ("character", &sym));
-	Add_param (new St_loader<string> ("texture", &texture_fname));
-	Add_param (new St_loader<int> ("texture centre x", &texture_offset.x));
-	Add_param (new St_loader<int> ("texture centre y", &texture_offset.y));
-	Add_param (new St_loader<float> ("friction", &fric));
-	Add_param (new St_loader<bool> ("rough", &rough));
+    Field_set (string name, MapTile** tiles) : Sectionp (name, '='), _tiles(tiles)
+	{
+		Add_param (new St_loader<unsigned char> ("character", &sym));
+		Add_param (new St_loader<string> ("texture", &texture_fname));
+		Add_param (new St_loader<int> ("texture centre x", &texture_offset.x));
+		Add_param (new St_loader<int> ("texture centre y", &texture_offset.y));
+		Add_param (new St_loader<float> ("friction", &fric));
+		Add_param (new St_loader<bool> ("rough", &rough));
     }
 
-    virtual ~Field_set ()
+	virtual ~Field_set ()
     {
 	Delete_props ();
     }
 };
 
-TileFactory::TileFactory()
-{
-    
-}
+TileFactory::TileFactory() {}
 
 void TileFactory::scale(Point size)
 {
+	_size = size;
     for( int i = 0; i < 256; i++)
     {
         if ( _tiles[i])
@@ -81,21 +78,27 @@ void TileFactory::scale(Point size)
 
 void TileFactory::toIsometric()
 {
-    for( int i = 0; i < 256; i++)
+	_size.x = _size.x * 4 - 2;
+	_size.y = _size.y * 2;
+	for( int i = 0; i < 256; i++)
     {
-        if ( _tiles[i])
+		if ( _tiles[i])
         {
 			_tiles[i]->getSprite()->ortogonalToIsometric();
 		}
     }
 }
 
-void TileFactory::init(ifstream& file) {
-    clear();
-    Sectionp tile_props("gensec", '\n');
-    tile_props.Add_param (new Field_set ("tile", _tiles));
-    tile_props.Unserialise (file);
+void TileFactory::init(ifstream& file, Point size) 
+{
+	_size = size;
+	clear();
+	Sectionp tile_props("gensec", '\n');
+	tile_props.Add_param (new Field_set ("tile", _tiles));
+	tile_props.Unserialise (file);
+
 }
+
 
 TileFactory::~TileFactory() {
 }
@@ -104,8 +107,8 @@ void TileFactory::clear()
 {
     for (int i = 0; i < 256; ++i)
         if (_tiles[i] != 0)
-	{
+		{
             delete _tiles[i];
             _tiles[i] = 0;
-	}
+		}	
 }
