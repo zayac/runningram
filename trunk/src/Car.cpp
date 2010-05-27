@@ -80,7 +80,7 @@ void Car::Draw (Canvas* c)
 	back.orient.Update ();
 	Orient primary_o = back.orient;
 	if (pic != 0)
-		pic->draw (c, pos.To<int>(), (PI + primary_o.Get_angle())/PI/2);
+		pic->draw (c, Canvas::transform (pos.To<int>()), (PI + primary_o.Get_angle())/PI/2);
 //	else	//if car hasn't sprite, it will be drawn schematically
 	{
 		dbgcanv = c;//deprecated;
@@ -88,14 +88,14 @@ void Car::Draw (Canvas* c)
 		Point begin = back.pos.To<int>();
 		Point end = front.pos.To<int>();//(front.orient.Get_dir()*front.r + pos).To<int> ();
 
-		Point leftback = Point (back.r*primary_o.Get_dir().y, -back.r*primary_o.Get_dir().x) + begin;
-		Point leftfront = Point (front.r*primary_o.Get_dir().y, -front.r*primary_o.Get_dir().x) + end;
-		Point rightback = Point (-back.r*primary_o.Get_dir().y, back.r*primary_o.Get_dir().x) + begin;
-		Point rightfront = Point (-front.r*primary_o.Get_dir().y, front.r*primary_o.Get_dir().x) + end;
+		Point leftback = Canvas::transform (Point (back.r*primary_o.Get_dir().y, -back.r*primary_o.Get_dir().x) + begin);
+		Point leftfront = Canvas::transform (Point (front.r*primary_o.Get_dir().y, -front.r*primary_o.Get_dir().x) + end);
+		Point rightback = Canvas::transform (Point (-back.r*primary_o.Get_dir().y, back.r*primary_o.Get_dir().x) + begin);
+		Point rightfront = Canvas::transform (Point (-front.r*primary_o.Get_dir().y, front.r*primary_o.Get_dir().x) + end);
 
-		Point one_trg = (front.r*front.orient.Get_dir() + front.pos).To<int>();
-		Point two_trg = (front.r*(front.orient + Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
-		Point three_trg = (front.r*(front.orient - Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
+		Point one_trg = Canvas::transform (front.r*front.orient.Get_dir() + front.pos).To<int>();
+		Point two_trg = Canvas::transform (front.r*(front.orient + Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
+		Point three_trg = Canvas::transform (front.r*(front.orient - Orient(2*PI/3)).Get_dir() + front.pos).To<int>();
 
 		c->line (leftback, leftfront, Color (150, 200, 200));
 		c->line (leftfront, rightfront, Color (150, 200, 200));

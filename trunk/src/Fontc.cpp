@@ -1,9 +1,9 @@
 #include <SDL/SDL_ttf.h>
+#include "initparser.h"
 #include "Fontc.h"
 #include "Player_manager.h"
 
 //--------------------------------------------------------------------------------------------------
-
 Fontc::Fontc():UniId<TTF_Font> (0, 0), col (Color()), bgcol (Color()), fq(fqBAD), bg (bgcol), fg (col)
 {
 }
@@ -42,6 +42,7 @@ Fontc& Fontc::operator= (const Fontc& orig)
 	UniId<TTF_Font>::operator = (orig);
 	col = orig.col;
 	bgcol = orig.bgcol;
+	fq = orig.fq;
 }
 //--------------------------------------------------------------------------------------------------
 Canvas Fontc::Create_label (const char* line, bool color_reverse, Rect* brd) const

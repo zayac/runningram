@@ -22,16 +22,23 @@ extern "C"
 
 class Console::Initialaiser : public Sectionp
 {
-public:
-	string font_fname;
-	int height;
+	Color fg_col;
+	Color bg_col;
+	Fontc* target;
+protected:
+	bool After_read (ifstream&)
+	{
+		target->Set_fg (fg_col);
+		target->Set_bg (bg_col);
+	}
 public:
 
-	Initialaiser (string name)
-	: Sectionp (name, '='), font_fname ("default.ttf"), height (16)
+	Initialaiser (string name, Fontc* tgt_font)
+	: Sectionp (name, '='), target (tgt_font)
 	{
-		Add_param (new St_loader<int > ("font height", &height));
-		Add_param (new St_loader<string > ("font file", &font_fname));
+		Add_param (new Fontc::Initialiser ("font", tgt_font));
+		Add_param (new Color::Initialiser ("color", &fg_col));
+		Add_param (new Color::Initialiser ("bgcolor", &bg_col));
 	}
 
 	virtual ~Initialaiser ()
@@ -52,7 +59,7 @@ int dbg_print (lua_State* lss)
 	return 0;
 }
 
-Console::Console () :parser (new Initialaiser ("[Console]")), history (font, 50), input (font), vm(lua_open())
+Console::Console () :parser (new Initialaiser ("[Console]", &font)), history (font, 50), input (font), vm(lua_open())
 {
     //!!! only for debug
     interface = this;
@@ -71,10 +78,10 @@ Serializator* Console::Get_parser()
 //--------------------------------------------------------------------------------------------------
 bool Console::Init (Graphic_subsystem* c)
 {
-	font.Open_font (parser->font_fname.c_str(), parser->height);
+//	font.Open_font (parser->font_fname.c_str(), parser->height);
 
-	font.Set_fg (Color(10, 200, 20));
-	font.Set_bg (Color(10, 20, 20));
+//	font.Set_fg (Color(10, 200, 20));
+//	font.Set_bg (Color(10, 20, 20));
 
 	Rect borders = c->Get_screen()->getClipRect ();
 	borders.h = 210;
@@ -182,34 +189,34 @@ void Line_edit::Operate (Kbd_event ev)
 	if (!num_lock)
 		switch (ev.ki)
 		{
-		case KI_KP1:			Cursor_end();		return;
-		case KI_KP2:						return;
-		case KI_KP3:						return;
-		case KI_KP4:			Cursor_left();		return;
-		case KI_KP5:						return;
-		case KI_KP6:			Cursor_right();		return;
-		case KI_KP7:			Cursor_home();		return;
-		case KI_KP8:						return;
-		case KI_KP9:						return;
-		case KI_KP_PERIOD:					return;
-		case KI_KP_DIVIDE:					return;
+		case KI_KP1:			Cursor_end();	return;
+		case KI_KP2:							return;
+		case KI_KP3:							return;
+		case KI_KP4:			Cursor_left();	return;
+		case KI_KP5:							return;
+		case KI_KP6:			Cursor_right();	return;
+		case KI_KP7:			Cursor_home();	return;
+		case KI_KP8:							return;
+		case KI_KP9:							return;
+		case KI_KP_PERIOD:						return;
+		case KI_KP_DIVIDE:						return;
 		case KI_KP_MULTIPLY:					return;
-		case KI_KP_MINUS:					return;
-		case KI_KP_PLUS:					return;
-		case KI_KP_EQUALS:					return;
+		case KI_KP_MINUS:						return;
+		case KI_KP_PLUS:						return;
+		case KI_KP_EQUALS:						return;
 		}
 
 	switch (ev.ki)
 	{
 	case KI_LEFT:			Cursor_left();		break;
-	case KI_RIGHT:		Cursor_right();		break;
+	case KI_RIGHT:			Cursor_right();		break;
 	case KI_HOME:			Cursor_home();		break;
 	case KI_END:			Cursor_end();		break;
 
-	case KI_BACKSPACE:            Delete_left();		break;
-	case KI_DELETE:		Delete_right();		break;
+	case KI_BACKSPACE:		Delete_left();		break;
+	case KI_DELETE:			Delete_right();		break;
 
-	case KI_RETURN:		Finish_input();		break;
+	case KI_RETURN:			Finish_input();		break;
 	case KI_KP_ENTER:		Finish_input();		break;
 	default:
 		Type_char (ev);

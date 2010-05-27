@@ -114,7 +114,7 @@ void Battlefield::Draw (Graphic_subsystem* c) const
     Canvas *canv = c->Get_screen ();
 
     drawField(canv);
-    /*for (int i = 0; i < size.x; ++i)
+    for (int i = 0; i < size.x; ++i)
         for (int j = 0; j < size.y; ++j)
         {
 			Color bkg =  Color (80, 80, 80);
@@ -123,7 +123,7 @@ void Battlefield::Draw (Graphic_subsystem* c) const
 
             Draw_cage (canv, Point(i, j)*csize, Point (csize, csize),
                             Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), bkg);
-        }*/
+        }
         //test[0]->draw(canv, Point (100, 100));
 	//sprites['1']->draw (canv, Point(120, 120));
 }
@@ -168,6 +168,7 @@ bool Battlefield::Load_from_file (const char* fname)
 	cur_res_point = resur_points.begin();
 
 	_tileFactory.init(file, Point (csize, csize));
+	_tileFactory.scale (Point (csize, csize));
 	_tileFactory.toIsometric();
 
 	file.close();

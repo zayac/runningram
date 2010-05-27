@@ -34,6 +34,7 @@ public:
 		fqGOOD,
 		fqTRANSPARENT
 	};
+	class Initialiser;
 private:
 	Font_quality fq;
 
@@ -65,6 +66,48 @@ public:
 };
 
 void FontcCleanUp();
+
+#ifdef INITPARSER_H_INCLUDED
+// <editor-fold defaultstate="collapsed" desc="From file initialaiser">
+
+class Fontc::Initialiser : public Sectionp
+{
+public:
+	string fname;
+	int height;
+	string quality;
+
+	Fontc* object;
+
+
+protected:
+	virtual bool After_read (ifstream &file)
+	{
+		object->Open_font (fname.c_str(), height);
+		if (quality == "good")
+			object->Set_fq (Fontc::fqGOOD);
+		else if (quality == "transparent")
+			object->Set_fq (Fontc::fqTRANSPARENT);
+		else
+			object->Set_fq (Fontc::fqBAD);
+		return true;
+	}
+public:
+
+	Initialiser (string name, Fontc* what)
+	: Sectionp (name, '='), fname ("default.ttf"), height (16), quality ("bad"), object (what)
+	{
+		Add_param (new St_loader<int > ("height", &height));
+		Add_param (new St_loader<string > ("file", &fname));
+		Add_param (new St_loader<string > ("quality", &quality));
+	}
+
+	virtual ~Initialiser ()
+	{
+		Delete_props ();
+	}
+}; // </editor-fold>
+#endif
 
 #endif	/* _FONTC_H */
 
