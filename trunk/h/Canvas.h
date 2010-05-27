@@ -116,7 +116,8 @@ public:
     void ortogonalToIsometric();
 	void saveToBmp( string filename);
 
-	static Point transformPointToOrtogonal(Point old, Point size);
+	inline static Point transform(Point old) { return Point (1 / sqrt(2) * (old.x - old.y), 1 / (2 * sqrt(2)) * (old.x + old.y)); }
+	inline static Vector2f transform(Vector2f old) { return Vector2f (1 / sqrt(2) * (old.x - old.y), 1 / (2 * sqrt(2)) * (old.x + old.y)); }
 
 	void setPos (Point npos) {pos = npos;}
 	Point getPos () const   {return pos;} 

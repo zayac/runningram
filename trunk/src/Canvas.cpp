@@ -375,7 +375,7 @@ void Canvas::ortogonalToIsometric()
         }
     }
     Reinit (new_surf);
-	pos = transformPointToOrtogonal(pos, (new_surf.getWidth (), new_surf.getHeight ()));
+	pos = transform(pos);
 }
 
 void Canvas::saveToBmp(string filename)
@@ -383,28 +383,3 @@ void Canvas::saveToBmp(string filename)
 	SDL_SaveBMP(this->getSurface (), filename.c_str ());
 }
 
-Point Canvas::transformPointToOrtogonal(Point old, Point size)
-{
-	Point tmp, pnew;
-	if (old.x + old.y <= size.x)
-	{
-		tmp.y = old.x;
-		tmp.x = old.x + old.y;
-		pnew.y = tmp.x;
-		pnew.x = tmp.y * 4 + (size.y *2 - 2 - tmp.x * 2);
-	}
-	else
-	{
-		old.x = size.x - old.x - 1;
-		old.y = size.x - old.y - 1;
-		tmp.y = old.x;
-		tmp.x = old.x + old.y;
-		pnew.y = tmp.x;
-		pnew.x = tmp.y * 4 + (size.y *2 - 2 - tmp.x * 2);
-		pnew.y = size.x * 2 - 1 - pnew.y;
-		pnew.x = size.x * 4 - 4 - pnew.x;
-		//pnew.y = (size.x - 1) * 2 - tmp.x - 1;
-		//pnew.x = size.x * 4 - 2 - (tmp.y * 4 + ((size.y-1) *2 - 2 - tmp.x * 2));
-	}
-	return pnew;
-}

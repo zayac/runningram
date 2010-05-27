@@ -91,7 +91,21 @@ void Battlefield::drawField (Canvas* c) const
         }
         start -= _tileFactory.getSize().x / 2;
     }
-
+    start += _tileFactory.getSize().x;
+	for(int i = 1; i < size.x; i++)
+    {
+        Point pos = Point (i, size.y - 1);
+        int j = size.y;
+        while (( pos.x < size.x) && (pos.y < size.y) && (pos.x >= 0) && (pos.y >= 0))
+        {
+            //cout << "pos: " << pos.x << ", "<< pos.y << "map: "<< start + j * csize.x << ", " << i * csize.y / 2 << endl;
+            _tileFactory.getTile(CELL(pos.x, pos.y))->getSprite()->draw(c, Point (start + (size.y - j) * _tileFactory.getSize().x, (size.y - 1 + i) * _tileFactory.getSize().y / 2));
+            pos.x++;
+            pos.y--;
+            j--;
+        }
+        start += _tileFactory.getSize().x / 2;
+    }
 }
 //----------------------------------------
 void Battlefield::Draw (Graphic_subsystem* c) const
@@ -154,15 +168,7 @@ bool Battlefield::Load_from_file (const char* fname)
 	cur_res_point = resur_points.begin();
 
 	_tileFactory.init(file, Point (csize, csize));
-	//_tileFactory.scale(csize);
 	_tileFactory.toIsometric();
-	//Point test = Canvas::transformPointToOrtogonal (Point (2, 3), Point (4, 4));
-	//csize.x = csize.x * 4 - 2;
-	//csize.y = csize.y * 2;
-	 /*Clean_sprites ();
-	Sectionp tile_props("gensec", '\n');
-	tile_props.Add_param (new Field_set ("tile", sprites, frics, &roughs, &sands));
-	tile_props.Unserialise (file);*/
 
 	file.close();
 	return Ok();
