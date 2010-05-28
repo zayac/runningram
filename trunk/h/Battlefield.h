@@ -50,7 +50,7 @@ public:
 
 	const unsigned char* Get_cells() const {return cells;}
 	Point Get_size() const {return size;}
-	Point Get_cell_size() const {return csize;}
+	int Get_cell_size() const {return csize;}
 	Point Get_next_res_point();
 
 	bool Is_rough (int x, int y) const;

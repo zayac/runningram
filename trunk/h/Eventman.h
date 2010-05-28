@@ -53,6 +53,7 @@ public:
 
 	void Acts();
 	bool Stopped() const;
+	void Stop() {stop = true;}
 
 	bool Ok() const;
 };

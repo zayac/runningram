@@ -80,7 +80,10 @@ void Car::Draw (Canvas* c)
 	back.orient.Update ();
 	Orient primary_o = back.orient;
 	if (pic != 0)
-		pic->draw (c, Canvas::transform (pos.To<int>()), (PI + primary_o.Get_angle())/PI/2);
+	{
+		float angle = PI + primary_o.Get_angle() + PI/4;//PI/4 for isometric projection
+		pic->draw (c, Canvas::transform (pos.To<int>()), (angle)/PI/2);
+	}
 //	else	//if car hasn't sprite, it will be drawn schematically
 	{
 		dbgcanv = c;//deprecated;

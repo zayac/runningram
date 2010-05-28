@@ -16,6 +16,8 @@
 class Canvas;
 class SDL_Surface;
 
+const float SINPI4 = 0.707106781;
+
 using namespace std;
 
 class Color// :public SDL_Color
@@ -119,8 +121,8 @@ public:
     void ortogonalToIsometric();
 	void saveToBmp( string filename);
 
-	inline static Point transform(Point old) { return Point (1 / sqrt(2) * (old.x - old.y), 1 / (2 * sqrt(2)) * (old.x + old.y)); }
-	inline static Vector2f transform(Vector2f old) { return Vector2f (1 / sqrt(2) * (old.x - old.y), 1 / (2 * sqrt(2)) * (old.x + old.y)); }
+	inline static Point transform(Point old) { return Point (SINPI4 * (old.x - old.y), SINPI4/2 * (old.x + old.y)); }
+	inline static Vector2f transform(Vector2f old) { return Vector2f (SINPI4 * (old.x - old.y), SINPI4/2 * (old.x + old.y)); }
 
 	void setPos (Point npos) {pos = npos;}
 	Point getPos () const   {return pos;} 

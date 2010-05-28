@@ -17,6 +17,7 @@
 #include "Functor.h"
 #include "Fontc.h"
 #include "Exception.h"
+#include "Functor.h"
 
 using std::string;
 using std::list;
@@ -152,13 +153,15 @@ public:
 	void Cleanup();
 	void On_enter_string (const string& str);
 	void Push_string (const string&);
+	int Output (lua_State* ls);
 
 	void Operate (Kbd_event ev);
 	void Draw (Graphic_subsystem* c) const;
 
-	void Switch();
+	void Register_processor (string name, int (*fun)(lua_State*));
+	void Register_processor (string name, Arg_Functor <int, lua_State*>*);
 
-	void Out (const string& str);
+	void Switch();
 
 	bool Ok() const;
 };
