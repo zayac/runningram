@@ -27,6 +27,22 @@ void Eventman::Applay_event (const Kbd_event& ev)
 			(*i->fun)();
 }
 //--------------------------------------------------------------------------------------------------
+void Eventman::Applay_event (const Mouse_btn& ev)
+{
+	assert(Ok());
+	for (mbiter i = mbtn_acts.begin(); i != mbtn_acts.end(); ++i)
+		if (i->ev.Contain (ev))
+			(*i->mh)(ev.pos);
+}
+//--------------------------------------------------------------------------------------------------
+void Eventman::Applay_event (const Mouse_move& ev)
+{
+	assert(Ok());
+	for (mmiter i = mmove_acts.begin(); i != mmove_acts.end(); ++i)
+		if (i->ev.Contain (ev))
+			(*i->mh)(ev.pos);
+}
+//--------------------------------------------------------------------------------------------------
 void Eventman::Clear_actions()
 {
 	assert(Ok());
@@ -46,6 +62,20 @@ int Eventman::Register_key_action (Functor* fun, Uint8 event, Key_id key, Key_mo
 	return kbdacts.rbegin()->Id();
 }
 //--------------------------------------------------------------------------------------------------
+int Eventman::Register_mouse_action (Mevent_handler* fun, Mouse_move_event mme)
+{
+	assert(Ok());
+	mmove_acts.push_back (Mmove_action (fun, mme));
+	return mmove_acts.rbegin()->Id();
+}
+//--------------------------------------------------------------------------------------------------
+int Eventman::Register_mouse_action (Mevent_handler* fun, Mouse_btn_event mbe)
+{
+	assert(Ok());
+	mbtn_acts.push_back (Mbtn_action (fun, mbe));
+	return mbtn_acts.rbegin()->Id();
+}
+//--------------------------------------------------------------------------------------------------
 void Eventman::Register_key_oper (Kbd_oper op)
 {
 	assert(Ok());
@@ -63,6 +93,28 @@ void Eventman::Unregister_key_action (int id)
 		}
 }
 //--------------------------------------------------------------------------------------------------
+void Eventman::Unregister_mouse_move_action (int id)
+{
+	for (mmiter i = mmove_acts.begin(); i != mmove_acts.end(); ++i)
+		if (i->Id() == id)
+		{
+			delete i->mh;
+			mmove_acts.erase (i);
+			return;
+		}
+}
+//--------------------------------------------------------------------------------------------------
+void Eventman::Unregister_mouse_btn_action (int id)
+{
+	for (mbiter i = mbtn_acts.begin(); i != mbtn_acts.end(); ++i)
+		if (i->Id() == id)
+		{
+			delete i->mh;
+			mbtn_acts.erase (i);
+			return;
+		}
+}
+//--------------------------------------------------------------------------------------------------
 void Eventman::Acts()
 {
 	assert(Ok());
@@ -76,6 +128,13 @@ void Eventman::Acts()
 			/* close button clicked */
 		case SDL_QUIT:
 			stop = 1;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+			Applay_event (Mouse_btn (event.button));
+			break;
+		case SDL_MOUSEMOTION:
+			Applay_event (Mouse_move (event.motion));
 			break;
 
 			/* handle the keyboard */

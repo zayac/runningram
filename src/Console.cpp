@@ -422,7 +422,7 @@ void Line_edit::Delete_right()
 void Line_edit::Draw (Canvas* c) const
 {
 	assert(Ok());
-	borders.Draw (c, font.bg);
+	c->fillRect (borders, font.bg);
 	Draw_text (c);
 	Draw_cursor (c);
 }
@@ -450,7 +450,7 @@ void Line_edit::Draw_cursor (Canvas* c) const
 	if ((time/blink_interval) % 2) colour = font.bg;
 	else colour = font.fg;
 
-	cursor.Draw (c, colour);
+	c->fillRect (cursor, colour);
 }
 //--------------------------------------------------------------------------------------------------
 int Line_edit::Cursor_offset() const
@@ -550,8 +550,7 @@ void Lines_view::Draw (Canvas* c) const
 	}
 	if (lesser) start_y = height - borders.h;//snuggle bottom
 
-	borders.Draw (c, font.bg);
-
+	c->fillRect (borders, font.bg);
 	int cur_height = 0;
 	int total_height = -start_y;
 	for (list <Stringc>::const_iterator i = start; i != data.end(); ++i)

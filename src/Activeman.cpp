@@ -130,7 +130,7 @@ void Activeman::Collis_brd (const Battlefield* bf)
 						}
 					}
 					Rect cell (left, up, right - left, down - up);
-					if (globb) cell.Draw (globb, Color (200, 0, 124));//!!! deprecated
+					if (globb) globb->fillRect (cell, Color (200, 0, 124));//!!! deprecated
 					(**i).Collis_brd (cell, bf->Friction (x, y));
 				}
 	}

@@ -168,7 +168,7 @@ bool Battlefield::Load_from_file (const char* fname)
 	cur_res_point = resur_points.begin();
 
 	_tileFactory.init(file, Point (csize, csize));
-	_tileFactory.scale (Point (csize, csize));
+//	_tileFactory.scale (Point (csize, csize));
 	_tileFactory.toIsometric();
 
 	file.close();

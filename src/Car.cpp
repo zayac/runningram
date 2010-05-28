@@ -117,7 +117,7 @@ void Car::Draw (Canvas* c)
 		Color headc (200, 150, 150);
 		int hlen = health/max_health*Health_indicator_len;
 		Rect hline (pos.x - hlen/2, pos.y + Health_indicator_offset, hlen, Health_indicator_height);
-		hline.Draw (c, headc);
+		c->fillRect (hline, headc);
 	}
 }
 //--------------------------------------------------------------------------------------------------
