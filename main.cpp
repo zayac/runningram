@@ -2,20 +2,21 @@
 
 #include "Battlefield.h"
 #include "Exception.h"
+#include "Console.h"
 
 extern "C"
 {
-	#include "lua/include/lua.h"
-	#include "lua/include/lualib.h"
-	#include "lua/include/lauxlib.h"
+	#include "lua.h"
+	#include "lualib.h"
+	#include "lauxlib.h"
 }
 //--------------------------------------------------------------------------------------------------
 int main (int argc, char *argv[])
 {
 	try
 	{
-		lua_State* luaVM = luaL_newstate ();//lua_open();
-//		cout <<"dfte";
+		lua_State* luaVM = luaL_newstate ();
+
 		lua_close (luaVM);
 
 		Game_manager gm (argc, argv);

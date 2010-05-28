@@ -21,6 +21,7 @@ class Effects_manager;
 
 class Server;
 class Client;
+class lua_State;
 
 #include <Fontc.h>
 
@@ -54,6 +55,7 @@ public:
 	bool Init (int argc, char *argv[]);
 	bool Main_loop();
 	bool Cleanup();
+	int Stop (lua_State*);
 
 	void tmpExport();
 	void tmpImport();

@@ -16,6 +16,7 @@ extern "C"
 {
 	#include "lua.h"
 	#include "lauxlib.h"
+	#include "lualib.h"
 }
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
@@ -53,9 +54,13 @@ public:
 //!!! only for debug
 Console* interface = 0;
 
-int dbg_print (lua_State* lss)
+int Lua_execute (lua_State* ls)
 {
-	if (interface)	interface->Push_string (lua_tostring (lss, -1));
+	typedef Arg_Functor <int, lua_State*> Tfun;
+	Tfun* function = (Tfun*)(long)lua_tonumber(ls, lua_upvalueindex(1));
+	if (function)
+		return (*function)(ls);
+	lua_error (ls);
 	return 0;
 }
 
@@ -88,11 +93,14 @@ bool Console::Init (Graphic_subsystem* c)
 	history.Init (borders);
 	history.Push_string ("You are welcome!");
 
-//	lua_baselibopen (vm);
-//	lua_iolibopen (vm);
-//	lua_strlibopen (vm);
-//	lua_mathlibopen (vm);
-	lua_register (vm, "print", dbg_print);
+	luaopen_base (vm);
+	luaopen_math (vm);
+	luaopen_string (vm);
+//	luaopen_io (vm);
+	luaopen_os (vm);
+	luaopen_table (vm);
+
+	Register_processor ("print", new Arg_Method <int, lua_State*, Console> (this, &Console::Output));
 
 	borders.y = borders.h;
 	borders.h = font.Height ();
@@ -103,6 +111,18 @@ bool Console::Init (Graphic_subsystem* c)
 	assert(Ok());
 
 	return true;
+}
+//--------------------------------------------------------------------------------------------------
+void Console::Register_processor (string name, int (*fun)(lua_State*))
+{
+	lua_register (vm, name.c_str(), fun);
+}
+//--------------------------------------------------------------------------------------------------
+void Console::Register_processor (string name, Arg_Functor <int, lua_State*>* f)
+{
+	lua_pushnumber (vm, (double)(long)(f));
+	lua_pushcclosure (vm, Lua_execute, 1);
+	lua_setglobal (vm, name.c_str());
 }
 //--------------------------------------------------------------------------------------------------
 void Console::Cleanup()
@@ -135,11 +155,6 @@ void Console::Switch()
 	enabled = !enabled;
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Out (const string& str)
-{
-    history.Push_string (str);
-}
-//--------------------------------------------------------------------------------------------------
 void Console::On_enter_string (const string& str)
 {
 	assert(Ok());
@@ -151,6 +166,11 @@ void Console::Push_string (const string& str)
 {
 	assert(Ok());
 	history.Push_string (str);
+}
+//--------------------------------------------------------------------------------------------------
+int Console::Output (lua_State* ls)
+{
+	Push_string (lua_tostring (ls, -1));
 }
 //--------------------------------------------------------------------------------------------------
 bool Console::Ok() const

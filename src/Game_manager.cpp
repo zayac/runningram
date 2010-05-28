@@ -108,8 +108,9 @@ bool Game_manager::Init (int argc, char *argv[])
 
 	    result = result && cmd->Init (pic);
 		result = result && ground->Init();
+		result = result && eff->Init();
 
-                eff->Init();
+		cmd->Register_processor ("quit", new Arg_Method <int, lua_State*, Game_manager> (this, &Game_manager::Stop));
                 
 //                result = result && eff->Init();
 //		if (co) delete co;
@@ -266,6 +267,12 @@ bool Game_manager::Cleanup()
 	return Ok();
 	pic->Cleanup();
 	cmd->Cleanup();
+}
+//--------------------------------------------------------------------------------------------------
+int Game_manager::Stop (lua_State*)
+{
+	sense->Stop ();
+	return 0;
 }
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::Ok() const
