@@ -53,6 +53,8 @@ class Canvas :public UniId<SDL_Surface>
 
 	Point pos;//permanent addition
 
+	//static float _transformCoef;
+	
 	friend class Rect;
 	friend class Color;
 	friend class Fontc;
@@ -86,9 +88,11 @@ public:
     void ortogonalToIsometric();
 	void saveToBmp( string filename);
 
-	inline static Point transform(Point old) { return Point (SINPI4 * (old.x - old.y), SINPI4/2 * (old.x + old.y)); }
-	inline static Vector2f transform(Vector2f old) { return Vector2f (SINPI4 * (old.x - old.y), SINPI4/2 * (old.x + old.y)); }
+	//inline static Point transform(Point old) { return Point (SINPI4 * (old.x - old.y), SINPI4/2 * (old.x + old.y)); }
+	//inline static Vector2f transform(Vector2f old) { return Vector2f (SINPI4 * (old.x - old.y), SINPI4/2 * (old.x + old.y)); }
 
+	inline static Point transform(Point old) { return Point (1.41 * SINPI4 * 2 * (old.x - old.y), 1.41 * SINPI4 * (old.y + old.x)); }
+	inline static Vector2f transform(Vector2f old) { return Vector2f ( 1.41 * SINPI4 * 2 * (old.x - old.y), 1.41 * SINPI4 * (old.y + old.x)); }
 	void setPos (Point npos) {pos = npos;}
 	Point getPos () const   {return pos;} 
 

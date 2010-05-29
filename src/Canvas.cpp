@@ -284,6 +284,7 @@ void Canvas::ortogonalToIsometric()
 	new_surf.fillRect(Rect (0, 0, new_surf.getWidth(), new_surf.getHeight()), Color (255, 0, 255));
 	new_surf.setTransparency (Color (255, 0, 255));
 	
+	//_transformCoef = sqrt( 5 - 4 / getWidth() + 1 / (getWidth() * getWidth()));
 	/* Set filling */
 	for (int i = 0; i < getHeight(); i++)
     {
