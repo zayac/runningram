@@ -76,7 +76,7 @@ void Draw_cage (Canvas* c, Point start, Point full_size, Point num_cells, Color 
 
 void Battlefield::drawField (Canvas* c) const
 {
-    int start = 0;
+    int start = - _tileFactory.getSize().x / 2;
     for(int i = 0; i < size.y; i++)
     {
         Point pos = Point (0, i);
@@ -114,7 +114,16 @@ void Battlefield::Draw (Graphic_subsystem* c) const
     Canvas *canv = c->Get_screen ();
 
     drawField(canv);
-    for (int i = 0; i < size.x; ++i)
+    
+	for(int i = 1; i <= size.x; i++)
+	{
+		canv->line(Canvas::transform(Point (0, (i - 1) * csize)), Canvas::transform(Point (0, i * csize)), Color (0, 255, 0));
+		canv->line(Canvas::transform(Point (csize * size.x, (i - 1) * csize)), Canvas::transform(Point (csize * size.x, i * csize)), Color (0, 255, 0));
+		canv->line(Canvas::transform(Point ((i - 1) * csize, 0)), Canvas::transform(Point (i * csize, 0)), Color (0, 255, 0));
+		canv->line(Canvas::transform(Point ((i - 1) * csize, csize * size.y)), Canvas::transform(Point (i * csize, csize * size.y)), Color(0, 255, 0));
+	}
+	
+	for (int i = 0; i < size.x; ++i)
         for (int j = 0; j < size.y; ++j)
         {
 			Color bkg =  Color (80, 80, 80);
@@ -124,8 +133,6 @@ void Battlefield::Draw (Graphic_subsystem* c) const
             Draw_cage (canv, Point(i, j)*csize, Point (csize, csize),
                             Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), bkg);
         }
-        //test[0]->draw(canv, Point (100, 100));
-	//sprites['1']->draw (canv, Point(120, 120));
 }
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::Init()
@@ -144,8 +151,6 @@ bool Battlefield::Load_from_file (const char* fname)
 	file >>size.y;
 	file >>csize;
 	    
-	//test.push_back( new Canvas ("textures/smile.png", true));
-
 	cells = new unsigned char[size.x * size.y];
 	if (cells == 0) return false;
 	Clean_field ('0');
@@ -168,7 +173,7 @@ bool Battlefield::Load_from_file (const char* fname)
 	cur_res_point = resur_points.begin();
 
 	_tileFactory.init(file, Point (csize, csize));
-//	_tileFactory.scale (Point (csize, csize));
+	//_tileFactory.scale (Point (csize, csize));
 	_tileFactory.toIsometric();
 
 	file.close();
