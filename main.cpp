@@ -15,6 +15,7 @@ int main (int argc, char *argv[])
 {
 	try
 	{
+		string str = string("d;a;;lala");
 		lua_State* luaVM = luaL_newstate ();
 
 		lua_close (luaVM);

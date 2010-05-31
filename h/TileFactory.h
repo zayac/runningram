@@ -12,7 +12,8 @@
 
 enum TileType { GRASS, SAND, WATER };
 
-class Tile {
+class Tile
+{
 public:
     virtual void draw(Canvas* buffer, Point point) const = 0;
     inline virtual Sprite* getSprite() { return _sprite; }
@@ -21,7 +22,8 @@ protected:
 };
 
 
-class MapTile : public Tile {
+class MapTile : public Tile
+{
     bool _obstacle;
     bool _sand;
     float _friction;
@@ -66,7 +68,8 @@ public:
 };
 
 
-class TileFactory {
+class TileFactory
+{
 public:
     TileFactory();
     inline MapTile* getTile(char chr) const { return _tiles[chr]; }

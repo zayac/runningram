@@ -14,8 +14,6 @@
 #include "Battlefield.h"
 #include "Orient.h"
 #include "Exception.h"
-//SDL_Surface* Canvas::screen_p = 0;
-//Canvas::base* Canvas::screen_t = 0;
 
 Canvas* Canvas::Screen = 0;
 
@@ -27,7 +25,7 @@ Canvas::Canvas (const char* file, bool alpha):UniId<SDL_Surface>(0, 0), pos()
 {
     SDL_Surface *temp = NULL;
     temp = IMG_Load (file);
-    if (temp == NULL) throw Exception(Sprintf ("can't load file %s !!!", file));
+    if (temp == NULL) throw Exception (Sprintf ("can't load file %s !!!", file));
 
     if (alpha)
         Reinit (SDL_DisplayFormatAlpha(temp), 0);
@@ -37,16 +35,20 @@ Canvas::Canvas (const char* file, bool alpha):UniId<SDL_Surface>(0, 0), pos()
     //SDL_SetColorKey( this->data(), SDL_SRCCOLORKEY, SDL_MapRGB( this->data()->format, 0, 0xFF, 0xFF ) );
 }
 //--------------------------------------------------------------------------------------------------
-Canvas::Canvas (const Canvas& orig):UniId<SDL_Surface> (orig.data(), orig.table()), pos()
+Canvas::Canvas (const Canvas& orig):UniId<SDL_Surface> (orig.data(), orig.table()), pos (orig.pos)
 {
 
 }
 //--------------------------------------------------------------------------------------------------
-//Canvas::~Canvas () { }
-//--------------------------------------------------------------------------------------------------
-void Canvas::deleteData()
+Canvas::~Canvas ()
 {
-	SDL_FreeSurface (data());
+	Destroy ();
+}
+//--------------------------------------------------------------------------------------------------
+void Canvas::Delete_data()
+{
+	if (data())
+		SDL_FreeSurface (data());
 }
 //--------------------------------------------------------------------------------------------------
 inline int toInt (float a) {return (int)(a + 0.5);}
@@ -86,7 +88,7 @@ int Canvas::getHeight() const
 	return data()->h;
 }
 //--------------------------------------------------------------------------------------------------
-void Canvas::copy (Canvas from, Rect src_brd, Point to)
+void Canvas::copy (const Canvas from, Rect src_brd, Point to)
 {
 	to += from.pos - pos;
 	SDL_Rect* src_brdp = addSdl (&src_brd);
@@ -95,9 +97,9 @@ void Canvas::copy (Canvas from, Rect src_brd, Point to)
 	SDL_BlitSurface (from.data(), src_brdp, data(), addSdl (&my_brd));
 }
 //--------------------------------------------------------------------------------------------------
-void Canvas::draw (Canvas* buffer, Point position) const
+void Canvas::draw (Canvas where, Point position) const
 {
-    position += pos - buffer->pos;
+    position += pos - where.pos;
     SDL_Rect dstrect;
     dstrect.x = position.x;
     dstrect.y = position.y;
@@ -107,17 +109,18 @@ void Canvas::draw (Canvas* buffer, Point position) const
     srcRect.y = 0;
     srcRect.w = getWidth();
     srcRect.h = getHeight();
-    SDL_BlitSurface (data(), &srcRect, buffer->getSurface(), &dstrect);
+    SDL_BlitSurface (data(), &srcRect, where.getSurface(), &dstrect);
 }
 //--------------------------------------------------------------------------------------------------
 Canvas Canvas::createCompatible (Point size) const
 {
 	if (size == Point()) size = Point (data()->w, data()->h);
         
-	return Canvas (SDL_CreateRGBSurface (data()->flags, size.x, size.y, data()->format->BitsPerPixel,
+	Canvas ret (SDL_CreateRGBSurface (data()->flags, size.x, size.y, data()->format->BitsPerPixel,
 													  data()->format->Rmask, data()->format->Gmask,
                                 					  data()->format->Bmask, data()->format->Amask));
 
+	return ret;
 }
 
 //--------------------------------------------------------------------------------------------------

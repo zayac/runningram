@@ -14,7 +14,7 @@ Exception::Exception()
 	text += strerror(errno);
 }
 
-Exception::Exception (const string& str, int line, char* file)
+Exception::Exception (const string& str, int line, const char* file)
 	:text (str)
 {
 	char buf[128] = "";
@@ -33,7 +33,7 @@ void Output_cerr::print (const string& text)
 	std::cerr << text;
 }
 
-string Sprintf (char* fmt, ...)
+string Sprintf (const char* fmt, ...)
 {
 	va_list ap;
 	va_start (ap, fmt);

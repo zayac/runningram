@@ -51,8 +51,14 @@ void Eventman::Clear_actions()
 	for (koiter i = kbd_opers.begin(); i != kbd_opers.end(); ++i)
 		delete *i;
 	kbdacts.clear();
-
-	kbd_opers.clear();//!!! not debugged
+	kbd_opers.clear();
+	
+	for (mbiter i = mbtn_acts.begin(); i != mbtn_acts.end(); ++i)
+		delete i->mh;
+	for (mmiter i = mmove_acts.begin(); i != mmove_acts.end(); ++i)
+		delete i->mh;
+	mbtn_acts.clear ();
+	mmove_acts.clear ();//!!! not debugged
 }
 //--------------------------------------------------------------------------------------------------
 int Eventman::Register_key_action (Functor* fun, Uint8 event, Key_id key, Key_mode mod)

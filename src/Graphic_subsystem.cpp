@@ -108,7 +108,7 @@ bool Graphic_subsystem::Ok() const
 //--------------------------------------------------------------------------------------------------
 void Graphic_subsystem::SplashScreen()
 {
-    splash.draw(screen, Point());
+    splash.draw (*screen, Point());
     screen->update();
 }
 //--------------------------------------------------------------------------------------------------

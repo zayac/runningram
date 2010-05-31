@@ -40,7 +40,7 @@ protected:
 	}
 public:
 
-	Initialaiser (char* name, Carman* chost)
+	Initialaiser (const char* name, Carman* chost)
 	: Sectionp (name, '='), host (chost), data(), spritefname (""), nsprites(0)
 	{
 		Add_param (new St_loader<string> ("name", &data.model_name));

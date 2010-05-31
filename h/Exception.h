@@ -31,7 +31,7 @@ class Exception
 
 public:
 	Exception();
-	Exception (const string& str, int line = 0, char* file = 0);
+	Exception (const string& str, int line = 0, const char* file = 0);
 
 	void print() {out->print (text);};
 
@@ -39,7 +39,7 @@ public:
 private:
 
 };
-string Sprintf (char* fmt, ...);
+string Sprintf (const char* fmt, ...);
 
 #define GODFORBID(cond, msg) if (cond) throw Exception (msg);
 #define GODFORBIDlf(cond, msg) if (cond) throw Exception (msg, __LINE__, __FILE__);
