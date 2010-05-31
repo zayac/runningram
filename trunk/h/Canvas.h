@@ -17,8 +17,6 @@
 class Canvas;
 class SDL_Surface;
 
-const float SINPI4 = 0.707106781;
-
 using namespace std;
 
 class Color// :public SDL_Color
@@ -60,12 +58,12 @@ class Canvas :public UniId<SDL_Surface>
 	friend class Fontc;
 
 protected:
-	virtual void deleteData();
+	virtual void Delete_data();
 public:
 	Canvas();
 	Canvas (const Canvas& orig);
 	Canvas (const char* file, bool alpha = false);
-	//virtual ~Canvas();
+	virtual ~Canvas();
 
 	/* helper methods */
 	Canvas cropRect (Point point, int width, int height, bool remember_pos = false);
@@ -91,17 +89,17 @@ public:
 	//inline static Point transform(Point old) { return Point (SINPI4 * (old.x - old.y), SINPI4/2 * (old.x + old.y)); }
 	//inline static Vector2f transform(Vector2f old) { return Vector2f (SINPI4 * (old.x - old.y), SINPI4/2 * (old.x + old.y)); }
 
-	inline static Point transform(Point old) { return Point (1.41 * SINPI4 * 2 * (old.x - old.y), 1.41 * SINPI4 * (old.y + old.x)); }
-	inline static Vector2f transform(Vector2f old) { return Vector2f ( 1.41 * SINPI4 * 2 * (old.x - old.y), 1.41 * SINPI4 * (old.y + old.x)); }
+	inline static Point transform(Point old) { return Point (2 * (old.x - old.y), (old.y + old.x)); }
+	inline static Vector2f transform(Vector2f old) { return Vector2f ( 2 * (old.x - old.y), (old.y + old.x)); }
 	void setPos (Point npos) {pos = npos;}
 	Point getPos () const   {return pos;} 
 
-	void draw (Canvas* buffer, Point pos) const;
+	void draw (Canvas where, Point pos) const;
 	void fillRect (Rect r, Color col);
 	void fill (Color col);
 
-	void copy (Canvas from, Rect src_brd = Rect (0, 0, 0, 0), Point to = Point());
-	inline void copy (Canvas from, Point src_from, Rect dst_brd = Rect (0, 0, 0, 0))
+	void copy (const Canvas from, Rect src_brd = Rect (0, 0, 0, 0), Point to = Point());
+	inline void copy (const Canvas from, Point src_from, Rect dst_brd = Rect (0, 0, 0, 0))
 	{
 		copy (from, Rect(src_from.x, src_from.y, dst_brd.w, dst_brd.h), Point (dst_brd.x, dst_brd.y));
 	}

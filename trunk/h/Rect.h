@@ -18,6 +18,7 @@ public:
 
 public:
 	Rect ():x(), y(), w(), h(){}
+	Rect (Point lup, Point size) :x (lup.x), y (lup.y), w (size.x), h (size.y) {}
 	Rect (int x, int y, int w, int h);
 	Rect (const Rect& that);
 	Rect& operator = (const Rect& that);

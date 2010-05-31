@@ -19,7 +19,7 @@ class UniId
 protected:
 
 	typedef list <UniId<T> *> base;
-	typename base::iterator myentry;
+	typename base::iterator _myentry;
 
 private:
 	base* _table;
@@ -31,12 +31,12 @@ protected:
 		if (tab == 0) _table = new base;
 		else _table = tab;
 		_table->push_front (this);
-		myentry = _table->begin ();
+		_myentry = _table->begin ();
 	}
 	inline void Unregister()
 	{
-		_table->erase (myentry);
-		myentry = _table->end();
+		_table->erase (_myentry);
+		_myentry = _table->end();
 	}
 	inline void Destroy()
 	{
@@ -48,12 +48,12 @@ protected:
 			Delete_data();
 			_data = 0;
 		}
+		_table = 0;
+		_data = 0;
 	}
 
-	virtual void Delete_data()
-	{
-		delete _data;
-	}
+	virtual void Delete_data() = 0;//If this function tryes to be called,
+								   //you need to call Destroy from destructor of your class
 
 private:
 	inline void Init (T* d, base* tab)
@@ -70,7 +70,7 @@ protected:
 			Init (d, tab);
 		}
 	}
-	inline void Reinit (UniId that)
+	inline void Reinit (const UniId& that)
 	{
 		if (that._data != _data)
 		{
@@ -113,15 +113,15 @@ public:
 
 	inline UniId& operator= (const UniId& orig)
 	{
-//		Reinit (orig.data, orig._table);
 		Reinit (orig);
+		Ok();
 		return *this;
 	}
 
 	virtual bool Ok() const
 	{
 		if (_data == 0) return _table == 0;//uninitialaised
-		return _table != 0 && _table->size() > 0 && (*myentry) == this;
+		return _table != 0 && _table->size() > 0 && (*_myentry) == this;
 	}
 
 };

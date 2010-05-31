@@ -122,28 +122,32 @@ void Sprite::animate()
 	}
 }
 
-void Sprite::draw(Canvas* buffer, Point point) {
-    sprites[index].draw(buffer, point);
-}
-
-void Sprite::draw(Canvas* buffer, Point point, float progress)
+void Sprite::draw (Canvas* buffer, Point point)
 {
-	sprites[int (progress*maxFrames)].draw (buffer, point);
+    sprites[index].draw (*buffer, point);
+}
+
+void Sprite::draw (Canvas* buffer, Point point, float progress)
+{
+	sprites[int (progress*maxFrames)].draw (*buffer, point);
 }
 
 
-void Sprite::start() {
+void Sprite::start()
+{
     run = true;
 }
 
-void Sprite::restart() {
+void Sprite::restart()
+{
     if(run) {
         index = 0;
         lastAnimated = SDL_GetTicks();
     }
 }
 
-void Sprite::setSpeed (int i) {
+void Sprite::setSpeed (int i)
+{
     speed = i;
 }
 

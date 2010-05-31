@@ -46,7 +46,7 @@ protected:
 	}
 public:
 
-	Initialaiser (char* name, Player_manager* chost, Eventman* sense)
+	Initialaiser (const char* name, Player_manager* chost, Eventman* sense)
 	: Sectionp (name, '='), host (chost)
 	{
 		ks.evman = sense;
