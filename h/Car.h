@@ -13,7 +13,7 @@
 #include "Collision_detection.h"
 #include "Identified.h"
 #include "Effects_manager.h"
-//#include "Console.h"
+#include "Drawable.h"
 
 const float VeryBigMass = 1e10;
 
@@ -37,7 +37,7 @@ public:
 	virtual bool ok() const {return r >= 0;}
 };
 
-class Active :public Limited, public Identified<Active>
+class Active :public Limited, public Identified<Active>, public Drawable
 {
 protected:
 	virtual int signDataLen() const {return sizeof(pos) + sizeof(r);}
@@ -56,8 +56,6 @@ public:
 	virtual int myType() const {return No_type;}
 	virtual bool dead() const = 0;
 	virtual void die() = 0;
-
-	virtual bool ok() const = 0;
 };
 
 class Body :public Limited

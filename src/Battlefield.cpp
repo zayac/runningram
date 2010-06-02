@@ -76,38 +76,51 @@ void Draw_cage (Canvas* c, Point start, Point full_size, Point num_cells, Color 
 //--------------------------------------------------------------------------------------------------
 void Battlefield::drawField (Canvas* c) const
 {
-    int start = - _tileFactory.getSize().x / 2;
-    for(int i = 0; i < size.y; i++)
-    {
-        Point pos = Point (0, i);
-        int j = 0;
-        while (( pos.x < size.x) && (pos.y < size.y) && (pos.x >= 0) && (pos.y >= 0))
-        {
-            //cout << "pos: " << pos.x << ", "<< pos.y << "map: "<< start + j * csize.x << ", " << i * csize.y / 2 << endl;
-            _tileFactory.getTile(CELL(pos.x, pos.y))->getSprite()->draw(c, Point (start + j* _tileFactory.getSize().x, i * _tileFactory.getSize().y / 2));
-            pos.x++;
-            pos.y--;
-            j++;
-        }
-        start -= _tileFactory.getSize().x / 2;
-    }
-    start += _tileFactory.getSize().x;
-	for(int i = 1; i < size.x; i++)
-    {
-        Point pos = Point (i, size.y - 1);
-        int j = size.y;
-        while (( pos.x < size.x) && (pos.y < size.y) && (pos.x >= 0) && (pos.y >= 0))
-        {
-            //cout << "pos: " << pos.x << ", "<< pos.y << "map: "<< start + j * csize.x << ", " << i * csize.y / 2 << endl;
-            _tileFactory.getTile(CELL(pos.x, pos.y))->getSprite()->draw(c, Point (start + (size.y - j) * _tileFactory.getSize().x, (size.y - 1 + i) * _tileFactory.getSize().y / 2));
-            pos.x++;
-            pos.y--;
-            j--;
-        }
-        start += _tileFactory.getSize().x / 2;
-    }
+	int start = -_tileFactory.getSize ().x / 2;
+	Rect frame = c->getClipRect ();
+	frame.enlarge (_tileFactory.getSize ()); //compute manifold of tile positions
+	frame.move (-_tileFactory.getSize ()); //really displayed on the screen
+
+	for (int i = 0; i < size.y; i++)
+	{
+		Point pos = Point (0, i);
+		int j = 0;
+		while ((pos.x < size.x) && (pos.y >= 0))
+		{
+			Point coor (start + j * _tileFactory.getSize ().x, i * _tileFactory.getSize ().y / 2);
+
+			if (frame.contain (coor))//do not process tiles which won't be displayed
+				_tileFactory.getTile (CELL (pos.x, pos.y))-> getSprite ()->draw (c, coor);
+			pos.x++;
+			pos.y--;
+			j++;
+		}
+		start -= _tileFactory.getSize ().x / 2;
+	}
+	start += _tileFactory.getSize ().x;
+	for (int i = 1; i < size.x; i++)
+	{
+		Point pos = Point (i, size.y - 1);
+		int j = size.y;
+		while ((pos.x < size.x) && (pos.y >= 0))
+		{
+			Point coor (start + (size.y - j) * _tileFactory.getSize ().x, (size.y - 1 + i) * _tileFactory.getSize ().y / 2);
+
+			if (frame.contain (coor)) //do not process tiles which won't be displayed
+				_tileFactory.getTile (CELL (pos.x, pos.y))->getSprite ()->draw (c, coor);
+			pos.x++;
+			pos.y--;
+			j--;
+		}
+		start += _tileFactory.getSize ().x / 2;
+	}
+
+	for (ziter i = z_buffer.begin (); i != z_buffer.end (); ++i)
+	{
+		i->second->draw (c);
+	}
 }
-//----------------------------------------
+//--------------------------------------------------------------------------------------------------
 void Battlefield::draw (Graphic_subsystem* c) const
 {
     assert(ok());
@@ -229,6 +242,16 @@ bool Battlefield::isSand (int x, int y) const
 float Battlefield::friction (int x, int y) const
 {
 	return _tileFactory.getTile(CELL(x, y))->getFriction();
+}
+//--------------------------------------------------------------------------------------------------
+void Battlefield::cleanZbuffer()
+{
+	z_buffer.clear();
+}
+//--------------------------------------------------------------------------------------------------
+void Battlefield::addDrawable (int z, Drawable* d)
+{
+	z_buffer.insert (make_pair (z, d));
 }
 //--------------------------------------------------------------------------------------------------
 void Battlefield::cleanField (char fill_cell)

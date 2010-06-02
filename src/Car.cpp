@@ -32,13 +32,17 @@ float Car::max_health = 0;
 Car::Car (Vector2f coor, float health_, float motor_force_, float bouncy_, float angular_vel_, float rudder_spring_,
 		  float rmass1, float rmass2, float len, float r1, float r2, float turn_transfer_, Vector2f fric, Orient start_orient, int id_,
 		 Sprite* pic_ , Player* host_, Effects_manager* em_)
-:Active (coor, len + max(r1, r2), id_), rp(0), lp(0), fp(0), bp(0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)),
+:Active (coor, len + max(r1, r2), id_), rp (0), lp (0), fp (0), bp (0), lenght (len), rmass (1/(1/rmass1 + 1/rmass2)),
  health (health_), motor_force (motor_force_), bouncy (bouncy_), angular_vel (angular_vel_),
- rudder_spring (rudder_spring_), host (host_), em(em_), pic(pic_), turn_transfer (turn_transfer_),
+ rudder_spring (rudder_spring_), host (host_), em (em_), pic (pic_), turn_transfer (turn_transfer_),
 	back (rmass1, r1, coor - start_orient.getDir()*len/(1 + rmass1/rmass2), fric, start_orient),
 	front (rmass2, r2, coor + start_orient.getDir()*len/(1 + rmass2/rmass1), fric, start_orient)
 {
 	if (health_ > max_health) max_health = health_;
+	if (pic)
+		setHeight (pic->getHeight ());
+	else
+		setHeight (r);
 	assert(ok());
 }
 Car::~Car()
