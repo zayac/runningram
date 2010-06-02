@@ -15,16 +15,11 @@ int main (int argc, char *argv[])
 {
 	try
 	{
-		string str = string("d;a;;lala");
-		lua_State* luaVM = luaL_newstate ();
-
-		lua_close (luaVM);
-
 		Game_manager gm (argc, argv);
-		if (!gm.Ok()) return -1;
-		gm.Main_loop();
+		if (!gm.ok()) return -1;
+		gm.mainLoop();
 
-		if (!gm.Cleanup()) return -1;
+		if (!gm.cleanup()) return -1;
 	}
 	catch (Exception& ex)
 	{

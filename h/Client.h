@@ -25,20 +25,20 @@ class Client :protected Socket, public list <Transmitted*>
 	Player_manager* pm;
 	vector<package> undelivered;
 
-	int Combine_undelivered (char* buf, int size);
+	int combineUndelivered (char* buf, int size);
 
 public:
 	Client();
 	virtual ~Client();
 
-	void Connect (string adress, int port);
-	int Receive (char* data, int max_size);
-	void Check_events (char* buffer, int bsize);
+	void connect (string adress, int port);
+	int receive (char* data, int max_size);
+	void checkEvents (char* buffer, int bsize);
 
-	void Set_pm (Player_manager* pm_) {pm = pm_;}
+	void setPM (Player_manager* pm_) {pm = pm_;}
 
-	void Send_reaction (char* buffer, int bsize);
-	void Receive_next (char* buffer, int bsize);
+	void sendReaction (char* buffer, int bsize);
+	void receiveNext (char* buffer, int bsize);
 
 };
 

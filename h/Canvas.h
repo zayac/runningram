@@ -39,7 +39,7 @@ public:
 	operator SDL_Color() const;
 	Color (const SDL_Color& src);
 
-	Uint32 Toint (const SDL_Surface* screen) const;
+	Uint32 toInt (const SDL_Surface* screen) const;
 	#endif
 };
 
@@ -58,7 +58,7 @@ class Canvas :public UniId<SDL_Surface>
 	friend class Fontc;
 
 protected:
-	virtual void Delete_data();
+	virtual void deleteData();
 public:
 	Canvas();
 	Canvas (const Canvas& orig);
@@ -115,7 +115,7 @@ public:
 	//void setSurface (SDL_Surface* surf) {data = surf};
 	Canvas createCompatible (Point size = Point()) const;
 
-	bool Ok() const;
+	bool ok() const;
 
 	static Canvas* getScreenCanvas (Point size);//Run once!!!
 };
@@ -129,7 +129,7 @@ public:
 	int r, g, b, unused;
 	Color* object;
 protected:
-	virtual bool After_read (ifstream &file)
+	virtual bool afterRead (ifstream &file)
 	{
 		*object = Color (r, g, b, unused);
 		return true;
@@ -139,15 +139,15 @@ public:
 	Initialiser (string name, Color* what)
 	: Sectionp (name, '='), object (what), r (what->r), g (what->g), b (what->b), unused (what->unused)
 	{
-		Add_param (new St_loader<int > ("red", &r));
-		Add_param (new St_loader<int > ("green", &g));
-		Add_param (new St_loader<int > ("blue", &b));
-		Add_param (new St_loader<int > ("alpha", &unused));
+		addParam (new St_loader<int > ("red", &r));
+		addParam (new St_loader<int > ("green", &g));
+		addParam (new St_loader<int > ("blue", &b));
+		addParam (new St_loader<int > ("alpha", &unused));
 	}
 
 	virtual ~Initialiser ()
 	{
-		Delete_props ();
+		deleteProps ();
 	}
 }; // </editor-fold>
 #endif //INITPARSER_H_INCLUDED

@@ -34,30 +34,30 @@ class Control
 	Uint32 events;
 
 protected:
-	inline void Set_event (Uint32 ev) {events |= ev;}
+	inline void setEvent (Uint32 ev) {events |= ev;}
 
 public:
-	void Up_press()		{Set_event (UP_PRESS);		Applay_events();}
-	void Down_press()	{Set_event (DOWN_PRESS);	Applay_events();}
-	void Left_press()	{Set_event (LEFT_PRESS);	Applay_events();}
-	void Right_press()	{Set_event (RIGHT_PRESS);	Applay_events();}
+	void upPress()		{setEvent (UP_PRESS);		applayEvents();}
+	void downPress()	{setEvent (DOWN_PRESS);	applayEvents();}
+	void leftPress()	{setEvent (LEFT_PRESS);	applayEvents();}
+	void rightPress()	{setEvent (RIGHT_PRESS);	applayEvents();}
 
-	void Up_release()	{Set_event (UP_RELEASE);	Applay_events();}
-	void Down_release()	{Set_event (DOWN_RELEASE);	Applay_events();}
-	void Left_release()	{Set_event (LEFT_RELEASE);	Applay_events();}
-	void Right_release(){Set_event (RIGHT_RELEASE);	Applay_events();}
+	void upRelease()	{setEvent (UP_RELEASE);	applayEvents();}
+	void downRelease()	{setEvent (DOWN_RELEASE);	applayEvents();}
+	void leftRelease()	{setEvent (LEFT_RELEASE);	applayEvents();}
+	void rightRelease(){setEvent (RIGHT_RELEASE);	applayEvents();}
 
 public:
 	Control ():events(0){}
-	virtual void Set_control (Car* obj) {object = obj;}
-	virtual void Car_crushed (Car*) {object = 0;}
+	virtual void setControl (Car* obj) {object = obj;}
+	virtual void carCrushed (Car*) {object = 0;}
 
-	void Applay_events();
-	bool Event_exists() {return events != 0;}
-	void Clear_events() {events = 0;}
+	void applayEvents();
+	bool eventExists() {return events != 0;}
+	void clearEvents() {events = 0;}
 
-	virtual int Export (char* buffer, int size) const;
-	virtual int Import (char* buffer, int size);
+	virtual int exp (char* buffer, int size) const;
+	virtual int imp (char* buffer, int size);
 };
 //============================================================================
 struct Key_storage :public Control
@@ -69,8 +69,8 @@ struct Key_storage :public Control
 
 	Eventman* evman;
 
-	void Set_control (Car*);
-	Key_storage* Create_copy();
+	void setControl (Car*);
+	Key_storage* createCopy();
 };
 
 #endif	/* _CONTROL_H */

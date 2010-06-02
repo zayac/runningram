@@ -27,15 +27,15 @@ public:
 	: Sectionp (name, '='), win_x (640), win_y (480), win_name ("Banzay!")
         , splash_file ("textures/bricks.png")
 	{
-		Add_param (new St_loader<int> ("X size", &win_x));
-		Add_param (new St_loader<int> ("Y size", &win_y));
-		Add_param (new St_loader<string> ("app name", &win_name));
-                Add_param (new St_loader<string> ("splash file", &splash_file));
+		addParam (new St_loader<int> ("X size", &win_x));
+		addParam (new St_loader<int> ("Y size", &win_y));
+		addParam (new St_loader<string> ("app name", &win_name));
+                addParam (new St_loader<string> ("splash file", &splash_file));
 	}
 
 	virtual ~Initialaiser ()
 	{
-		Delete_props ();
+		deleteProps ();
 	}
 }; // </editor-fold>
 
@@ -46,18 +46,18 @@ Graphic_subsystem::Graphic_subsystem () :parser (new Initialaiser ((char*)"[Grap
 //--------------------------------------------------------------------------------------------------
 Graphic_subsystem::~Graphic_subsystem ()
 {
-	Cleanup();//!!! It may be need to add if(initialaised) check for avoid fail of cleanup
+	cleanup();//!!! It may be need to add if(initialaised) check for avoid fail of cleanup
 //	SDL_FreeSurface (buffer);
 //	buffer = 0;
 	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
-Serializator* Graphic_subsystem::Get_parser()
+Serializator* Graphic_subsystem::getParser()
 {
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
-bool Graphic_subsystem::Init()
+bool Graphic_subsystem::init()
 {
 	/* initialize SDL */
     SDL_Init (SDL_INIT_VIDEO);
@@ -77,10 +77,10 @@ bool Graphic_subsystem::Init()
     buffer->format->Aloss = 0;*/
 //	SDL_LockSurface (screen);
 
-	return Ok();
+	return ok();
 }
 //--------------------------------------------------------------------------------------------------
-void Graphic_subsystem::Draw (Camera* look)
+void Graphic_subsystem::draw (Camera* look)
 {
     /* update the screen */
 
@@ -89,11 +89,11 @@ void Graphic_subsystem::Draw (Camera* look)
 //	SDL_UnlockSurface (screen);
 	screen->update ();
 	buffer.fill (Color(0, 0,0));
-	buffer.setPos (look->Get_pos ());
+	buffer.setPos (look->getPos ());
 //	SDL_LockSurface (screen);
 }
 //--------------------------------------------------------------------------------------------------
-void Graphic_subsystem::Cleanup()
+void Graphic_subsystem::cleanup()
 {
     /* cleanup SDL */
 	delete screen;
@@ -101,12 +101,12 @@ void Graphic_subsystem::Cleanup()
     SDL_Quit ();
 }
 //--------------------------------------------------------------------------------------------------
-bool Graphic_subsystem::Ok() const
+bool Graphic_subsystem::ok() const
 {
-	return parser != 0 && screen != 0 && screen->Ok() && buffer.Ok();
+	return parser != 0 && screen != 0 && screen->ok() && buffer.ok();
 }
 //--------------------------------------------------------------------------------------------------
-void Graphic_subsystem::SplashScreen()
+void Graphic_subsystem::splashScreen()
 {
     splash.draw (*screen, Point());
     screen->update();

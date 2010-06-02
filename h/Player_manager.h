@@ -42,19 +42,19 @@ public:
 	
 	Car* Create_car (Carman* shop, Vector2f where);
 	
-	void Add_frag() {frags++;}
-	void Sub_frag() {frags--;}
-	int Get_frags() const {return frags;}
-	string Get_name() const {return name;}
+	void addFrag() {frags++;}
+	void subFrag() {frags--;}
+	int getFrags() const {return frags;}
+	string getName() const {return name;}
 
-	int My_size() const;
-	int Export (char* buffer, int size) const;
-	int Import (char* buffer, int size);
+	int mySize() const;
+	int exp (char* buffer, int size) const;
+	int imp (char* buffer, int size);
 
-	inline Control* Get_control() const {return ks;}
+	inline Control* getControl() const {return ks;}
 	
-	bool Is_poor() const {return mobile == 0;}
-	void Car_crashed() {if (ks) ks->Car_crushed (mobile); mobile = 0;}
+	bool isPoor() const {return mobile == 0;}
+	void carCrushed() {if (ks) ks->carCrushed (mobile); mobile = 0;}
 };
 
 class Player_manager :public list<Player*>, public Transmitted
@@ -63,25 +63,25 @@ class Player_manager :public list<Player*>, public Transmitted
 	class Initialaiser;
 	Initialaiser* parser;
 
-	void Erase (iterator start, iterator finish);
+	void erase (iterator start, iterator finish);
 
 public:
 	Player_manager (Eventman* sense);
 	virtual ~Player_manager();
 
-	Serializator* Get_parser();
-	void Draw_comp_table (Canvas* where, Fontc* font);
+	Serializator* getParser();
+	void drawCompTable (Canvas* where, Fontc* font);
 
-	int Export_events (char* buffer, int size) const;
-	int Import_events (char* buffer, int size);
-	void Clear_events();
+	int exportEvents (char* buffer, int size) const;
+	int importEvents (char* buffer, int size);
+	void clearEvents();
 
-	Player* Get (int id) const;
+	Player* get (int id) const;
 
-	int Export (char* buffer, int size) const;
-	int Import (char* buffer, int size);
+	int exp (char* buffer, int size) const;
+	int imp (char* buffer, int size);
 
-	void Create_cars_for_poors (Carman* shop, Activeman* dest, Battlefield* site);
+	void createCarsForPoors (Carman* shop, Activeman* dest, Battlefield* site);
 
 };
 

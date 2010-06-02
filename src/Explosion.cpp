@@ -24,7 +24,7 @@ Explosion::~Explosion()
 //    delete spr;
 }
 
-bool Explosion::Draw(Canvas* c)
+bool Explosion::draw(Canvas* c)
 {
     if(run)
     {
@@ -34,22 +34,22 @@ bool Explosion::Draw(Canvas* c)
     }
 }
 
-void Explosion::Set_position(Point pos_)
+void Explosion::setPos(Point pos_)
 {
     pos = pos_;
 }
 
-void Explosion::Set_sprite(Sprite* spr_)
+void Explosion::setSprite(Sprite* spr_)
 {
     spr = spr_;
 }
 
-bool Explosion::Get_run(void )
+bool Explosion::getRun(void )
 {
     return run;
 }
 
-void Explosion::Animate(void )
+void Explosion::animate(void )
 {
     static int MaxFrames, speed;
 

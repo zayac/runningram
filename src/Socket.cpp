@@ -19,11 +19,12 @@ Socket::Socket() :UniId <soc_data> (new soc_data (-1), 0)
 //--------------------------------------------------------------------------------------------------
 Socket::~Socket()
 {
+	destroy();
 }
 //--------------------------------------------------------------------------------------------------
-void Socket::Delete_data()
+void Socket::deleteData()
 {
-	if (is_valid ())
+	if (isValid ())
 	{
 		::close (data()->m_sock);
 		delete data();
@@ -34,7 +35,7 @@ bool Socket::create()
 {
 	data()->m_sock = socket (AF_INET, SOCK_STREAM, 0);
 
-	if (!is_valid ()) return false;
+	if (!isValid ()) return false;
 
 	// TIME_WAIT - argh
 	int on = 1;
@@ -47,7 +48,7 @@ bool Socket::create()
 //--------------------------------------------------------------------------------------------------
 bool Socket::bind (const int port)
 {
-	if (!is_valid ())
+	if (!isValid ())
 		return false;
 
 	data()->m_addr.sin_family = AF_INET;
@@ -62,7 +63,7 @@ bool Socket::bind (const int port)
 //--------------------------------------------------------------------------------------------------
 bool Socket::listen () const
 {
-	if (!is_valid ())
+	if (!isValid ())
 		return false;
 
 	if (-1 == ::listen (data()->m_sock, MAXCONNECTIONS))
@@ -127,7 +128,7 @@ int Socket::recv (char* buffer, int max_size) const
 //--------------------------------------------------------------------------------------------------
 bool Socket::connect (const std::string& host, const int port)
 {
-	if (!is_valid ()) return false;
+	if (!isValid ()) return false;
 
 	data()->m_addr.sin_family = AF_INET;
 	data()->m_addr.sin_port = htons (port);
@@ -177,8 +178,8 @@ Socket::package::package (Transmitted* from)
 :UniId<pkg_data>(new pkg_data, 0)
 {
 	char buffer[Buffer_size];
-	buffer[0] = from->Id ();
-	data()->size = from->Export (buffer + 1, Buffer_size - 1) + 1;
+	buffer[0] = from->id ();
+	data()->size = from->exp (buffer + 1, Buffer_size - 1) + 1;
 
 	//if size == 0, export returned -1 = error
 	GODFORBIDlf(0 == data()->size, "can\'t export to buffer");
@@ -196,7 +197,7 @@ int Socket::package::copy_to (char* dst, int max_size)
 	return data()->size;
 }
 //--------------------------------------------------------------------------------------------------
-void Socket::package::Delete_data()
+void Socket::package::deleteData()
 {
 	if (data()->data) delete [] data()->data;
 	delete data();

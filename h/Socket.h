@@ -40,12 +40,12 @@ public:
 
 		int copy_to (char* dst, int max_size);
 	protected:
-		void Delete_data();
+		void deleteData();
 
 	};
 
 protected:
-    void Delete_data();
+    void deleteData();
 
 public:
 	Socket();
@@ -67,7 +67,7 @@ public:
 
 	void set_non_blocking (bool);
 
-	bool is_valid() const
+	bool isValid() const
 	{
 		return data() !=0 && data()->m_sock != -1;
 	}

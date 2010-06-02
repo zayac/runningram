@@ -308,20 +308,20 @@ enum Key_mode
 #define KM_META	(KM_LMETA|KM_RMETA)
 
 #ifdef _SDL_keysym_h
-inline SDLKey Get_sdl_code (Key_id what)
+inline SDLKey getSDLcode (Key_id what)
 {
 	return static_cast<SDLKey> (what);
 }
-inline Key_id Get_my_code (SDLKey what)
+inline Key_id getMyCode (SDLKey what)
 {
 	return static_cast<Key_id> (what);
 }
 
-inline SDLMod Get_sdl_mode (Key_mode what)
+inline SDLMod getSDLmode (Key_mode what)
 {
 	return static_cast<SDLMod> (what);
 }
-inline Key_mode Get_my_mode (SDLMod what)
+inline Key_mode getMyMode (SDLMod what)
 {
 	return static_cast<Key_mode> (what);
 }
@@ -350,20 +350,20 @@ struct Kbd_event
 	Kbd_event (const Kbd_event& src)
 		:type (src.type), mod (src.mod), ki (src.ki) {}
 
-	bool Contain (const Kbd_event& that) const
+	bool contain (const Kbd_event& that) const
 	{
 		return that.type == type && that.ki == ki && ((that.mod&mod) == that.mod);
 	}
 #ifdef _SDL_events_h
 	Kbd_event (const SDL_KeyboardEvent& src)
-		:type (src.type), mod (Get_my_mode (src.keysym.mod)), ki(Get_my_code (src.keysym.sym)) {}
+		:type (src.type), mod (getMyMode (src.keysym.mod)), ki(getMyCode (src.keysym.sym)) {}
 #endif
 };
 
 extern const char* Key_names[];
 
-const char* Get_key_name (Key_id);
-Key_id Get_key_id (const char* name);
+const char* getKeyName (Key_id);
+Key_id getKeyId (const char* name);
 
 #endif	/* _KEY_EVENT_H */
 

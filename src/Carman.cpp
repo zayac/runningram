@@ -26,7 +26,7 @@ public:
 	Car_creator data;
 
 protected:
-	virtual bool After_read (ifstream &file)
+	virtual bool afterRead (ifstream &file)
 	{
 		if (spritefname.size() > 0 && nsprites > 0)
 		{
@@ -35,7 +35,7 @@ protected:
 			sp->setPos (-sprite_offset);
 			data.setPicture (sp);
 		}
-		host->Add_model (data.Create_copy ());
+		host->addModel (data.Create_copy ());
 		return true;
 	}
 public:
@@ -43,30 +43,30 @@ public:
 	Initialaiser (const char* name, Carman* chost)
 	: Sectionp (name, '='), host (chost), data(), spritefname (""), nsprites(0)
 	{
-		Add_param (new St_loader<string> ("name", &data.model_name));
-		Add_param (new St_loader<int>	("id", &data.model_id));
-		Add_param (new St_loader<float> ("health", &data.start_health));
-		Add_param (new St_loader<float> ("motor power", &data.motor_force));
-		Add_param (new St_loader<float> ("back rmass", &data.rmass1));
-		Add_param (new St_loader<float> ("front rmass", &data.rmass2));
-		Add_param (new St_loader<float> ("lenght", &data.lenght));
-		Add_param (new St_loader<float> ("back size", &data.r1));
-		Add_param (new St_loader<float> ("front size", &data.r2));
-		Add_param (new St_loader<float> ("bouncy", &data.bouncy));
-		Add_param (new St_loader<float> ("rudder speed", &data.angular_vel));
-		Add_param (new St_loader<float> ("rudder spring", &data.rudder_spring));
-		Add_param (new St_loader<float> ("turn transfer", &data.turn_transfer));
-		Add_param (new St_loader<float> ("along friction", &data.fric.x));
-		Add_param (new St_loader<float> ("across friction", &data.fric.y));
-		Add_param (new St_loader<string> ("sprite file", &spritefname));
-		Add_param (new St_loader<int> ("number of frames", &nsprites));
-		Add_param (new St_loader<int> ("sprite centre x", &sprite_offset.x));
-		Add_param (new St_loader<int> ("sprite centre y", &sprite_offset.y));
+		addParam (new St_loader<string> ("name", &data.model_name));
+		addParam (new St_loader<int>	("id", &data.model_id));
+		addParam (new St_loader<float> ("health", &data.start_health));
+		addParam (new St_loader<float> ("motor power", &data.motor_force));
+		addParam (new St_loader<float> ("back rmass", &data.rmass1));
+		addParam (new St_loader<float> ("front rmass", &data.rmass2));
+		addParam (new St_loader<float> ("lenght", &data.lenght));
+		addParam (new St_loader<float> ("back size", &data.r1));
+		addParam (new St_loader<float> ("front size", &data.r2));
+		addParam (new St_loader<float> ("bouncy", &data.bouncy));
+		addParam (new St_loader<float> ("rudder speed", &data.angular_vel));
+		addParam (new St_loader<float> ("rudder spring", &data.rudder_spring));
+		addParam (new St_loader<float> ("turn transfer", &data.turn_transfer));
+		addParam (new St_loader<float> ("along friction", &data.fric.x));
+		addParam (new St_loader<float> ("across friction", &data.fric.y));
+		addParam (new St_loader<string> ("sprite file", &spritefname));
+		addParam (new St_loader<int> ("number of frames", &nsprites));
+		addParam (new St_loader<int> ("sprite centre x", &sprite_offset.x));
+		addParam (new St_loader<int> ("sprite centre y", &sprite_offset.y));
 	}
 
 	virtual ~Initialaiser ()
 	{
-		Delete_props ();
+		deleteProps ();
 	}
 }; // </editor-fold>
 
@@ -80,12 +80,12 @@ Carman::~Carman ()
 		delete *i;
 }
 //--------------------------------------------------------------------------------------------------
-Serializator* Carman::Get_parser()
+Serializator* Carman::getParcer()
 {
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
-Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient, Player* host, int id)
+Car* Carman::createCar (int model, Vector2f pos, Orient start_orient, Player* host, int id)
 {
 	for (citer i = models.begin(); i != models.end(); ++i)
 	{
@@ -93,28 +93,28 @@ Car* Carman::Create_car (int model, Vector2f pos, Orient start_orient, Player* h
 		if ((**i).model_id == model)
 		{
 			Car* ncar = (**i).New_car (pos, start_orient, host, effm, id);
-			last_creations.push_back (Creation (model, pos, start_orient, host->Id(), ncar->Id()));
-			important = true;
+			last_creations.push_back (Creation (model, pos, start_orient, host->id(), ncar->id()));
+			important_ = true;
 			return ncar;
 		}
 	}
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------
-void Carman::Clear_last_creations()
+void Carman::clesrLastActions()
 {
 	last_creations.clear();
-	important = false;
+	important_ = false;
 }
 //--------------------------------------------------------------------------------------------------
-int Carman::Export (char* buffer, int size) const
+int Carman::exp (char* buffer, int size) const
 {
 	int offset = 0;
 	for (list <Creation>::const_iterator i = last_creations.begin();
 		i != last_creations.end(); ++i)
 	{
 		*(buffer + offset++) = 'c';//continue
-		int len = i->Export (buffer + offset, size - offset);
+		int len = i->exp (buffer + offset, size - offset);
 		if (len == -1) return -1;
 		offset += len;
 		if (offset + 1 > size) return -1;
@@ -123,17 +123,17 @@ int Carman::Export (char* buffer, int size) const
 	return offset;
 }
 //--------------------------------------------------------------------------------------------------
-int Carman::Import (char* buffer, int size)
+int Carman::imp (char* buffer, int size)
 {
 	int offset = 0;
 	Creation cur;
 	while (*(buffer + offset++) == 'c')
 	{
-		int len = cur.Import (buffer + offset, size - offset);
+		int len = cur.imp (buffer + offset, size - offset);
 		if (len == -1) return -1;
 		offset += len;
 		if (offset > size) return -1;
-		objs->push_back (Create_car (cur.model, cur.pos, cur.start_orient, hosts->Get (cur.pl_id), cur.id));
+		objs->push_back (createCar (cur.model, cur.pos, cur.start_orient, hosts->get (cur.pl_id), cur.id));
 	}
 	return offset;
 }
@@ -159,9 +159,9 @@ Car* Car_creator::New_car (Vector2f pos, Orient start_orient, Player* host, Effe
 {
 	Car* ret = new Car (pos, start_health, motor_force, bouncy, angular_vel,
 					 rudder_spring, rmass1, rmass2, lenght, r1, r2, turn_transfer, fric, start_orient, id, picture, host, em);
-	Control* contr = host->Get_control ();
+	Control* contr = host->getControl ();
 //	contr->evman = sense;
-	contr->Set_control (ret);
+	contr->setControl (ret);
 
 	return ret;
 }
@@ -200,14 +200,14 @@ Carman::Creation::Creation (const Carman::Creation& orig)
 {
 }
 //--------------------------------------------------------------------------------------------------
-int Carman::Creation::Export (char* buffer, int size) const
+int Carman::Creation::exp (char* buffer, int size) const
 {
 	if (sizeof (Creation) > size) return -1;
 	memcpy (buffer, this, sizeof (Creation));
 	return sizeof (Creation);
 }
 //--------------------------------------------------------------------------------------------------
-int Carman::Creation::Import (char* buffer, int size)
+int Carman::Creation::imp (char* buffer, int size)
 {
 	if (sizeof (Creation) > size) return -1;
 	memcpy (this, buffer, sizeof (Creation));

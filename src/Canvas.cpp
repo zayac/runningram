@@ -28,9 +28,9 @@ Canvas::Canvas (const char* file, bool alpha):UniId<SDL_Surface>(0, 0), pos()
     if (temp == NULL) throw Exception (Sprintf ("can't load file %s !!!", file));
 
     if (alpha)
-        Reinit (SDL_DisplayFormatAlpha(temp), 0);
+        reinit (SDL_DisplayFormatAlpha(temp), 0);
     else
-        Reinit (SDL_DisplayFormat(temp), 0);
+        reinit (SDL_DisplayFormat(temp), 0);
     SDL_FreeSurface (temp);
     //SDL_SetColorKey( this->data(), SDL_SRCCOLORKEY, SDL_MapRGB( this->data()->format, 0, 0xFF, 0xFF ) );
 }
@@ -42,10 +42,10 @@ Canvas::Canvas (const Canvas& orig):UniId<SDL_Surface> (orig.data(), orig.table(
 //--------------------------------------------------------------------------------------------------
 Canvas::~Canvas ()
 {
-	Destroy ();
+	destroy ();
 }
 //--------------------------------------------------------------------------------------------------
-void Canvas::Delete_data()
+void Canvas::deleteData()
 {
 	if (data())
 		SDL_FreeSurface (data());
@@ -62,8 +62,8 @@ void Canvas::line (Point start, Point finish, Color c)
 //--------------------------------------------------------------------------------------------------
 void Canvas::fillRect (Rect r, Color col)
 {
-	r.Move (-pos);
-    SDL_FillRect (data(), addSdl (&r), col.Toint (data()));
+	r.move (-pos);
+    SDL_FillRect (data(), addSdl (&r), col.toInt (data()));
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::fill (Color col)
@@ -74,7 +74,7 @@ void Canvas::fill (Color col)
 Rect Canvas::getClipRect() const
 {
 	Rect rez = data()->clip_rect;
-	rez.Move (pos);
+	rez.move (pos);
 	return rez;
 }
 //--------------------------------------------------------------------------------------------------
@@ -116,11 +116,9 @@ Canvas Canvas::createCompatible (Point size) const
 {
 	if (size == Point()) size = Point (data()->w, data()->h);
         
-	Canvas ret (SDL_CreateRGBSurface (data()->flags, size.x, size.y, data()->format->BitsPerPixel,
+	return Canvas (SDL_CreateRGBSurface (data()->flags, size.x, size.y, data()->format->BitsPerPixel,
 													  data()->format->Rmask, data()->format->Gmask,
                                 					  data()->format->Bmask, data()->format->Amask));
-
-	return ret;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -129,9 +127,9 @@ void Canvas::update()
 	SDL_UpdateRect (data(), 0, 0, 0, 0);
 }
 //--------------------------------------------------------------------------------------------------
-bool Canvas::Ok() const
+bool Canvas::ok() const
 {
-	return UniId<SDL_Surface>::Ok();
+	return UniId<SDL_Surface>::ok();
 }
 //--------------------------------------------------------------------------------------------------
 Color::operator SDL_Color() const
@@ -151,7 +149,7 @@ Uint32 Color::Toint (const Canvas* screen) const
 	return SDL_MapRGBA (screen->data()->format, r,g,b,unused);
 }
 //--------------------------------------------------------------------------------------------------
-Uint32 Color::Toint (const SDL_Surface* screen) const
+Uint32 Color::toInt (const SDL_Surface* screen) const
 {
 	return SDL_MapRGBA (screen->format, r,g,b,unused);
 }
@@ -192,33 +190,33 @@ void Canvas::setPixel (Point point, Color pixel)
 {
 	point -= pos;
     Uint32* pixels = (Uint32*)data()->pixels;
-    pixels[point.y * data()->w + point.x] = pixel.Toint(data());
+    pixels[point.y * data()->w + point.x] = pixel.toInt(data());
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::rotate (double angle)
 {
 	Orient rot (angle);
-	pos = rot.Rotate (pos.To<float>()).To <int>();
-	Substitute_data (rotozoomSurface(data(), angle, 1, 1));
+	pos = rot.rotate (pos.to<float>()).to <int>();
+	substituteData (rotozoomSurface(data(), angle, 1, 1));
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::flipHorizontal()
 {
 	pos.x = -pos.x;
-	Substitute_data (zoomSurface(data(), 1, -1, SMOOTHING_ON));
+	substituteData (zoomSurface(data(), 1, -1, SMOOTHING_ON));
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::flipVertical()
 {
 	pos.y = -pos.y;
-	Substitute_data (zoomSurface(data(), -1, 1, SMOOTHING_ON));
+	substituteData (zoomSurface(data(), -1, 1, SMOOTHING_ON));
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::zoom (double zoomx, double zoomy)  // percentage to zoom in
 {
 	pos.x *= zoomx;
 	pos.y *= zoomy;
-	Substitute_data (zoomSurface (data(), zoomx, zoomy, SMOOTHING_OFF));
+	substituteData (zoomSurface (data(), zoomx, zoomy, SMOOTHING_OFF));
 }
 //--------------------------------------------------------------------------------------------------
 Canvas Canvas::cropRect (Point point, int w, int h, bool remember_pos)
@@ -246,8 +244,8 @@ Canvas Canvas::cropRect (Point point, int w, int h, bool remember_pos)
 //--------------------------------------------------------------------------------------------------
 void Canvas::setTransparency(Color colorkey)
 {
-    SDL_SetColorKey( data(), SDL_SRCCOLORKEY|SDL_RLEACCEL, colorkey.Toint(data()) );
-	Substitute_data (SDL_DisplayFormat(data()));
+    SDL_SetColorKey( data(), SDL_SRCCOLORKEY|SDL_RLEACCEL, colorkey.toInt(data()) );
+	substituteData (SDL_DisplayFormat(data()));
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::setTransparentPixel (Point point)
@@ -342,7 +340,7 @@ void Canvas::ortogonalToIsometric()
             new_surf.setPixel(new_cell, color);
         }
     }
-    Reinit (new_surf);
+    reinit (new_surf);
 	pos = transform(pos);
 }
 //--------------------------------------------------------------------------------------------------

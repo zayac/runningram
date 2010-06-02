@@ -18,23 +18,23 @@ class Battlefield;
 
 class Activeman :public list <Active*>, public Transmitted
 {
-	void Kill(iterator start, iterator finish);
+	void kill(iterator start, iterator finish);
 
 public:
 	Activeman();
 //	Activeman(const Activeman& orig);
 //	virtual ~Activeman();
 
-	void Activate (float dt);
-	void Draw (Canvas*);
-	void Collis_brd (const Battlefield* bf);
-	void Process_collisions();
-	bool Delete_deadalives();//returns true when one or more of Deadalives have found and deleted
+	void activate (float dt);
+	void draw (Canvas*);
+	void collisBrd (const Battlefield* bf);
+	void processCollisions();
+	bool deleteDeadalives();//returns true when one or more of Deadalives have found and deleted
 
-        int Export (char* buffer, int size) const;
-	int Import (char* buffer, int size);
+	int exp (char* buffer, int size) const;
+	int imp (char* buffer, int size);
 
-	bool Ok() const;
+	bool ok() const;
 };
 
 #endif	/* _ACTIVEMAN_H */

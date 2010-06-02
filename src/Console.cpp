@@ -27,24 +27,24 @@ class Console::Initialaiser : public Sectionp
 	Color bg_col;
 	Fontc* target;
 protected:
-	bool After_read (ifstream&)
+	bool afterRead (ifstream&)
 	{
-		target->Set_fg (fg_col);
-		target->Set_bg (bg_col);
+		target->setFG (fg_col);
+		target->setBG (bg_col);
 	}
 public:
 
 	Initialaiser (string name, Fontc* tgt_font)
 	: Sectionp (name, '='), target (tgt_font)
 	{
-		Add_param (new Fontc::Initialiser ("font", tgt_font));
-		Add_param (new Color::Initialiser ("color", &fg_col));
-		Add_param (new Color::Initialiser ("bgcolor", &bg_col));
+		addParam (new Fontc::Initialiser ("font", tgt_font));
+		addParam (new Color::Initialiser ("color", &fg_col));
+		addParam (new Color::Initialiser ("bgcolor", &bg_col));
 	}
 
 	virtual ~Initialaiser ()
 	{
-		Delete_props ();
+		deleteProps ();
 	}
 }; // </editor-fold>
 
@@ -76,22 +76,22 @@ Console::~Console ()
 	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
-Serializator* Console::Get_parser()
+Serializator* Console::getParser()
 {
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
-bool Console::Init (Graphic_subsystem* c)
+bool Console::init (Graphic_subsystem* c)
 {
 //	font.Open_font (parser->font_fname.c_str(), parser->height);
 
 //	font.Set_fg (Color(10, 200, 20));
 //	font.Set_bg (Color(10, 20, 20));
 
-	Rect borders = c->Get_screen()->getClipRect ();
+	Rect borders = c->getScreen()->getClipRect ();
 	borders.h = 210;
-	history.Init (borders);
-	history.Push_string ("You are welcome!");
+	history.init (borders);
+	history.pushString ("You are welcome!");
 
 	luaopen_base (vm);
 	luaopen_math (vm);
@@ -100,105 +100,105 @@ bool Console::Init (Graphic_subsystem* c)
 	luaopen_os (vm);
 	luaopen_table (vm);
 
-	Register_processor ("print", new Arg_Method <int, lua_State*, Console> (this, &Console::Output));
+	registerProcessor ("print", new Arg_Method <int, lua_State*, Console> (this, &Console::output));
 
 	borders.y = borders.h;
-	borders.h = font.Height ();
-	input.Init  (borders, new Arg_Method<void, const string&, Console> (this, &Console::On_enter_string), "You:>");
+	borders.h = font.height ();
+	input.init  (borders, new Arg_Method<void, const string&, Console> (this, &Console::onEnterString), "You:>");
 
 	enabled = false;
 
-	assert(Ok());
+	assert(ok());
 
 	return true;
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Register_processor (string name, int (*fun)(lua_State*))
+void Console::registerProcessor (string name, int (*fun)(lua_State*))
 {
 	lua_register (vm, name.c_str(), fun);
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Register_processor (string name, Arg_Functor <int, lua_State*>* f)
+void Console::registerProcessor (string name, Arg_Functor <int, lua_State*>* f)
 {
 	lua_pushnumber (vm, (double)(long)(f));
 	lua_pushcclosure (vm, Lua_execute, 1);
 	lua_setglobal (vm, name.c_str());
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Cleanup()
+void Console::cleanup()
 {
-	assert(Ok());//!!! It may be needed to close opend font
+	assert(ok());//!!! It may be needed to close opend font
         FontcCleanUp();
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Operate (Kbd_event ev)
+void Console::operate (Kbd_event ev)
 {
-	assert(Ok());
+	assert(ok());
 	if (enabled)
-		input.Operate (ev);
+		input.operate (ev);
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Draw (Graphic_subsystem* c) const
+void Console::draw (Graphic_subsystem* c) const
 {
 	if (!enabled) return;
-	Canvas* screen = c->Get_screen ();
+	Canvas* screen = c->getScreen ();
 	Point scr_pos = screen->getPos();
 	screen->setPos (Point());
-	assert(Ok());
-	history.Draw (screen);
-	input.Draw (screen);
+	assert(ok());
+	history.draw (screen);
+	input.draw (screen);
 	screen->setPos (scr_pos);
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Switch()
+void Console::turn()
 {
 	enabled = !enabled;
 }
 //--------------------------------------------------------------------------------------------------
-void Console::On_enter_string (const string& str)
+void Console::onEnterString (const string& str)
 {
-	assert(Ok());
-	history.Push_string (input.Get_greeting() + str);
+	assert(ok());
+	history.pushString (input.getGreeting() + str);
 	luaL_dostring (vm, str.c_str());
 }
 //--------------------------------------------------------------------------------------------------
-void Console::Push_string (const string& str)
+void Console::pushString (const string& str)
 {
-	assert(Ok());
-	history.Push_string (str);
+	assert(ok());
+	history.pushString (str);
 }
 //--------------------------------------------------------------------------------------------------
-int Console::Output (lua_State* ls)
+int Console::output (lua_State* ls)
 {
-	Push_string (lua_tostring (ls, -1));
+	pushString (lua_tostring (ls, -1));
 }
 //--------------------------------------------------------------------------------------------------
-bool Console::Ok() const
+bool Console::ok() const
 {
-	return font.Ok() && history.Ok() && input.Ok() && parser != 0;
+	return font.ok() && history.ok() && input.ok() && parser != 0;
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Init (const Rect& brd, Arg_Functor <void, const string&> *enter, string gr)
+void Line_edit::init (const Rect& brd, Arg_Functor <void, const string&> *enter, string gr)
 {
 	on_enter = enter;
 	data = "Very very very long  long test edit string for test drawing of text A same characters other"
 		   "Very very very long  long test edit string for test drawing of text A same characters other"
 		   "Very very very long  long test edit string for test drawing of text A same characters other"
 		   "Very very very long  long test edit string for test drawing of text A same characters other";
-	data.Set_font (font);
+	data.setFont (font);
 	cursor_pos = 0;
 	start_view = 0;
 	borders = brd;
 	last_actiont = MSECS;
 	greeting = gr;
-	greeting.Set_font (font);
-	grsize = greeting.Width();
-	assert(Ok());
+	greeting.setFont (font);
+	grsize = greeting.width();
+	assert(ok());
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Operate (Kbd_event ev)
+void Line_edit::operate (Kbd_event ev)
 {
-	assert(Ok());
+	assert(ok());
 	if (ev.type == EV_KEYUP) return;
 	if (ev.ki == KI_BACKQUOTE) return; //!!! it's ugly. this key switches console
 
@@ -209,13 +209,13 @@ void Line_edit::Operate (Kbd_event ev)
 	if (!num_lock)
 		switch (ev.ki)
 		{
-		case KI_KP1:			Cursor_end();	return;
+		case KI_KP1:			cursorEnd();	return;
 		case KI_KP2:							return;
 		case KI_KP3:							return;
-		case KI_KP4:			Cursor_left();	return;
+		case KI_KP4:			cursorLeft();	return;
 		case KI_KP5:							return;
-		case KI_KP6:			Cursor_right();	return;
-		case KI_KP7:			Cursor_home();	return;
+		case KI_KP6:			cursorRight();	return;
+		case KI_KP7:			cursorHome();	return;
 		case KI_KP8:							return;
 		case KI_KP9:							return;
 		case KI_KP_PERIOD:						return;
@@ -228,24 +228,24 @@ void Line_edit::Operate (Kbd_event ev)
 
 	switch (ev.ki)
 	{
-	case KI_LEFT:			Cursor_left();		break;
-	case KI_RIGHT:			Cursor_right();		break;
-	case KI_HOME:			Cursor_home();		break;
-	case KI_END:			Cursor_end();		break;
+	case KI_LEFT:			cursorLeft();		break;
+	case KI_RIGHT:			cursorRight();		break;
+	case KI_HOME:			cursorHome();		break;
+	case KI_END:			cursorEnd();		break;
 
-	case KI_BACKSPACE:		Delete_left();		break;
-	case KI_DELETE:			Delete_right();		break;
+	case KI_BACKSPACE:		deleteLeft();		break;
+	case KI_DELETE:			deleteRight();		break;
 
-	case KI_RETURN:			Finish_input();		break;
-	case KI_KP_ENTER:		Finish_input();		break;
+	case KI_RETURN:			finishInput();		break;
+	case KI_KP_ENTER:		finishInput();		break;
 	default:
-		Type_char (ev);
+		typeChar (ev);
 	}
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Type_char (Kbd_event& ev)
+void Line_edit::typeChar (Kbd_event& ev)
 {
-	assert(Ok());
+	assert(ok());
 	bool shift = ev.mod & KM_SHIFT;
 	bool up_case = shift != bool (ev.mod & KM_CAPS);
 	char c = 0;
@@ -345,14 +345,14 @@ void Line_edit::Type_char (Kbd_event& ev)
 	case KI_KP_PLUS:		c = '+';	break;	//keypad plus
 	case KI_KP_EQUALS:	c = '=';	break;	//keypad equals
 	}
-	if (c) Insert_symbol (c);
+	if (c) insertSymbol (c);
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Insert_symbol (char c)
+void Line_edit::insertSymbol (char c)
 {
-	assert(Ok());
+	assert(ok());
 	data.insert (cursor_pos, 1, c);
-	Cursor_right();
+	cursorRight();
 }
 //--------------------------------------------------------------------------------------------------
 Line_edit::~Line_edit()
@@ -360,18 +360,18 @@ Line_edit::~Line_edit()
 	if (on_enter) delete on_enter;
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Finish_input ()
+void Line_edit::finishInput ()
 {
-	assert(Ok());
+	assert(ok());
 	cursor_pos = 0;
 	start_view = 0;
 	(*on_enter)(data);
 	data.clear();
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Cursor_left()
+void Line_edit::cursorLeft()
 {
-	assert(Ok());
+	assert(ok());
 	if (cursor_pos > 0)
 	{
 		cursor_pos--;
@@ -379,33 +379,33 @@ void Line_edit::Cursor_left()
 	}
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Cursor_right()
+void Line_edit::cursorRight()
 {
-	assert(Ok());
+	assert(ok());
 	if (cursor_pos < data.size())
 	{
 		cursor_pos++;
-		while (Cursor_offset() > borders.w) start_view++;
+		while (cursorOffset() > borders.w) start_view++;
 	}
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Cursor_home()
+void Line_edit::cursorHome()
 {
-	assert(Ok());
+	assert(ok());
 	cursor_pos = 0;
 	if (cursor_pos < start_view) start_view = cursor_pos;
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Cursor_end()
+void Line_edit::cursorEnd()
 {
-	assert(Ok());
+	assert(ok());
 	cursor_pos = data.size();
-	while (Cursor_offset() > borders.w) start_view++;
+	while (cursorOffset() > borders.w) start_view++;
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Delete_left()
+void Line_edit::deleteLeft()
 {
-	assert(Ok());
+	assert(ok());
 	if (cursor_pos > 0)
 	{
 		cursor_pos --;
@@ -413,36 +413,36 @@ void Line_edit::Delete_left()
 	}
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Delete_right()
+void Line_edit::deleteRight()
 {
-	assert(Ok());
+	assert(ok());
 	if (cursor_pos < data.size()) data.erase (cursor_pos, 1);
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Draw (Canvas* c) const
+void Line_edit::draw (Canvas* c) const
 {
-	assert(Ok());
+	assert(ok());
 	c->fillRect (borders, font.bg);
-	Draw_text (c);
-	Draw_cursor (c);
+	drawText (c);
+	drawCursor (c);
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Draw_text (Canvas* c) const
+void Line_edit::drawText (Canvas* c) const
 {
-	assert(Ok());
+	assert(ok());
 	Rect brd = borders;
-	greeting.Draw (c, &brd);
+	greeting.draw (c, &brd);
 
 	brd = borders;
-	brd.Cut_left (grsize);
-	data.Draw (c, &brd, start_view);
+	brd.cutLeft (grsize);
+	data.draw (c, &brd, start_view);
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::Draw_cursor (Canvas* c) const
+void Line_edit::drawCursor (Canvas* c) const
 {
-	assert(Ok());
+	assert(ok());
 	Rect cursor = borders;
-	cursor.x += Cursor_offset() - cursor_width/2;
+	cursor.x += cursorOffset() - cursor_width/2;
 	cursor.w = cursor_width;
 
 	Color colour = 0;
@@ -453,36 +453,36 @@ void Line_edit::Draw_cursor (Canvas* c) const
 	c->fillRect (cursor, colour);
 }
 //--------------------------------------------------------------------------------------------------
-int Line_edit::Cursor_offset() const
+int Line_edit::cursorOffset() const
 {
-	assert(Ok());
+	assert(ok());
 	string before = data.substr (start_view, cursor_pos - start_view);
-	return grsize + font.Str_len (before.c_str());
+	return grsize + font.strLen (before.c_str());
 }
 //--------------------------------------------------------------------------------------------------
-bool Line_edit::Ok() const
+bool Line_edit::ok() const
 {
 	return 0 <= cursor_pos && cursor_pos <= data.size() && 0 <= start_view && start_view <= data.size() &&
-		data.Ok() && greeting.Ok() && grsize >= 0 && on_enter != 0;
+		data.ok() && greeting.ok() && grsize >= 0 && on_enter != 0;
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::Init (const Rect& brd)
+void Lines_view::init (const Rect& brd)
 {
-	assert(Ok());
+	assert(ok());
 	borders = brd;
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::Push_string (const string &what)
+void Lines_view::pushString (const string &what)
 {
-	assert(Ok());
+	assert(ok());
 	data.push_back (Stringc (what, font));
 	if (data.size () > max_lines)
 		data.erase (data.begin());
 }
 //--------------------------------------------------------------------------------------------------
-int Lines_view::Get_height (const Stringc& what) const
+int Lines_view::getHeight (const Stringc& what) const
 {
-	assert(Ok());
+	assert(ok());
 	Point size = what.pSize();
 	float nlines = float(size.x)/borders.w;
 
@@ -495,24 +495,24 @@ int Lines_view::Get_height (const Stringc& what) const
 //--------------------------------------------------------------------------------------------------
 int Lines_view::Draw_tolerable_line (Canvas* screen, const Stringc& text, int offset, Rect brd) const
 {
-	assert(Ok());
-	Stringc buf = text.Get_bordered_substring (brd.w, offset);
-	if (buf.Draw (screen, &brd))
+	assert(ok());
+	Stringc buf = text.getBorderedSubstring (brd.w, offset);
+	if (buf.draw (screen, &brd))
 		return buf.size();
 	return false;
 }
 //--------------------------------------------------------------------------------------------------
-int Lines_view::Draw_text (Canvas* screen, const Stringc& text, int start_offset) const
+int Lines_view::drawText (Canvas* screen, const Stringc& text, int start_offset) const
 {
-	assert(Ok());
+	assert(ok());
 	int result_height = 0;
 	int total_symbols = text.size();
 	int symbols_showed = 0;
 
 	Rect brd = borders;
-	brd.Cut_top (start_offset);
+	brd.cutTop (start_offset);
 
-	int fheight = font.Height ();
+	int fheight = font.height ();
 
 	while (symbols_showed < total_symbols)
 	{
@@ -524,14 +524,14 @@ int Lines_view::Draw_text (Canvas* screen, const Stringc& text, int start_offset
 		result_height += fheight;
 
 		if (brd.h < fheight) break;
-		brd.Cut_top (fheight);
+		brd.cutTop (fheight);
 	}
     return result_height;
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::Draw (Canvas* c) const
+void Lines_view::draw (Canvas* c) const
 {
-	assert(Ok());
+	assert(ok());
 	int start_y = 0;
 	list <Stringc>::const_iterator start = data.begin();
 	int height = 0;
@@ -539,7 +539,7 @@ void Lines_view::Draw (Canvas* c) const
 
 	for (list <Stringc>::const_reverse_iterator i = data.rbegin(); i != data.rend(); ++i)
 	{
-		height += Get_height (*i);
+		height += getHeight (*i);
 		if (height > borders.h)
 		{
 			start_y = height - borders.h;
@@ -555,31 +555,31 @@ void Lines_view::Draw (Canvas* c) const
 	int total_height = -start_y;
 	for (list <Stringc>::const_iterator i = start; i != data.end(); ++i)
 	{
-		cur_height = Draw_text (c, *i, total_height);
+		cur_height = drawText (c, *i, total_height);
 		if (cur_height == 0 && i->size() > 0) return;//!!! Error
 		total_height += cur_height;
 	}
 
 }
 //--------------------------------------------------------------------------------------------------
-bool Lines_view::Ok() const
+bool Lines_view::ok() const
 {
 #ifdef FULL_DEBUG
 	for (list<Stringc>::const_iterator i = data.begin(); i != data.end(); ++i)
 		if (!i->Ok ()) return false;
 #endif
-	return font.Ok();
+	return font.ok();
 }
 //--------------------------------------------------------------------------------------------------
-void Stringc::Update_lab()
+void Stringc::updateLab()
 {
-	lab = font.Create_label (c_str(), false);
+	lab = font.createLabel (c_str(), false);
 	lab_upd = true;
 }
 //--------------------------------------------------------------------------------------------------
-Stringc Stringc::Get_bordered_substring (int width, int offset) const
+Stringc Stringc::getBorderedSubstring (int width, int offset) const
 {
-	int ret = font.Approximate_num_symbols (width);
+	int ret = font.approximateNumSymbols (width);
 	if (0 >= ret || ret > size()) ret = size();
 	if (ret > 500) ret = 500;
 
@@ -587,7 +587,7 @@ Stringc Stringc::Get_bordered_substring (int width, int offset) const
 	strncpy (buf, data() + offset, ret);
 	buf[ret] = 0;
 
-	int w = font.Str_len (buf);
+	int w = font.strLen (buf);
 
 	while (w > width)
 	{
@@ -595,7 +595,7 @@ Stringc Stringc::Get_bordered_substring (int width, int offset) const
 		ret -= (w - width)/std_w + 0.5;
 		ret -= ret%2; //for double char symbols
 		buf[ret] = 0;//cut string
-		w = font.Str_len (buf);
+		w = font.strLen (buf);
 	}
 	return Stringc (buf, font);
 }

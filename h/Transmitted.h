@@ -12,19 +12,19 @@ const int Buffer_size = 1048576;
 
 class Transmitted
 {
-	char id;
+	char id_;
+protected:
+	bool important_;
 
 protected:
-	bool important;
-protected:
-	Transmitted (char id_, bool important_) :id(id_), important (important_){}
+	Transmitted (char _id, bool importa) :id_(_id), important_ (importa){}
 
 public:
-	virtual int Export (char* buffer, int size) const = 0;
-	virtual int Import (char* buffer, int size) = 0;
+	virtual int exp (char* buffer, int size) const = 0;
+	virtual int imp (char* buffer, int size) = 0;
 
-	inline char Id() const {return id;}
-	inline char Important() const {return important;}
+	inline char id() const {return id_;}
+	inline char important() const {return important_;}
 };
 
 #endif	/* _TRANSMITTED_H */

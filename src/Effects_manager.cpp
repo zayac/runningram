@@ -22,24 +22,24 @@ public:
         int exp_speed;
         Effects_manager* efm;
 protected:
-	virtual bool After_read (ifstream &file)
+	virtual bool afterRead (ifstream &file)
 	{
             Sprite *sp = new Sprite(exp_file.c_str(), exp_frames, exp_speed, true);
-            efm->exp_add(sp);
+            efm->expAdd(sp);
             return true;
 	}
 public:
 	Initialaiser (string name, Effects_manager* effect)
 	: Sectionp (name, '='), efm(effect)
 	{
-                Add_param (new St_loader<string> ("sprite file", &exp_file));
-                Add_param (new St_loader<int> ("number of frames", &exp_frames));
-                Add_param (new St_loader<int> ("speed", &exp_speed));
+                addParam (new St_loader<string> ("sprite file", &exp_file));
+                addParam (new St_loader<int> ("number of frames", &exp_frames));
+                addParam (new St_loader<int> ("speed", &exp_speed));
 	}
 
 	virtual ~Initialaiser ()
 	{
-		Delete_props ();
+		deleteProps ();
 	}
 };
 
@@ -65,7 +65,7 @@ Effects_manager::Effects_manager(const Effects_manager& any)
     
 }
 
-bool Effects_manager::Init()
+bool Effects_manager::init()
 {
     /*
     boom.push_back(new Sprite(parser->exp_file.c_str(), parser->exp_frames, parser->exp_speed, true));
@@ -79,22 +79,22 @@ bool Effects_manager::Init()
     k = boom.size();
 }
 
-void Effects_manager::exp_draw(Canvas* can)
+void Effects_manager::expDraw(Canvas* can)
 {
     for(i = exp.begin(); i != exp.end(); ++i)
     {
-        (**i).Draw(can );
-        (**i).Animate();
+        (**i).draw(can );
+        (**i).animate();
     }
     
 }
 
-Serializator* Effects_manager::Get_parser()
+Serializator* Effects_manager::getParser()
 {
 	return parser;
 }
 
-void Effects_manager::Create_explosion (Vector2f pos, float size)
+void Effects_manager::createExplosion (Vector2f pos, float size)
 {
     Explosion* a = new Explosion;
     static int x_os, y_os, j, b = 1;
@@ -112,21 +112,21 @@ void Effects_manager::Create_explosion (Vector2f pos, float size)
     x_os = (*is)->getWidth();
     y_os = (*is)->getHeight();
 
-    a->Set_sprite( (*is) );
-    pos_new = pos.To<int>();
+    a->setSprite( (*is) );
+    pos_new = pos.to<int>();
     pos_new.x -= x_os/2;
     pos_new.y -= y_os/2;
 
-    a->Set_position(pos_new);
+    a->setPos(pos_new);
     exp.push_back(a);
 }
 
-void Effects_manager::exp_clean()
+void Effects_manager::expClean()
 {
     i = exp.begin();
     while( i != exp.end())
     {
-        if( !(**i).Get_run())
+        if( !(**i).getRun())
         {
             delete (*i);
             i = exp.erase(i);
@@ -135,7 +135,7 @@ void Effects_manager::exp_clean()
     }
 }
 
-void Effects_manager::exp_add(Sprite* sp)
+void Effects_manager::expAdd(Sprite* sp)
 {
     boom.push_back(sp);
 }

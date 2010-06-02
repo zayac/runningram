@@ -18,40 +18,40 @@ Activeman::Activeman ():Transmitted ('A', false) { }
 
 
 //--------------------------------------------------------------------------------------------------
-void Activeman::Activate (float dt)
+void Activeman::activate (float dt)
 {
-	assert(Ok());
+	assert(ok());
 	for (iterator i = begin(); i != end(); ++i)
-		(**i).Actions (dt);
+		(**i).actions (dt);
 }
 //--------------------------------------------------------------------------------------------------
 Canvas* globb = 0;//!!! deprecated, must be deleted
-void Activeman::Draw (Canvas* c)
+void Activeman::draw (Canvas* c)
 {
 	globb = c;
 
-	assert(Ok());
+	assert(ok());
 	for (iterator i = begin(); i != end(); ++i)
-		(**i).Draw (c);
+		(**i).draw (c);
 }
 //--------------------------------------------------------------------------------------------------
 #define CELL(a, b) cells[size.x*(b) + a]
 //--------------------------------------------------------------------------------------------------
-void Activeman::Collis_brd (const Battlefield* bf)
+void Activeman::collisBrd (const Battlefield* bf)
 {
-	assert(Ok());
-	assert (bf != 0 && bf->Ok());
+	assert(ok());
+	assert (bf != 0 && bf->ok());
 
-	const unsigned char* cells = bf->Get_cells ();
-	Point size = bf->Get_size ();
-	int csize = bf->Get_cell_size();
+	const unsigned char* cells = bf->getCells ();
+	Point size = bf->getSize ();
+	int csize = bf->getCellSize();
 
 	Point full_size = Point (csize*size.x, csize*size.y);
 
 	for (iterator i = begin(); i != end(); ++i)
 	{
-		float r = (**i).Get_r();
-		Point pos = (**i).Get_pos ().To<int>();
+		float r = (**i).getR();
+		Point pos = (**i).getPos ().to<int>();
 		Point lup = pos - Point (r, r);
 		Point rdown = pos + Point (r, r);
 
@@ -67,7 +67,7 @@ void Activeman::Collis_brd (const Battlefield* bf)
 
 		for (int x = 0; x < size.x; ++x)
 			for (int y = 0; y < size.y; ++y)
-				if (bf->No_road(x, y))
+				if (bf->noRoad(x, y))
 				{
 					int left = x*csize;
 					int right = left + csize;//cell borders
@@ -79,10 +79,10 @@ void Activeman::Collis_brd (const Battlefield* bf)
 					if (up > rdown.y) continue;
 					if (down < lup.y) continue;
 
-					if (bf->Is_sand (x, y))
+					if (bf->isSand (x, y))
 					{
 						Rect cell (left, up, right - left, down - up);
-						(**i).Drive_sand (cell, bf->Friction (x, y));
+						(**i).driveSand (cell, bf->friction (x, y));
 						continue;						//sands acts lonesome
 					}
 
@@ -92,18 +92,18 @@ void Activeman::Collis_brd (const Battlefield* bf)
 
 						while (++nx < size.x && right <= rdown.x)
 						{
-							if (bf->Is_rough (nx, y)||
-								(pos.y < up && y - 1 >=  0 && bf->Is_rough(nx, y-1)) ||	//for gnawed corners
-								(pos.y > down && y + 1 < size.y && bf->Is_rough(nx, y+1)))
+							if (bf->isRough (nx, y)||
+								(pos.y < up && y - 1 >=  0 && bf->isRough(nx, y-1)) ||	//for gnawed corners
+								(pos.y > down && y + 1 < size.y && bf->isRough(nx, y+1)))
 								right += csize;			//cell alliance expansion
 							else break;
 						}
 						nx = x;
 						while (--nx >= 0 && left > lup.x)
 						{
-							if (bf->Is_rough (nx, y) && bf->Is_rough (nx, y)||
-								(pos.y < up && y - 1 >=  0 && bf->Is_rough (nx, y-1)) ||	//for gnawed corners
-								(pos.y > down && y + 1 < size.y && bf->Is_rough (nx, y+1)))
+							if (bf->isRough (nx, y) && bf->isRough (nx, y)||
+								(pos.y < up && y - 1 >=  0 && bf->isRough (nx, y-1)) ||	//for gnawed corners
+								(pos.y > down && y + 1 < size.y && bf->isRough (nx, y+1)))
 								left -= csize;			//cell alliance expansion
 							else break;
 						}
@@ -113,43 +113,43 @@ void Activeman::Collis_brd (const Battlefield* bf)
 						int ny = y;
 						while (++ny < size.y && down <= rdown.y)
 						{
-							if (bf->Is_rough (x, ny)||
-								(pos.x < left && x - 1 >=  0 && bf->Is_rough (x-1, ny)) ||	//for gnawed corners
-								(pos.x > right && x + 1 < size.x && bf->Is_rough (x+1, ny)))
+							if (bf->isRough (x, ny)||
+								(pos.x < left && x - 1 >=  0 && bf->isRough (x-1, ny)) ||	//for gnawed corners
+								(pos.x > right && x + 1 < size.x && bf->isRough (x+1, ny)))
 								down += csize;			//cell alliance expansion
 							else break;
 						}
 						ny = y;
 						while (--ny >= 0 && up > lup.y)
 						{
-							if (bf->Is_rough (x, ny) ||
-								(pos.x < left && x - 1 >=  0 && bf->Is_rough (x-1, ny)) ||	//for gnawed corners
-								(pos.x > right && x + 1 < size.x && bf->Is_rough (x+1, ny)))
+							if (bf->isRough (x, ny) ||
+								(pos.x < left && x - 1 >=  0 && bf->isRough (x-1, ny)) ||	//for gnawed corners
+								(pos.x > right && x + 1 < size.x && bf->isRough (x+1, ny)))
 								up -= csize;			//cell alliance expansion
 							else break;
 						}
 					}
 					Rect cell (left, up, right - left, down - up);
 					if (globb) globb->fillRect (cell, Color (200, 0, 124));//!!! deprecated
-					(**i).Collis_brd (cell, bf->Friction (x, y));
+					(**i).collisBrd (cell, bf->friction (x, y));
 				}
 	}
 }
 #undef CELL
 //--------------------------------------------------------------------------------------------------
-void Activeman::Process_collisions()
+void Activeman::processCollisions()
 {
     for (iterator i = begin(); i != end(); ++i)
         for (iterator j = begin(); j != i; ++j)
         {
-            float r = (**i).Get_r() + (**j).Get_r();
-            Vector2f disp = (**i).Get_pos() - (**j).Get_pos();
-            if (disp.Lensq() < r*r)
-                (**i).Collis_obj (*j);
+            float r = (**i).getR() + (**j).getR();
+            Vector2f disp = (**i).getPos() - (**j).getPos();
+            if (disp.lenSq() < r*r)
+                (**i).collisObj (*j);
         }
 }
 //--------------------------------------------------------------------------------------------------
-bool Activeman::Delete_deadalives()
+bool Activeman::deleteDeadalives()
 {
 	iterator last;
 	bool last_must_be_deleted = false;
@@ -163,7 +163,7 @@ bool Activeman::Delete_deadalives()
 			last_must_be_deleted = false;
 			deletion_done = true;
 		}
-		if ((**i).Dead ())
+		if ((**i).dead ())
 		{
 			last = i;
 			last_must_be_deleted = true;
@@ -178,17 +178,17 @@ bool Activeman::Delete_deadalives()
 	return deletion_done;
 }
 //--------------------------------------------------------------------------------------------------
-int Activeman::Export (char* buffer, int size) const
+int Activeman::exp (char* buffer, int size) const
 {
 	int offset = 0;
 	for (const_iterator i = begin(); i != end(); ++i)
 	{
 		*(buffer + offset++) = 'c';//continue
 
-		*((int*)(buffer + offset)) = (**i).Id();
+		*((int*)(buffer + offset)) = (**i).id();
 		offset += sizeof (int);
 		
-		int cur_offs = (**i).Export (buffer + offset, size - offset);
+		int cur_offs = (**i).exp (buffer + offset, size - offset);
 		if (cur_offs == -1) return -1;
 		offset += cur_offs;
 		
@@ -198,7 +198,7 @@ int Activeman::Export (char* buffer, int size) const
 	return offset;
 }
 //--------------------------------------------------------------------------------------------------
-int Activeman::Import (char* buffer, int size)
+int Activeman::imp (char* buffer, int size)
 {
 	int offset = 0;
 	for (iterator i = begin();/* i != end()*/;)
@@ -206,7 +206,7 @@ int Activeman::Import (char* buffer, int size)
 		char next = *(buffer + offset++);
 		if (next == 's')		//stop
 		{
-			Kill (i, end());
+			kill (i, end());
 			return offset;
 		}
 		if (next != 'c') return -1;			//if not 's' and not 'c' I can't determine what it is
@@ -216,12 +216,12 @@ int Activeman::Import (char* buffer, int size)
 
 		int len = -1;
 
-		if (i == end() || id != (**i).Id())
+		if (i == end() || id != (**i).id())
 		{
 			bool found = false;
 			iterator j = i;
 			for (j = i; j != end(); ++j)
-				if ((**j).Id() == id)
+				if ((**j).id() == id)
 				{
 					found = true;
 					break;
@@ -229,7 +229,7 @@ int Activeman::Import (char* buffer, int size)
 			if (found)
 			{
 				std::swap (*i, *j);
-				len = (**i).Import (buffer + offset, size - offset);
+				len = (**i).imp (buffer + offset, size - offset);
 			}
 //			else
 //			{
@@ -237,7 +237,7 @@ int Activeman::Import (char* buffer, int size)
 //				len = (**j).Import (buffer + offset, size - offset);
 //			}
 		}
-		else	len = (**i).Import (buffer + offset, size - offset);
+		else	len = (**i).imp (buffer + offset, size - offset);
 		
 		if (len == -1) return -1;
 		offset += len;
@@ -259,18 +259,18 @@ int Activeman::Import (char* buffer, int size)
 //	return offset;
 }
 //--------------------------------------------------------------------------------------------------
-void Activeman::Kill (iterator start, iterator finish)
+void Activeman::kill (iterator start, iterator finish)
 {
 	for (iterator i = start; i != finish; ++i)
-		(**i).Die();
+		(**i).die();
 		//delete *i;
 //	erase (start, finish);
 }
 //--------------------------------------------------------------------------------------------------
-bool Activeman::Ok() const
+bool Activeman::ok() const
 {
 	for (const_iterator i = begin(); i != end(); ++i)
-		if (*i == 0 || !(**i).Ok()) return false;
+		if (*i == 0 || !(**i).ok()) return false;
 	return true;
 }
 //--------------------------------------------------------------------------------------------------

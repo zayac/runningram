@@ -37,12 +37,12 @@ Game_manager::Game_manager (int argc, char *argv[])
 , eff(new Effects_manager)
 {
 	co = new Output_cerr;
-	Exception::Set_output (co);
+	Exception::setOutput (co);
 	
 	players = new Player_manager (sense);
 
-	Init (argc, argv);
-	assert(Ok());
+	init (argc, argv);
+	assert(ok());
 }
 //--------------------------------------------------------------------------------------------------
 Game_manager::~Game_manager()
@@ -62,7 +62,7 @@ Game_manager::~Game_manager()
 	if (clie) delete clie; clie = 0;
 }
 //--------------------------------------------------------------------------------------------------
-bool Game_manager::Init (int argc, char *argv[])
+bool Game_manager::init (int argc, char *argv[])
 {
 	if (argc > 1)
 		if (strlen(argv[1]) < 8)
@@ -73,44 +73,44 @@ bool Game_manager::Init (int argc, char *argv[])
 	try
 	{
 	    Sectionp gen ("gensec", '\n');
-		gen.Add_param (pic->Get_parser ());
+		gen.addParam (pic->getParser ());
 		File_loader fl ((char*)"./settings.cfg");
-	    fl.Read_sector (&gen);
-		result = result && pic->Init();			//Graphic subsystem must be initialaised previously
-		pic->SplashScreen();
+	    fl.readSector (&gen);
+		result = result && pic->init();			//Graphic subsystem must be initialaised previously
+		pic->splashScreen();
 
-		gen.Add_param (cmd->Get_parser ());
-		gen.Add_param (ground->Get_parser ());
-		gen.Add_param (models->Get_parser ());
-		gen.Add_param (players->Get_parser ());
-                gen.Add_param(eff->Get_parser());
-		fl.Read_sector (&gen);
+		gen.addParam (cmd->getParser ());
+		gen.addParam (ground->getParser ());
+		gen.addParam (models->getParcer ());
+		gen.addParam (players->getParser ());
+                gen.addParam(eff->getParser());
+		fl.readSector (&gen);
 
-		models->Set_am (cars);
+		models->setAM (cars);
 		int ggg = cars->size();
-		models->Set_pm (players);
-                models->Set_em (eff);
+		models->setPM (players);
+                models->setEM (eff);
 
-		sense->Register_key_oper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::Operate));
-		sense->Register_key_action (new Arg_Method<void, void, Console> (cmd, &Console::Switch),
+		sense->registerKeyOper (new Arg_Method<void, Kbd_event, Console> (cmd, &Console::operate));
+		sense->registerKeyAction (new Arg_Method<void, void, Console> (cmd, &Console::turn),
 																			EV_KEYDOWN, KI_BACKQUOTE);
 
-        sense->Register_key_action (new Arg_Function<void, void> (DBG_switch),
+        sense->registerKeyAction (new Arg_Function<void, void> (DBG_switch),
 																			EV_KEYDOWN, KI_s);
-		sense->Register_key_action (new Arg_Method<void, void, Game_manager> (this, &Game_manager::tmpExport),
+		sense->registerKeyAction (new Arg_Method<void, void, Game_manager> (this, &Game_manager::tmpExport),
 																			EV_KEYDOWN, KI_z);
-		sense->Register_key_action (new Arg_Method<void, void, Game_manager> (this, &Game_manager::tmpImport),
+		sense->registerKeyAction (new Arg_Method<void, void, Game_manager> (this, &Game_manager::tmpImport),
 																			EV_KEYDOWN, KI_x);
 
 
-		font.Open_font ("default.ttf", 16);
-		font.Set_fg (Color(100, 100, 200));//!!! deprecated
+		font.openfont ("default.ttf", 16);
+		font.setFG (Color(100, 100, 200));//!!! deprecated
 
-	    result = result && cmd->Init (pic);
-		result = result && ground->Init();
-		result = result && eff->Init();
+	    result = result && cmd->init (pic);
+		result = result && ground->init();
+		result = result && eff->init();
 
-		cmd->Register_processor ("quit", new Arg_Method <int, lua_State*, Game_manager> (this, &Game_manager::Stop));
+		cmd->registerProcessor ("quit", new Arg_Method <int, lua_State*, Game_manager> (this, &Game_manager::stop));
                 
 //                result = result && eff->Init();
 //		if (co) delete co;
@@ -121,23 +121,23 @@ bool Game_manager::Init (int argc, char *argv[])
 		switch (nstate)
 		{
 		case netclient:
-			clie->Connect (argv[1], 4334);
+			clie->connect (argv[1], 4334);
 			clie->push_back (players);
 			clie->push_back (cars);
 			clie->push_back (models);
-			clie->Set_pm (players);
+			clie->setPM (players);
 			break;
 		case netserver:
 			serv = new Server(4334);
 
 			int nclients = atoi (argv[1]);
 			while (nclients-- > 0)
-				serv->accept_one();
+				serv->acceptOne();
 
 			serv->push_back (models);
 			serv->push_back (players);
 			serv->push_back (cars);
-			serv->Set_pm (players);
+			serv->setPM (players);
 			break;
 		};
                 
@@ -147,10 +147,10 @@ bool Game_manager::Init (int argc, char *argv[])
 		ex.print();
 	}
 
-	return result && Ok();
+	return result && ok();
 }
 //--------------------------------------------------------------------------------------------------
-bool Game_manager::Main_loop()
+bool Game_manager::mainLoop()
 {
 	try
 	{
@@ -158,71 +158,83 @@ bool Game_manager::Main_loop()
 		float dt = 0;
 
                 
-		while (!sense->Stopped ())
+		while (!sense->stopped ())
 		{
-				sense->Acts ();
+				sense->acts ();
 				dt = 0.001 * (SDL_GetTicks () - last_time);
-				cars->Activate (dt);
+				cars->activate (dt);
 
 			if (nstate != netclient)
 			{
-				cars->Collis_brd (ground);
-				cars->Process_collisions ();
+				cars->collisBrd (ground);
+				cars->processCollisions ();
 			}
 				
 			last_time = SDL_GetTicks ();
+
 			
-			
-			ground->Draw (pic);
-			cars->Draw (pic->Get_screen ());
-			cmd->Draw (pic);
+			ground->draw (pic);
+			cars->draw (pic->getScreen ());
+			cmd->draw (pic);
 
 
 
 
                         
-                        eff->exp_draw(pic->Get_screen());
-                        eff->exp_clean();
+                        eff->expDraw(pic->getScreen());
+                        eff->expClean();
 
 
 
 
 
-			players->Draw_comp_table (pic->Get_screen (), &font);
+			players->drawCompTable (pic->getScreen (), &font);
 
-			if (!look->Has_target () && cars->size() > 0) look->Set_target (*cars->begin ());
-			look->Actions ();
-			cars->Delete_deadalives ();
+			if (!look->hasTarget () && cars->size() > 0) look->setTarget (*cars->begin ());
+			look->actions ();
+			cars->deleteDeadalives ();
 
 			Draw_fps (dt);
 
-			pic->Draw (look);
-			if (nstate != netclient) players->Create_cars_for_poors (models, cars, ground);
+			pic->draw (look);
+			if (nstate != netclient) players->createCarsForPoors (models, cars, ground);
 
-			if (nstate == netclient) Get_server_context();
-			if (nstate == netserver) Send_context();
-			models->Clear_last_creations ();
-			players->Clear_events();
+			if (nstate == netclient) getServerContext();
+			if (nstate == netserver) sendContext();
+			models->clesrLastActions ();
+			players->clearEvents();
 		}
 	}
 	catch (Exception& ex)
 	{
 		ex.print();
 	}
-	return Ok();
+	return ok();
 }
 //--------------------------------------------------------------------------------------------------
 void Game_manager::Draw_fps (float dt) const
 {
-	Point screen_pos = pic->Get_screen()->getPos ();
+	Point screen_pos = pic->getScreen()->getPos ();
 
-	static float mid_dt = dt;
-	mid_dt = (49*mid_dt + dt)/50;
+	static int frames = 0;
+	static int fps = 0;
+	static int last_time = SDL_GetTicks ();
+
+//	static float mid_dt = dt;
+//	mid_dt = (49*mid_dt + dt)/50;
+
+	++frames;
+	if (SDL_GetTicks () - last_time > 100)
+	{
+		fps = (10*frames + fps*9)/10;
+		frames = 0;
+		last_time = SDL_GetTicks ();
+	}
 
 	Rect brd (screen_pos.x + 10, screen_pos.y + 10, 100, 100);
 	char buf[128];
-	sprintf (buf, "fps: %.2f", 1/mid_dt);
-	font.Draw_line (pic->Get_screen(), buf, &brd);
+	sprintf (buf, "fps: %.2f", (float)fps);
+	font.drawLine (pic->getScreen(), buf, &brd);
 }
 //--------------------------------------------------------------------------------------------------
 void Game_manager::tmpExport()
@@ -251,37 +263,38 @@ void Game_manager::tmpImport()
 //	players->Import_events (buffer, 1048576);
 }
 //--------------------------------------------------------------------------------------------------
-void Game_manager::Get_server_context()
+void Game_manager::getServerContext()
 {
 	char buffer[Buffer_size];
-	clie->Receive_next (buffer, Buffer_size);
+	clie->receiveNext (buffer, Buffer_size);
 }
 //--------------------------------------------------------------------------------------------------
-void Game_manager::Send_context()
+void Game_manager::sendContext()
 {
-	serv->send_next ();
+	serv->sendNext ();
 }
 //--------------------------------------------------------------------------------------------------
-bool Game_manager::Cleanup()
+bool Game_manager::cleanup()
 {
-	return Ok();
-	pic->Cleanup();
-	cmd->Cleanup();
+	return ok();
+	pic->cleanup();
+	cmd->cleanup();
 }
 //--------------------------------------------------------------------------------------------------
-int Game_manager::Stop (lua_State*)
+int Game_manager::stop (lua_State*)
 {
-	sense->Stop ();
+	sense->stop ();
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------
-bool Game_manager::Ok() const
+bool Game_manager::ok() const
 {
-	return	(pic != 0) && pic->Ok() &&
-			(sense != 0)  && sense->Ok() &&
-			(ground != 0)  && ground->Ok() &&
-			(look != 0) && look->Ok() &&
-			(cmd != 0) && cmd->Ok() &&
-			(cars != 0) && cars->Ok();
+	return	(pic != 0) && pic->ok() &&
+			(sense != 0)  && sense->ok() &&
+			(ground != 0)  && ground->ok() &&
+			(look != 0) && look->ok() &&
+			(cmd != 0) && cmd->ok() &&
+			(cars != 0) && cars->ok() &&
+			(models != 0) && true;
 }
 //--------------------------------------------------------------------------------------------------

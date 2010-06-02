@@ -8,13 +8,13 @@ Rect::Rect (const Rect& that):x(that.x), y(that.y), w(that.w), h(that.h){}
 //--------------------------------------------------------------------------------------------------
 Rect& Rect::operator = (const Rect& that) {x = that.x; y = that.y; w = that.w; h = that.h; return *this;}
 //--------------------------------------------------------------------------------------------------
-void Rect::Cut_left (int what)
+void Rect::cutLeft (int what)
 {
 	x += what;
 	w -= what;
 }
 //--------------------------------------------------------------------------------------------------
-void Rect::Cut_top (int what)
+void Rect::cutTop (int what)
 {
 	y += what;
 	h -= what;

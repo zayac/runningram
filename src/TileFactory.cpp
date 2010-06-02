@@ -25,7 +25,7 @@ public:
     MapTile** _tiles;
 
 public:
-    virtual bool After_read (ifstream &file)
+    virtual bool afterRead (ifstream &file)
     {
         Sprite * sp = NULL;
     	if (texture_fname.size() > 0)
@@ -46,17 +46,17 @@ public:
 
     Field_set (string name, MapTile** tiles) : Sectionp (name, '='), _tiles(tiles)
 	{
-		Add_param (new St_loader<unsigned char> ("character", &sym));
-		Add_param (new St_loader<string> ("texture", &texture_fname));
-		Add_param (new St_loader<int> ("texture centre x", &texture_offset.x));
-		Add_param (new St_loader<int> ("texture centre y", &texture_offset.y));
-		Add_param (new St_loader<float> ("friction", &fric));
-		Add_param (new St_loader<bool> ("rough", &rough));
+		addParam (new St_loader<unsigned char> ("character", &sym));
+		addParam (new St_loader<string> ("texture", &texture_fname));
+		addParam (new St_loader<int> ("texture centre x", &texture_offset.x));
+		addParam (new St_loader<int> ("texture centre y", &texture_offset.y));
+		addParam (new St_loader<float> ("friction", &fric));
+		addParam (new St_loader<bool> ("rough", &rough));
     }
 
 	virtual ~Field_set ()
     {
-	Delete_props ();
+	deleteProps ();
     }
 };
 
@@ -101,8 +101,8 @@ void TileFactory::init(ifstream& file, Point size)
 	_size = size;
 	clear();
 	Sectionp tile_props("gensec", '\n');
-	tile_props.Add_param (new Field_set ("tile", _tiles));
-	tile_props.Unserialise (file);
+	tile_props.addParam (new Field_set ("tile", _tiles));
+	tile_props.unserialise (file);
 
 }
 

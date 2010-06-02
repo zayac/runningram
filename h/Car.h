@@ -31,33 +31,33 @@ protected:
 public:
 	Limited (Vector2f position, float r_):pos(position), r(r_){}
 	
-	inline float Get_r() const {return r;}
-	inline Vector2f Get_pos() const {return pos;}
+	inline float getR() const {return r;}
+	inline Vector2f getPos() const {return pos;}
 	
-	virtual bool Ok() const {return r >= 0;}
+	virtual bool ok() const {return r >= 0;}
 };
 
 class Active :public Limited, public Identified<Active>
 {
 protected:
-	virtual int Sign_data_len() const {return sizeof(pos) + sizeof(r);}
+	virtual int signDataLen() const {return sizeof(pos) + sizeof(r);}
 public:
 	Active (Vector2f position, float r_, int id = 0):Limited (position, r_), Identified<Active> (id) {}
 	virtual ~Active() {}
-	virtual void Actions (float dt) = 0;
-	virtual void Draw (Canvas*) = 0;
-	virtual void Collis_brd (Rect width, float fric) = 0;
-	virtual void Drive_sand (Rect width, float fric) = 0;
-	virtual void Collis_obj (Active* that) = 0;
+	virtual void actions (float dt) = 0;
+	virtual void draw (Canvas*) = 0;
+	virtual void collisBrd (Rect width, float fric) = 0;
+	virtual void driveSand (Rect width, float fric) = 0;
+	virtual void collisObj (Active* that) = 0;
 
-	virtual int Export (char* buffer, int size) const;
-	virtual int Import (char* buffer, int size);
+	virtual int exp (char* buffer, int size) const;
+	virtual int imp (char* buffer, int size);
 	
-	virtual int My_type() const {return No_type;}
-	virtual bool Dead() const = 0;
-	virtual void Die() = 0;
+	virtual int myType() const {return No_type;}
+	virtual bool dead() const = 0;
+	virtual void die() = 0;
 
-	virtual bool Ok() const = 0;
+	virtual bool ok() const = 0;
 };
 
 class Body :public Limited
@@ -69,8 +69,8 @@ protected:
 	Vector2f resist;
 
 protected:
-	inline Vector2f Get_vel() {return vel;}
-	virtual Vector2f Resistance(){};
+	inline Vector2f getVel() {return vel;}
+	virtual Vector2f resistance(){};
 
 public:
 	Body (float rmass, float r_, Vector2f position)
@@ -78,15 +78,15 @@ public:
 	virtual ~Body();
 
 
-	inline void Applay_motion (float dt)
+	inline void applayMotion (float dt)
 	{
 		pos += vel*dt + force*rev_mass*dt*dt/2;
 		vel += force*rev_mass*dt;
 		force = Vector2f();
-		Appl_resistance (Resistance());
+		applResistance (resistance());
 		Vector2f resdv = resist*rev_mass*dt;
-		if (resdv.Lensq() > vel.Lensq())
-			vel -= vel.Proj(resdv);
+		if (resdv.lenSq() > vel.lenSq())
+			vel -= vel.proj(resdv);
 		else
 			vel += resdv;
 		resist = Vector2f();
@@ -112,22 +112,22 @@ public:
 //		vel += vel_add_across + vel_add_along;
 //		force = Vector2f();
 	}
-	inline Vector2f Get_impulse()
+	inline Vector2f getImpulse()
 	{
 		if (rev_mass) return vel/rev_mass;
 		return vel*VeryBigMass;
 	}
 
-	inline void Appl_force (Vector2f f) {force += f;}
-	inline void Appl_resistance (Vector2f f) {resist += f;}
-	inline void Appl_force (Vector2f f, bool resistancive)
+	inline void applForce (Vector2f f) {force += f;}
+	inline void applResistance (Vector2f f) {resist += f;}
+	inline void applForce (Vector2f f, bool resistancive)
 	{
-		if (resistancive) Appl_resistance(f);
-		else Appl_force (f);
+		if (resistancive) applResistance(f);
+		else applForce (f);
 	}
-	inline void Appl_impulse (Vector2f imp) {vel += imp*rev_mass;}
+	inline void applImpulce (Vector2f imp) {vel += imp*rev_mass;}
 
-	inline bool Ok() const {return rev_mass > 0;}
+	inline bool ok() const {return rev_mass > 0;}
 };
 
 class Dir_body :public Body
@@ -137,25 +137,25 @@ protected:
 	Orient orient;
 	Vector2f fric;//[0] = x = parallel, [1] = y = normal friction
 
-	virtual Vector2f Resistance()
+	virtual Vector2f resistance()
 	{
-		Vector2f dir = orient.Get_dir();
-		Vector2f proj = (Get_vel()^dir)*dir;
+		Vector2f dir = orient.getDir();
+		Vector2f proj = (getVel()^dir)*dir;
 
-		return -fric[0]*proj - fric[1]*(Get_vel() - proj);
+		return -fric[0]*proj - fric[1]*(getVel() - proj);
 	}
 public:
 	Dir_body (float rmass, float r_, Vector2f coor, Vector2f friction, Orient start_orient)
 		:Body (rmass, r_, coor), orient (start_orient), fric (friction) {}
 
-	Vector2f Get_resist (Vector2f velocity)
+	Vector2f getResist (Vector2f velocity)
 	{
-		Vector2f dir = orient.Get_dir();
+		Vector2f dir = orient.getDir();
 		Vector2f proj = (velocity^dir)*dir;
 		return -fric[0]*proj - fric[1]*(velocity - proj);
 	}
 
-	inline bool Ok() const {return Body::Ok() && fric.x > 0 && fric.y > 0 && orient.Ok();}
+	inline bool ok() const {return Body::ok() && fric.x > 0 && fric.y > 0 && orient.ok();}
 };
 
 //const float Angular_vel = 5;
@@ -193,23 +193,23 @@ class Car :public Active
         
 	static float max_health;
 
-	void Process_gestures (float dt);
-	void Motory_force (float f);
-	void Turn_front (float dfi);
-	void Normalise_front_orient();
-	void Rudder_correction (float dt);
+	void processGestures (float dt);
+	void motoryForce (float f);
+	void turnFront (float dfi);
+	void normalizeFrontOrient();
+	void rudderCorrection (float dt);
 
-	void Applay_brd_collision (Collision_vector cv, float fric);
-	void Applay_obj_collision (Car* with, Collision_vector cv);
+	void applayBrdCollision (Collision_vector cv, float fric);
+	void applayObjCollision (Car* with, Collision_vector cv);
 
 	static const bool Back_rect = true;
 	static const bool Front_rect = false;
-	void Applay_sand_friction (Collision_vector cv, float fric, bool bORf);
+	void applaySandFriction (Collision_vector cv, float fric, bool bORf);
 
-	void Move (Vector2f disp) {back.pos += disp; front.pos += disp;}
+	void move (Vector2f disp) {back.pos += disp; front.pos += disp;}
 
 protected:
-	virtual int Sign_data_len() const;
+	virtual int signDataLen() const;
 
 public:
 	Car (Vector2f pos, float health, float motor_force, float bouncy, float angular_vel, float rudder_spring,
@@ -219,41 +219,41 @@ public:
 
 	~Car();
 
-	virtual void Actions (float dt);
-	virtual void Draw (Canvas*);
-	virtual void Collis_obj (Active* that);
-	virtual void Collis_brd (Rect with, float fric);
-	virtual void Drive_sand (Rect width, float fric);
+	virtual void actions (float dt);
+	virtual void draw (Canvas*);
+	virtual void collisObj (Active* that);
+	virtual void collisBrd (Rect with, float fric);
+	virtual void driveSand (Rect width, float fric);
 
-	void Get_my_verticies (Vector2f* four);
-	void Get_my_front_verticies (Vector2f* four);
-	void Get_my_back_verticies (Vector2f* four);
-	Vector2f Get_vel (Vector2f p);
-	Vector2f Get_imp (Vector2f p);
-	bool Damage (Vector2f imp, Vector2f papp, float destructive_k);			//returns true if killed
-	void Appl_impulse (Vector2f imp, Vector2f papp, float destructive_k = 2);
-	void Appl_force (Vector2f f, Vector2f papp, bool resistancive);
+	void getMyVerticies (Vector2f* four);
+	void getMyFrontVerticies (Vector2f* four);
+	void getMyBackVerticies (Vector2f* four);
+	Vector2f getVel (Vector2f p);
+	Vector2f getImp (Vector2f p);
+	bool damage (Vector2f imp, Vector2f papp, float destructive_k);			//returns true if killed
+	void applImpulse (Vector2f imp, Vector2f papp, float destructive_k = 2);
+	void applForce (Vector2f f, Vector2f papp, bool resistancive);
 
-	virtual int Export (char* buffer, int size) const;
-	virtual int Import (char* buffer, int size);
+	virtual int exp (char* buffer, int size) const;
+	virtual int imp (char* buffer, int size);
 	
-	virtual int My_type() const {return Car_type;}
-	virtual bool Dead() const;
-	virtual void Die();
+	virtual int myType() const {return Car_type;}
+	virtual bool dead() const;
+	virtual void die();
 
 //	Vector2f Collis_rectangle (Vector2f one, Vector2f two, Vector2f three, Vector2f four);
 
-	void Turn_rights()	{rp = true;}
-	void Turn_lefts()	{lp = true;}
-	void Forwards()		{fp = true;}
-	void Backwards()	{bp = true;}
+	void turnRights()	{rp = true;}
+	void turnLefts()	{lp = true;}
+	void forwards()		{fp = true;}
+	void backwards()	{bp = true;}
 							//s = start procedure, f = finish
-	void Turn_rightf()	{rp = false;}
-	void Turn_leftf()	{lp = false;}
-	void Forwardf()		{fp = false;}
-	void Backwardf()	{bp = false;}
+	void turnRightf()	{rp = false;}
+	void turnLeftf()	{lp = false;}
+	void forwardf()		{fp = false;}
+	void backwardf()	{bp = false;}
 
-	bool Ok() const;
+	bool ok() const;
 };
 void DBG_switch();
 #endif	/* _BODY_H */

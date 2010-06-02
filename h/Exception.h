@@ -35,7 +35,7 @@ public:
 
 	void print() {out->print (text);};
 
-	inline static void Set_output (Std_output_err* nout) {Exception::out = nout;}
+	inline static void setOutput (Std_output_err* nout) {Exception::out = nout;}
 private:
 
 };

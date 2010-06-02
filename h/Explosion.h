@@ -25,12 +25,12 @@ public:
     Explosion();
     virtual ~Explosion();
 
-    bool Draw(Canvas*);
-    void Set_position(Point );
-    void Set_sprite(Sprite* );
+    bool draw(Canvas*);
+    void setPos(Point );
+    void setSprite(Sprite* );
 
-    bool Get_run(void );
-    void Animate(void );
+    bool getRun(void );
+    void animate(void );
 };
 
 #endif	/* _EXPLOSION_H */

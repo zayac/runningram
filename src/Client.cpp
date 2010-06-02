@@ -19,7 +19,7 @@ Client::Client ()
 //--------------------------------------------------------------------------------------------------
 Client::~Client () { }
 //--------------------------------------------------------------------------------------------------
-void Client::Connect (string adress, int port)
+void Client::connect (string adress, int port)
 {
 	if (!Socket::connect (adress, port))
 		throw Exception ("Could not connect.");
@@ -28,7 +28,7 @@ void Client::Connect (string adress, int port)
 // not needed	for (int i = max_packets_in_net; i-- > 0;) Confirm(1);//allow sever max_packets_in_net packages to send
 }
 //--------------------------------------------------------------------------------------------------
-int Client::Receive (char* data, int max_size)
+int Client::receive (char* data, int max_size)
 {
 	int rez = Socket::recv (data, max_size);
 	if (rez == -1)
@@ -40,16 +40,16 @@ int Client::Receive (char* data, int max_size)
 	return rez;
 }
 //--------------------------------------------------------------------------------------------------
-void Client::Receive_next (char* buffer, int bsize)
+void Client::receiveNext (char* buffer, int bsize)
 {
-	Check_events (buffer, bsize);
+	checkEvents (buffer, bsize);
 
-	int received = Receive (buffer, bsize);
+	int received = receive (buffer, bsize);
 	if (received == 0)
 	{
 		return;
 	}
-	Send_reaction (buffer + received, bsize - received);//allow next package
+	sendReaction (buffer + received, bsize - received);//allow next package
 	int readed = 0;
 
 	while (readed < received)
@@ -62,9 +62,9 @@ void Client::Receive_next (char* buffer, int bsize)
 			readed += sizeof (int);
 		}
 		for (iterator i = begin(); i != end(); ++i)
-			if ((**i).Id () == id)
+			if ((**i).id () == id)
 			{
-				int size = (**i).Import (buffer + readed, received - readed);
+				int size = (**i).imp (buffer + readed, received - readed);
 				if (-1 == size) return;//!!!throw Exception ("Can\'t load package");
 				readed += size;
 				break;
@@ -72,13 +72,13 @@ void Client::Receive_next (char* buffer, int bsize)
 	}
 }
 //--------------------------------------------------------------------------------------------------
-void Client::Check_events (char* buffer, int bsize)
+void Client::checkEvents (char* buffer, int bsize)
 {
 	if (pm)
 	{
 		int len = 0;
 		*(buffer + len++) = 'e';
-		int writed = pm->Export_events (buffer + len, bsize - len);
+		int writed = pm->exportEvents (buffer + len, bsize - len);
 		GODFORBID(-1 == writed, "can\'t export_events");
 		len += writed;
 		if (len > sizeof (int))//there real events
@@ -86,11 +86,11 @@ void Client::Check_events (char* buffer, int bsize)
 	}
 }
 //--------------------------------------------------------------------------------------------------
-void Client::Send_reaction (char* buffer, int bsize)
+void Client::sendReaction (char* buffer, int bsize)
 {
 	int offset = 0;
 	offset = 0;
-	int undelivered_size = Combine_undelivered (buffer + offset, bsize - offset);
+	int undelivered_size = combineUndelivered (buffer + offset, bsize - offset);
 	offset += undelivered_size;
 
 	*(buffer + offset++) = 'c';//"confirmation" id
@@ -107,7 +107,7 @@ void Client::Send_reaction (char* buffer, int bsize)
 	}
 }
 //--------------------------------------------------------------------------------------------------
-int Client::Combine_undelivered (char* buf, int bsize)
+int Client::combineUndelivered (char* buf, int bsize)
 {
 	if (undelivered.empty ()) return 0;
 

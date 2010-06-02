@@ -23,20 +23,20 @@ public:
 	Rect (const Rect& that);
 	Rect& operator = (const Rect& that);
 
-	void Cut_left (int);
-	void Cut_top (int);
+	void cutLeft (int);
+	void cutTop (int);
 
-	inline Point Get_lup() const {return Point (x, y);}
-	inline Point Get_size() const {return Point (w, h);}
-	inline Point Get_rdown() const {return Get_lup() + Get_size();}
+	inline Point getLUp() const {return Point (x, y);}
+	inline Point getSize() const {return Point (w, h);}
+	inline Point getRDown() const {return getLUp() + getSize();}
 
-	inline bool Contain (Point p) const
+	inline bool contain (Point p) const
 	{
 		return	x < p.x && p.x - x < w &&
 				y < p.y && p.y - y < h ;
 	}
 
-	inline void Move (Point by) {x += by.x; y += by.y;}
+	inline void move (Point by) {x += by.x; y += by.y;}
 
 	#ifdef _SDL_H
 	Rect (const SDL_Rect& that);
