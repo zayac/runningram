@@ -25,6 +25,11 @@ public:
 
 	void cutLeft (int);
 	void cutTop (int);
+	inline void enlarge (Point p)
+	{
+		w += p.x;
+		h += p.y;
+	}
 
 	inline Point getLUp() const {return Point (x, y);}
 	inline Point getSize() const {return Point (w, h);}
@@ -34,6 +39,11 @@ public:
 	{
 		return	x < p.x && p.x - x < w &&
 				y < p.y && p.y - y < h ;
+	}
+	inline bool intersect (const Rect& r)
+	{
+		return	x < r.x + r.w && r.x < x + w &&
+				y < r.y + r.h && r.y < y + w;
 	}
 
 	inline void move (Point by) {x += by.x; y += by.y;}

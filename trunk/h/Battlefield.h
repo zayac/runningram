@@ -16,13 +16,12 @@
 #include "IsometricField.h"
 #include "TileFactory.h"
 #include "Sprite.h"
+#include "Drawable.h"
 
 using std::vector;
 using std::multimap;
 using std::ifstream;
 class Serializator;
-class SDL_Surface;
-
 
 class Battlefield
 {
@@ -32,6 +31,8 @@ class Battlefield
 	vector<Point> resur_points;
 	vector<Point>::iterator cur_res_point;
     TileFactory _tileFactory;
+	multimap<int, Drawable*> z_buffer;
+	typedef multimap<int, Drawable*>::const_iterator ziter;
 
 	class Initialaiser;
 	Initialaiser* parser;
@@ -39,8 +40,8 @@ class Battlefield
 	void cleanField (char fill_cell);
 	Point readRespoint (ifstream& file);
 
-
     void drawField(Canvas* c) const;
+
 public:
 
 	Battlefield();
@@ -59,6 +60,10 @@ public:
 	bool noRoad (int x, int y) const;
 	bool isSand (int x, int y) const;
 	float friction (int x, int y) const;
+
+	void cleanZbuffer();
+	void addDrawable (int z, Drawable* d);
+//	void adsorb (vector<Drawable*>*)
 
 	bool init();
 	bool loadFromFile (const char* fname);

@@ -54,8 +54,10 @@ public:
 
 	bool init (int argc, char *argv[]);
 	bool mainLoop();
+	void fillZbuffer();
 	bool cleanup();
 	int stop (lua_State*);
+	
 
 	void tmpExport();
 	void tmpImport();
