@@ -14,18 +14,18 @@ class Identified
 	static int max_id;
 
 protected:
-	int _id;
+	int id_;
 public:
-	inline Identified (int id = 0) :_id (++max_id)
+	inline Identified (int id = 0) :id_ (++max_id)
 	{
 		if (id)
 		{
-			_id = id;
+			id_ = id;
 			if (max_id < id) max_id = id;
 		}
 	}
 
-	inline int Id() {return _id;}
+	inline int id() {return id_;}
 
 };
 

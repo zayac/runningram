@@ -34,7 +34,7 @@ Server::Server (int port):pm (0)
 //--------------------------------------------------------------------------------------------------
 Server::~Server () { }
 //--------------------------------------------------------------------------------------------------
-void Server::accept_one()
+void Server::acceptOne()
 {
 	Socket s;
 	if (!listening.accept (s))
@@ -43,7 +43,7 @@ void Server::accept_one()
 	clients.push_back (s);
 }
 //--------------------------------------------------------------------------------------------------
-void Server::Add_pack (Socket::package imp)
+void Server::addPack (Socket::package imp)
 {
 	for (list<Clie_sock>::iterator i = clients.begin(); i != clients.end(); ++i)
 		i->undelivered.push_back (imp);
@@ -58,27 +58,27 @@ void Server::send (char* data, int size)
 	size += sizeof (int);
 //	std::cerr <<"sid = " <<pid <<std::endl;
 	for (list<Clie_sock>::iterator i = clients.begin(); i != clients.end(); ++i)
-		i->Send_if_possible (data, size, pm);
+		i->sendIfPossible (data, size, pm);
 }
 //--------------------------------------------------------------------------------------------------
-void Server::send_important()
+void Server::sendImportant()
 {
 	char buffer[Buffer_size];
 	for (list<Clie_sock>::iterator i = clients.begin(); i != clients.end(); ++i)
-		i->Try_send_undelivered (buffer);
+		i->trySendUndelivered (buffer);
 }
 //--------------------------------------------------------------------------------------------------
-void Server::send_next()
+void Server::sendNext()
 {
-	send_important();
+	sendImportant();
 	int writed = 0;
 	for (iterator i = begin(); i != end(); ++i)
 	{
-		if ((**i).Important()) Add_pack (*i);
+		if ((**i).important()) addPack (*i);
 		else
 		{
-			*(buffer + writed++) = (**i).Id();
-			int size = (**i).Export (buffer + writed, Buffer_size - writed);
+			*(buffer + writed++) = (**i).id();
+			int size = (**i).exp (buffer + writed, Buffer_size - writed);
 			GODFORBIDlf(size == -1, "can\'t export to package");
 			writed += size;
 		}
@@ -87,7 +87,7 @@ void Server::send_next()
 }
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-void Server::Clie_sock::Receive_answer (Player_manager* pm)
+void Server::Clie_sock::receiveAnswer (Player_manager* pm)
 {
 	int code = 0;
 	char buffer[Buffer_size];
@@ -111,7 +111,7 @@ void Server::Clie_sock::Receive_answer (Player_manager* pm)
 		}
 		if (pkg_id == 'e')
 		{
-			int len = pm->Import_events (buffer + offset, size - offset);
+			int len = pm->importEvents (buffer + offset, size - offset);
 			GODFORBIDlf(len == -1, "events not imported");
 			offset += len;
 		}
@@ -119,9 +119,9 @@ void Server::Clie_sock::Receive_answer (Player_manager* pm)
 	if (code == 1) --packets_in_net;
 }
 //--------------------------------------------------------------------------------------------------
-bool Server::Clie_sock::Send_if_possible (char* data, int size, Player_manager* pm)
+bool Server::Clie_sock::sendIfPossible (char* data, int size, Player_manager* pm)
 {
-	Receive_answer (pm);
+	receiveAnswer (pm);
 	if (packets_in_net < max_packets_in_net)
 	{
 		if (-1 == send (data, size))
@@ -136,7 +136,7 @@ bool Server::Clie_sock::Send_if_possible (char* data, int size, Player_manager* 
 	return false;
 }
 //--------------------------------------------------------------------------------------------------
-void Server::Clie_sock::Try_send_undelivered (char* buffer, Player_manager* pm)
+void Server::Clie_sock::trySendUndelivered (char* buffer, Player_manager* pm)
 {
 	if (undelivered.empty ()) return;
 
@@ -147,7 +147,7 @@ void Server::Clie_sock::Try_send_undelivered (char* buffer, Player_manager* pm)
 		GODFORBIDlf (-1 == size, "can\'t write important packet")
 		writed += size;
 	}
-	if (Send_if_possible (buffer, writed, pm))
+	if (sendIfPossible (buffer, writed, pm))
 		undelivered.clear (); //all important packages are delivered
 }
 //--------------------------------------------------------------------------------------------------

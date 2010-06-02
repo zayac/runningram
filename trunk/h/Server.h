@@ -31,28 +31,28 @@ class Server :public list <Transmitted*>
 		Clie_sock (const Socket& from) :Socket (from), packets_in_net(0){}
 
 		//void Check_confirmation();
-		void Receive_answer (Player_manager* pm);
-		bool Send_if_possible (char* data, int size, Player_manager* pm = 0);
+		void receiveAnswer (Player_manager* pm);
+		bool sendIfPossible (char* data, int size, Player_manager* pm = 0);
 
-		void Try_send_undelivered (char* buffer, Player_manager* pm = 0);
+		void trySendUndelivered (char* buffer, Player_manager* pm = 0);
 	};
 	list<Clie_sock> clients;
 
 	Player_manager* pm;
 
-	void Add_pack (Socket::package imp);
+	void addPack (Socket::package imp);
 
 public:
 	Server (int port);
 	virtual ~Server();
 
-	void accept_one();
+	void acceptOne();
 
 	void send (char* data, int size);
-	void send_next();
-	void send_important();
+	void sendNext();
+	void sendImportant();
 
-	void Set_pm (Player_manager* _pm) {pm = _pm;}
+	void setPM (Player_manager* _pm) {pm = _pm;}
 
 };
 

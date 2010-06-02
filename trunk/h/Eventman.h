@@ -28,11 +28,11 @@ class Eventman
 		Kbd_event ev;
 
 		Kbd_action (Functor* f, Key_id ki, Uint8 type, Key_mode mod = KM_NONE)
-		:fun (f), ev (type, mod, ki) {assert(Ok());}
+		:fun (f), ev (type, mod, ki) {assert(ok());}
 		Kbd_action (Functor* f, Kbd_event event)
-		:fun (f), ev (event) {assert(Ok());}
+		:fun (f), ev (event) {assert(ok());}
 
-		bool Ok() const {return fun != 0;}
+		bool ok() const {return fun != 0;}
 	};
 
 	struct Mmove_action :public Identified<Mmove_action>
@@ -41,9 +41,9 @@ class Eventman
 		Mouse_move_event ev;
 
 		Mmove_action (Mevent_handler* f, Mouse_move_event event)
-		:mh (f), ev (event) {assert(Ok());}
+		:mh (f), ev (event) {assert(ok());}
 
-		bool Ok() const {return mh != 0;}
+		bool ok() const {return mh != 0;}
 	};
 
 	struct Mbtn_action :public Identified<Mbtn_action>
@@ -52,9 +52,9 @@ class Eventman
 		Mouse_btn_event ev;
 
 		Mbtn_action (Mevent_handler* f, Mouse_btn_event event)
-		:mh (f), ev (event) {assert(Ok());}
+		:mh (f), ev (event) {assert(ok());}
 
-		bool Ok() const {return mh != 0;}
+		bool ok() const {return mh != 0;}
 	};
 
 	typedef list <Kbd_action>::iterator kiter;
@@ -66,31 +66,31 @@ class Eventman
 	list <Kbd_oper> kbd_opers;
 	list <Mmove_action> mmove_acts;
 	list <Mbtn_action> mbtn_acts;
-	bool stop;
+	bool stop_;
 
-	void Applay_event (const Kbd_event& ev);
-	void Applay_event (const Mouse_btn& ev);
-	void Applay_event (const Mouse_move& ev);
-	void Clear_actions();
+	void applayEvent (const Kbd_event& ev);
+	void applayEvent (const Mouse_btn& ev);
+	void applayEvent (const Mouse_move& ev);
+	void clearActions();
 
 public:
 	Eventman();
 	virtual ~Eventman();
 
-	int Register_key_action (Functor* fun, Uint8 event, Key_id key, Key_mode mod = KM_NONE);
-	int Register_mouse_action (Mevent_handler* fun, Mouse_move_event mme);
-	int Register_mouse_action (Mevent_handler* fun, Mouse_btn_event mbe);
-	void Register_key_oper (Kbd_oper op);
+	int registerKeyAction (Functor* fun, Uint8 event, Key_id key, Key_mode mod = KM_NONE);
+	int registerMouseAction (Mevent_handler* fun, Mouse_move_event mme);
+	int registerMouseAction (Mevent_handler* fun, Mouse_btn_event mbe);
+	void registerKeyOper (Kbd_oper op);
 
-	void Unregister_key_action (int id);
-	void Unregister_mouse_move_action (int id);
-	void Unregister_mouse_btn_action (int id);
+	void unregisterKeyAction (int id);
+	void unregisterMouseMoveAction (int id);
+	void unregisterMouseBtnAction (int id);
 
-	void Acts();
-	bool Stopped() const;
-	inline void Stop() {stop = true;}
+	void acts();
+	bool stopped() const;
+	inline void stop() {stop_ = true;}
 
-	bool Ok() const;
+	bool ok() const;
 };
 
 #endif	/* _EVENTMAN_H */

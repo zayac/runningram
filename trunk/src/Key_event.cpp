@@ -363,12 +363,12 @@ const char* Key_names[] =
 	"end"};
 
 
-const char* Get_key_name (Key_id id)
+const char* getKeyName (Key_id id)
 {
 	return Key_names [id];
 }
 #include <string.h>
-Key_id Get_key_id (const char* name)
+Key_id getKeyId (const char* name)
 {
 	if (strlen(name) == 1 && 0 <= name[0] && name[0] <= 127)//ASCII mapped part
 		return (Key_id)name[0];

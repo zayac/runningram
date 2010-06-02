@@ -10,68 +10,68 @@
 
 Orient::Orient () :ang(0), dir (1, 0), updated (true)
 {
-	assert(Ok());
+	assert(ok());
 }
 //--------------------------------------------------------------------------------------------------
-Orient::Orient (float angle, bool update) :ang (In_range (angle)), updated (update), dir (1, 0)
+Orient::Orient (float angle, bool _update) :ang (inRange (angle)), updated (_update), dir (1, 0)
 {
-	if (update) Update();
-	assert(Ok());
+	if (_update) update();
+	assert(ok());
 }
 //--------------------------------------------------------------------------------------------------
-Orient::Orient (Vector2f direction, bool normed):ang (In_range (atan2(direction.y, direction.x))), dir (1, 0)
+Orient::Orient (Vector2f direction, bool normed):ang (inRange (atan2(direction.y, direction.x))), dir (1, 0)
 {
-	if (!normed) Update ();
+	if (!normed) update ();
 	else
 	{
 		dir = direction;
 		updated = true;
 	}
-	assert(Ok());
+	assert(ok());
 }
 //--------------------------------------------------------------------------------------------------
-Orient::Orient (const Orient& orig):ang (In_range (orig.ang)), dir (orig.dir), updated (orig.updated) { }
+Orient::Orient (const Orient& orig):ang (inRange (orig.ang)), dir (orig.dir), updated (orig.updated) { }
 //--------------------------------------------------------------------------------------------------
 Orient::~Orient () { }
 //--------------------------------------------------------------------------------------------------
-void Orient::Set_angle (float a)
+void Orient::setAngle (float a)
 {
-	assert(Ok());
-	ang = In_range (a);
+	assert(ok());
+	ang = inRange (a);
 	updated = false;
 }
 //--------------------------------------------------------------------------------------------------
-void Orient::Update()
+void Orient::update()
 {
-	assert(Ok());
+	assert(ok());
 	dir.x = cos (ang);
 	dir.y = sin (ang);
 	updated = true;
 }
 //--------------------------------------------------------------------------------------------------
-float Orient::Get_angle() const
+float Orient::getAngle() const
 {
-	assert(Ok());
+	assert(ok());
 	return ang;
 }
 //--------------------------------------------------------------------------------------------------
-Vector2f Orient::Get_dir() const
+Vector2f Orient::getDir() const
 {
-	assert(Ok());
+	assert(ok());
 	if (updated) return dir;
 	return Vector2f (sin (ang), cos (ang));
 }
 //--------------------------------------------------------------------------------------------------
-Vector2f Orient::Get_dir()
+Vector2f Orient::getDir()
 {
-	assert(Ok());
-	if (!updated) Update();
+	assert(ok());
+	if (!updated) update();
 	return dir;
 }
 //--------------------------------------------------------------------------------------------------
 Orient Orient::operator -() const
 {
-	assert(Ok());
+	assert(ok());
 	Orient ret;
 	ret.ang = - ang;
 	if (updated) ret.dir.y = - dir.y;
@@ -81,9 +81,9 @@ Orient Orient::operator -() const
 //--------------------------------------------------------------------------------------------------
 Orient Orient::operator - (const Orient& that) const
 {
-	assert(Ok());
+	assert(ok());
 	Orient ret;
-	ret.ang = In_range (ang - that.ang);
+	ret.ang = inRange (ang - that.ang);
 	ret.updated = updated && that.updated;
 	if (ret.updated)
 	{
@@ -95,9 +95,9 @@ Orient Orient::operator - (const Orient& that) const
 //--------------------------------------------------------------------------------------------------
 Orient Orient::operator + (const Orient& that) const
 {
-	assert(Ok());
+	assert(ok());
 	Orient ret;
-	ret.ang = In_range (ang + that.ang);
+	ret.ang = inRange (ang + that.ang);
 	ret.updated = updated && that.updated;
 	if (ret.updated)
 	{
@@ -109,36 +109,36 @@ Orient Orient::operator + (const Orient& that) const
 //--------------------------------------------------------------------------------------------------
 Orient& Orient::operator -= (const Orient& that)
 {
-	assert(Ok());
+	assert(ok());
 	*this = operator - (that);
 	return *this;
 }
 //--------------------------------------------------------------------------------------------------
 Orient& Orient::operator += (const Orient& that)
 {
-	assert(Ok());
+	assert(ok());
 	*this = operator + (that);
 	
-	if (!Ok())
+	if (!ok())
 	{
-		bool gagaga = ( !updated || (1 - nearnull < dir.Lensq() && dir.Lensq() < nearnull + 1));
+		bool gagaga = ( !updated || (1 - nearnull < dir.lenSq() && dir.lenSq() < nearnull + 1));
 		bool re = !gagaga;
 	}
 	return *this;
 }
 //--------------------------------------------------------------------------------------------------
-Vector2f Orient::Rotate (Vector2f what)
+Vector2f Orient::rotate (Vector2f what)
 {
-    if (!updated) Update();
+    if (!updated) update();
     Vector2f ret;
     ret.x = what.x*dir.x - what.y*dir.y;
     ret.y = what.x*dir.y + what.y*dir.x;
     return ret;
 }
 //--------------------------------------------------------------------------------------------------
-bool Orient::Ok() const
+bool Orient::ok() const
 {
 	return -PI <= ang && ang <= PI && (updated == true || updated == false) &&
-		   ( !updated || (1 - nearnull < dir.Lensq() && dir.Lensq() < nearnull + 1));
+		   ( !updated || (1 - nearnull < dir.lenSq() && dir.lenSq() < nearnull + 1));
 }
 //--------------------------------------------------------------------------------------------------

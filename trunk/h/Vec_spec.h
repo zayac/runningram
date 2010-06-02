@@ -54,14 +54,14 @@ public:
 
 	inline Type& operator[] (int i)		{assert(0 <= i || i < dim); return coor[i];}
 	inline Type operator[] (int i) const	{assert(0 <= i || i < dim); return coor[i];}
-	inline const Type* Data() const {return coor;}
-	inline Type* Data() {return coor;}
+	inline const Type* data() const {return coor;}
+	inline Type* data() {return coor;}
 
-	Type Lensq() const;
-	inline Type Len() const {return sqrt (Lensq());}
+	Type lenSq() const;
+	inline Type len() const {return sqrt (lenSq());}
 
 	template <typename Target>
-		Vec<Target, dim> To() const;
+		Vec<Target, dim> to() const;
 
 	Vec operator + (const Vec& that) const;
 	Vec operator - (const Vec& that) const;
@@ -82,7 +82,7 @@ public:
 	bool operator == (const Vec& that) const;
 	bool operator != (const Vec& that) const;
 
-	Vec Proj (const Vec& direction) const;
+	Vec proj (const Vec& direction) const;
 };
 //===============================================================================================
 //===============================================================================================
@@ -115,7 +115,7 @@ public:
 
 //-----------------------------------------------------------------------------------------------
 FUN_SPEC_HEADLINE
-Type Vec<Type, dim>::Lensq() const
+Type Vec<Type, dim>::lenSq() const
 {
 	Type ret = 0;
 #define PLUSSQ(my_coor, that_coor, ret_coor) ret += my_coor*my_coor;
@@ -126,7 +126,7 @@ Type Vec<Type, dim>::Lensq() const
 //-----------------------------------------------------------------------------------------------
 FUN_SPEC_HEADLINE
 template <typename Target>
-Vec<Target, dim> Vec<Type, dim>::To() const
+Vec<Target, dim> Vec<Type, dim>::to() const
 {
 	Vec<Target, dim> ret;
 #define CONVERT(my_coor, that_coor, ret_coor) ret_coor = Target (my_coor);
@@ -267,10 +267,10 @@ bool Vec<Type, dim>::operator != (const Vec<Type, dim>& that) const
 }
 //-----------------------------------------------------------------------------------------------
 FUN_SPEC_HEADLINE
-inline Vec<Type, dim> Vec<Type, dim>::Proj (const Vec<Type, dim>& direction) const
+inline Vec<Type, dim> Vec<Type, dim>::proj (const Vec<Type, dim>& direction) const
 {
-	if (direction.Lensq() == 0) return *this;
-	return (operator^(direction))*direction/direction.Lensq();
+	if (direction.lenSq() == 0) return *this;
+	return (operator^(direction))*direction/direction.lenSq();
 }
 //-----------------------------------------------------------------------------------------------
 FUN_SPEC_HEADLINE

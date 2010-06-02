@@ -16,30 +16,30 @@ File_loader::File_loader (char* fname)
 {
 }
 //-----------------------------------------------------------------------------------------------
-bool File_loader::Open_file (char* fname)
+bool File_loader::OpenFile (char* fname)
 {
 	_file.open (fname);
 	return _file.is_open();
 }
 //-----------------------------------------------------------------------------------------------
-bool File_loader::Close_file()
+bool File_loader::closeFile()
 {
 	if (_file.is_open()) return false;
 	_file.close();
 	return !_file.is_open();
 }
 //-----------------------------------------------------------------------------------------------
-bool File_loader::Read_sector (Serializator* prop)
+bool File_loader::readSector (Serializator* prop)
 {
-	return prop->Unserialise (_file);
+	return prop->unserialise (_file);
 }
 //-----------------------------------------------------------------------------------------------
-bool File_loader::Is_good()
+bool File_loader::isGood()
 {
 	return _file.good();
 }
 //-----------------------------------------------------------------------------------------------
-ifstream& File_loader::Get_data()
+ifstream& File_loader::getData()
 {
 	return _file;
 }
@@ -54,19 +54,19 @@ Serializator::~Serializator()
 {
 }
 //-----------------------------------------------------------------------------------------------
-bool Serializator::Is_it_my_name (const string& name, bool no_spaced)
+bool Serializator::isItMyName (const string& name, bool no_spaced)
 {
 	if (no_spaced) return _name == name;
 	return _name == No_spaces (name);
 }
 //-----------------------------------------------------------------------------------------------
-bool Serializator::Unserialise (ifstream &file)
+bool Serializator::unserialise (ifstream &file)
 {
-	return Before_read (file) && Read_frag (file) && After_read (file);
+	return beforeRead (file) && readFrag (file) && afterRead (file);
 }
 //-----------------------------------------------------------------------------------------------
-bool Serializator::After_read (ifstream &file){return true;}
-bool Serializator::Before_read (ifstream &file){return true;}
+bool Serializator::afterRead (ifstream &file){return true;}
+bool Serializator::beforeRead (ifstream &file){return true;}
 //-----------------------------------------------------------------------------------------------
 //===============================================================================================
 Sectionp::Sectionp (string name, char break_name)
@@ -77,12 +77,12 @@ Sectionp::~Sectionp()
 {
 }
 //-----------------------------------------------------------------------------------------------
-void Sectionp::Add_param (Serializator* p)
+void Sectionp::addParam (Serializator* p)
 {
 	_props.push_back (p);
 }
 //-----------------------------------------------------------------------------------------------
-bool Sectionp::Read_frag (ifstream &file)
+bool Sectionp::readFrag (ifstream &file)
 {
 	string cur_name;
 	char cn[1024] = "wrong walue";
@@ -97,10 +97,10 @@ bool Sectionp::Read_frag (ifstream &file)
 		bool is_it_my_param = false;
 		for (vector <Serializator*>::iterator i = _props.begin(); i != _props.end(); ++i)
 		{
-			if ((*i)->Is_it_my_name (cur_name))
+			if ((*i)->isItMyName (cur_name))
 			{
 				No_spaces_begin (file);
-				(*i)->Unserialise (file);
+				(*i)->unserialise (file);
 				is_it_my_param = true;
 				break;
 			}
@@ -117,7 +117,7 @@ bool Sectionp::Read_frag (ifstream &file)
 	return true;
 }
 //-----------------------------------------------------------------------------------------------
-void Sectionp::Delete_props()
+void Sectionp::deleteProps()
 {
 	for (vector <Serializator*>::iterator i = _props.begin(); i != _props.end(); ++i)
 	{
@@ -128,7 +128,7 @@ void Sectionp::Delete_props()
 //===============================================================================================
 //-------------------------------------------------------------------
 template <>
-bool St_loader<int>::Read_frag (ifstream &file)
+bool St_loader<int>::readFrag (ifstream &file)
 {
 	char istr[64] = "wrong value";
 	file.getline (istr, 64);
@@ -137,7 +137,7 @@ bool St_loader<int>::Read_frag (ifstream &file)
 }
 //-------------------------------------------------------------------
 template <>
-bool St_loader<double>::Read_frag (ifstream &file)
+bool St_loader<double>::readFrag (ifstream &file)
 {
 	char istr[1024] = "wrong value";
 	file.getline (istr, 1024);
@@ -146,7 +146,7 @@ bool St_loader<double>::Read_frag (ifstream &file)
 }
 //-------------------------------------------------------------------
 template <>
-bool St_loader<float>::Read_frag (ifstream &file)
+bool St_loader<float>::readFrag (ifstream &file)
 {
 	char istr[1024] = "wrong value";
 	file.getline (istr, 1024);
@@ -155,7 +155,7 @@ bool St_loader<float>::Read_frag (ifstream &file)
 }
 //-------------------------------------------------------------------
 template <>
-bool St_loader<string>::Read_frag (ifstream &file)
+bool St_loader<string>::readFrag (ifstream &file)
 {
 	No_spaces_begin (file);
 	char istr[1024] = "wrong value";
@@ -166,7 +166,7 @@ bool St_loader<string>::Read_frag (ifstream &file)
 }
 //-------------------------------------------------------------------
 template <>
-bool St_loader<char>::Read_frag (ifstream &file)
+bool St_loader<char>::readFrag (ifstream &file)
 {
 	No_spaces_begin (file);
 	char istr[1024] = "wrong value";
@@ -176,7 +176,7 @@ bool St_loader<char>::Read_frag (ifstream &file)
 }
 //-------------------------------------------------------------------
 template <>
-bool St_loader<unsigned char>::Read_frag (ifstream &file)
+bool St_loader<unsigned char>::readFrag (ifstream &file)
 {
 	No_spaces_begin (file);
 	char istr[1024] = "wrong value";
@@ -186,7 +186,7 @@ bool St_loader<unsigned char>::Read_frag (ifstream &file)
 }
 //-------------------------------------------------------------------
 template <>
-bool St_loader<bool>::Read_frag (ifstream &file)
+bool St_loader<bool>::readFrag (ifstream &file)
 {
 	No_spaces_begin (file);
 	char istr[1024] = "wrong value";

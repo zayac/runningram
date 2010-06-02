@@ -12,7 +12,7 @@
 
 inline Vector2f Ortho (const Vector2f& dir) {return Vector2f (-dir.y, dir.x);}
 
-void Shape::Update_orthos()
+void Shape::updateOrthos()
 {
 	for (int i = 0; i < NV - 1; ++i)
 	{
@@ -21,17 +21,17 @@ void Shape::Update_orthos()
 	orthos[NV - 1] = Ortho (v[0] - v[NV - 1]);
 }
 
-void Shape::Get_projection_limits (Vector2f axis, float* minproj, float* maxproj,
+void Shape::getProjectionLimits (Vector2f axis, float* minproj, float* maxproj,
 							Vector2f* minp, Vector2f* maxp)
 {
 	*minproj = *maxproj = v[0]^axis;
-	*minp = *maxp = v[0].Proj (axis);
+	*minp = *maxp = v[0].proj (axis);
 	for (int i = 1; i < NV; ++i)
 	{
 		float curproj = v[i]^axis;
 
-		if (*minproj > curproj) { *minproj = curproj; *minp = v[i].Proj (axis);}
-		if (*maxproj < curproj) { *maxproj = curproj; *maxp = v[i].Proj (axis);}
+		if (*minproj > curproj) { *minproj = curproj; *minp = v[i].proj (axis);}
+		if (*maxproj < curproj) { *maxproj = curproj; *maxp = v[i].proj (axis);}
 	}
 }
 
@@ -44,20 +44,20 @@ bool Has_intersection (Shape& s1, Shape& s2, float time_interval, Collision_vect
 	Vector2f minp2, maxp2;
 	float min2, max2, speed2 = s2.vel^axis;
 
-	s1.Get_projection_limits (axis, &min1, &max1, &minp1, &maxp1);
-	s2.Get_projection_limits (axis, &min2, &max2, &minp2, &maxp2);
+	s1.getProjectionLimits (axis, &min1, &max1, &minp1, &maxp1);
+	s2.getProjectionLimits (axis, &min2, &max2, &minp2, &maxp2);
 
 	if (min1 < max2 && min2 < max1)
 	{
 		if ((max2 - min1) < (max1 - min2))
 		{
-			cv->depth = (max2 - min1)*axis/axis.Lensq();
+			cv->depth = (max2 - min1)*axis/axis.lenSq();
 //			cv->papp = (maxp2 + minp1)/2;
 //			*center = (minp1 + maxp2)/2;
 		}
 		else
 		{
-			cv->depth = (min2 - max1)*axis/axis.Lensq();
+			cv->depth = (min2 - max1)*axis/axis.lenSq();
 //			cv->papp = (maxp1 + minp2)/2;
 //			*center = (minp2 + maxp1)/2;
 		}
@@ -76,8 +76,8 @@ bool Has_intersection (Shape& s1, Shape& s2, float time_interval, Collision_vect
 	{
 		cv->time = (max2 - min1)/(speed2 - speed1);
 
-		minp1 += cv->time*speed1*axis/axis.Lensq ();
-		maxp2 += cv->time*speed2*axis/axis.Lensq ();
+		minp1 += cv->time*speed1*axis/axis.lenSq ();
+		maxp2 += cv->time*speed2*axis/axis.lenSq ();
 //		cv->papp = (maxp2 + minp1)/2;
 		Vector2f left = minp1;
 		Vector2f right = maxp2;				//!! Attention! not tested
@@ -88,8 +88,8 @@ bool Has_intersection (Shape& s1, Shape& s2, float time_interval, Collision_vect
 	if (min2 > max1 && speed1 - speed2 > aboutnull)//approach
 	{
 		cv->time = (min2 - max1)/(speed1 - speed2);
-		minp2 += cv->time*speed2*axis/axis.Lensq ();
-		maxp1 += cv->time*speed1*axis/axis.Lensq ();
+		minp2 += cv->time*speed2*axis/axis.lenSq ();
+		maxp1 += cv->time*speed1*axis/axis.lenSq ();
 //		cv->papp = (maxp1 + minp2)/2;
 		*center = (minp2 + maxp1)/2;
 
@@ -98,10 +98,10 @@ bool Has_intersection (Shape& s1, Shape& s2, float time_interval, Collision_vect
 	return false;
 }
 
-Collision_vector Detect_collision (Shape &s1, Shape &s2, float time_interval)
+Collision_vector detectCollision (Shape &s1, Shape &s2, float time_interval)
 {
-	s1.Update_orthos ();
-	s2.Update_orthos ();
+	s1.updateOrthos ();
+	s2.updateOrthos ();
 
 	Collision_vector ret;
 	Vector2f curordinate, ordinate, abscissa;//projections of center of intersection
@@ -114,7 +114,7 @@ Collision_vector Detect_collision (Shape &s1, Shape &s2, float time_interval)
 		if (Has_intersection (s1, s2, time_interval, &cur, &curordinate, SHAPE.orthos[i]))\
 		{\
 			if (cur.time < ret.time + aboutnull)\
-				if (ret.time > aboutnull || ret.depth.Lensq () > cur.depth.Lensq ())\
+				if (ret.time > aboutnull || ret.depth.lenSq () > cur.depth.lenSq ())\
 					{\
 						ret = cur;\
 						ordinate = curordinate;\

@@ -80,10 +80,10 @@ struct Mouse_move_event
 	Mouse_move_event (Rect brd_ = Rect(), Uint8 st = 0) :brd (brd_), state (st) {}
 	Mouse_move_event (const Mouse_move_event& orig):brd (orig.brd), state (orig.state){}
 
-	inline bool Contain (const Mouse_move& ev)
+	inline bool contain (const Mouse_move& ev)
 	{
 		return ((state&ev.state) == state) &&
-			((brd.w == 0 && brd.h == 0) || brd.Contain (ev.pos));
+			((brd.w == 0 && brd.h == 0) || brd.contain (ev.pos));
 	}
 };
 //==================================================================================
@@ -98,10 +98,10 @@ struct Mouse_btn_event
 	Mouse_btn_event (const Mouse_btn_event& orig)
 	:brd (orig.brd), button (orig.button), state (orig.state){}
 
-	inline bool Contain (const Mouse_btn& ev)
+	inline bool contain (const Mouse_btn& ev)
 	{
 		return ev.button == button && ev.state == state &&
-			((brd.w == 0 && brd.h == 0) || brd.Contain (ev.pos));
+			((brd.w == 0 && brd.h == 0) || brd.contain (ev.pos));
 	}
 };
 //==================================================================================

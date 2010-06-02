@@ -25,7 +25,7 @@ class Fontc :public UniId<TTF_Font>
 	Color col;
 	Color bgcol;
 
-	virtual void Delete_data();
+	virtual void deleteData();
 
 public:
 	enum Font_quality
@@ -45,24 +45,24 @@ public:
 	~Fontc();
 
 	Fontc& operator= (const Fontc& orig);
-	void Open_font (const char* fname, int height);
+	void openfont (const char* fname, int height);
 
-	void Set_bg (const Color& b) {bgcol = b;}
-	void Set_fg (const Color& f) {col = f;}
-	void Set_fq (Font_quality nfq) {fq = nfq;}
+	void setBG (const Color& b) {bgcol = b;}
+	void setFG (const Color& f) {col = f;}
+	void setFQ (Font_quality nfq) {fq = nfq;}
 
 	const Color& bg;
 	const Color& fg;
 
-	Point Str_size (const char* str) const;
-	inline int Str_height (const char* str) const {return Str_size (str).y;}
-	inline int Str_len (const char* str) const    {return Str_size (str).x;}
-	int Height() const;
-	int Approximate_num_symbols (int width) const;
-	Canvas Create_label (const char* line, bool color_reverse = false, Rect* brd = 0) const;
-	int Draw_line (Canvas* screen, const char* line, Rect* brd, bool color_reverse = false) const;
+	Point strSize (const char* str) const;
+	inline int strHeight (const char* str) const {return strSize (str).y;}
+	inline int strLen (const char* str) const    {return strSize (str).x;}
+	int height() const;
+	int approximateNumSymbols (int width) const;
+	Canvas createLabel (const char* line, bool color_reverse = false, Rect* brd = 0) const;
+	int drawLine (Canvas* screen, const char* line, Rect* brd, bool color_reverse = false) const;
 
-	bool Ok() const;
+	bool ok() const;
 };
 
 void FontcCleanUp();
@@ -81,15 +81,15 @@ public:
 
 
 protected:
-	virtual bool After_read (ifstream &file)
+	virtual bool afterRead (ifstream &file)
 	{
-		object->Open_font (fname.c_str(), height);
+		object->openfont (fname.c_str(), height);
 		if (quality == "good")
-			object->Set_fq (Fontc::fqGOOD);
+			object->setFQ (Fontc::fqGOOD);
 		else if (quality == "transparent")
-			object->Set_fq (Fontc::fqTRANSPARENT);
+			object->setFQ (Fontc::fqTRANSPARENT);
 		else
-			object->Set_fq (Fontc::fqBAD);
+			object->setFQ (Fontc::fqBAD);
 		return true;
 	}
 public:
@@ -97,14 +97,14 @@ public:
 	Initialiser (string name, Fontc* what)
 	: Sectionp (name, '='), fname ("default.ttf"), height (16), quality ("bad"), object (what)
 	{
-		Add_param (new St_loader<int > ("height", &height));
-		Add_param (new St_loader<string > ("file", &fname));
-		Add_param (new St_loader<string > ("quality", &quality));
+		addParam (new St_loader<int > ("height", &height));
+		addParam (new St_loader<string > ("file", &fname));
+		addParam (new St_loader<string > ("quality", &quality));
 	}
 
 	virtual ~Initialiser ()
 	{
-		Delete_props ();
+		deleteProps ();
 	}
 }; // </editor-fold>
 #endif

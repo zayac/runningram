@@ -16,20 +16,20 @@ Camera::~Camera ()
 {
 }
 //--------------------------------------------------------------------------------------------------
-Point Camera::Get_pos() const
+Point Camera::getPos() const
 {
 	return pos;
 }
 //--------------------------------------------------------------------------------------------------
-void Camera::Actions()
+void Camera::actions()
 {
 	if (!target) return;
-	if (target->Dead ())
+	if (target->dead ())
 	{
 		target = 0;
 		return;
 	}
 
-	pos += (Canvas::transform (target->Get_pos().To<int>()) - Point (300, 300) - pos)/50;
+	pos += (Canvas::transform (target->getPos().to<int>()) - Point (300, 300) - pos)/50;
 }
 //--------------------------------------------------------------------------------------------------

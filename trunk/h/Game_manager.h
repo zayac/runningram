@@ -52,18 +52,18 @@ public:
 	Game_manager (int argc, char *argv[]);
 	virtual ~Game_manager();
 
-	bool Init (int argc, char *argv[]);
-	bool Main_loop();
-	bool Cleanup();
-	int Stop (lua_State*);
+	bool init (int argc, char *argv[]);
+	bool mainLoop();
+	bool cleanup();
+	int stop (lua_State*);
 
 	void tmpExport();
 	void tmpImport();
 
-	void Get_server_context();
-	void Send_context();
+	void getServerContext();
+	void sendContext();
 
-	bool Ok() const;
+	bool ok() const;
 
 
 Fontc font;//!!! deprecated, must be deleted

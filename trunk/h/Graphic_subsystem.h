@@ -26,14 +26,14 @@ public:
 	Graphic_subsystem();
 	virtual ~Graphic_subsystem();
 
-	Serializator* Get_parser();
-	bool Init();
-	void Cleanup();
-        void SplashScreen();
-        void Draw (Camera* look);
-	Canvas* Get_screen() {return &buffer;};
+	Serializator* getParser();
+	bool init();
+	void cleanup();
+        void splashScreen();
+        void draw (Camera* look);
+	Canvas* getScreen() {return &buffer;};
         
-	bool Ok() const;
+	bool ok() const;
 };
 
 #endif	/* _GRAPHIC_SUBSYSTEM_H */

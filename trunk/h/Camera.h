@@ -21,14 +21,14 @@ public:
 	Camera();
 	virtual ~Camera();
 
-	Point Get_pos() const;
-	bool Has_target() const {return target != 0;}
+	Point getPos() const;
+	bool hasTarget() const {return target != 0;}
 
-	void Set_target (Active* a) {target = a;}
+	void setTarget (Active* a) {target = a;}
 
-	void Actions();
+	void actions();
 
-	bool Ok() const {return true;}
+	bool ok() const {return true;}
 
 };
 

@@ -9,6 +9,7 @@
 #define	_BATTLEFIELD_H
 
 #include <vector>
+#include <map>
 #include <fstream>
 #include "Vec.h"
 #include "Graphic_subsystem.h"
@@ -17,6 +18,7 @@
 #include "Sprite.h"
 
 using std::vector;
+using std::multimap;
 using std::ifstream;
 class Serializator;
 class SDL_Surface;
@@ -34,8 +36,8 @@ class Battlefield
 	class Initialaiser;
 	Initialaiser* parser;
 
-	void Clean_field (char fill_cell);
-	Point Read_respoint (ifstream& file);
+	void cleanField (char fill_cell);
+	Point readRespoint (ifstream& file);
 
 
     void drawField(Canvas* c) const;
@@ -44,24 +46,24 @@ public:
 	Battlefield();
 	virtual ~Battlefield();
 
-	Serializator* Get_parser();
+	Serializator* getParser();
 
-	void Draw (Graphic_subsystem* c) const;
+	void draw (Graphic_subsystem* c) const;
 
-	const unsigned char* Get_cells() const {return cells;}
-	Point Get_size() const {return size;}
-	int Get_cell_size() const {return csize;}
-	Point Get_next_res_point();
+	const unsigned char* getCells() const {return cells;}
+	Point getSize() const {return size;}
+	int getCellSize() const {return csize;}
+	Point getNextResPoint();
 
-	bool Is_rough (int x, int y) const;
-	bool No_road (int x, int y) const;
-	bool Is_sand (int x, int y) const;
-	float Friction (int x, int y) const;
+	bool isRough (int x, int y) const;
+	bool noRoad (int x, int y) const;
+	bool isSand (int x, int y) const;
+	float friction (int x, int y) const;
 
-	bool Init();
-	bool Load_from_file (const char* fname);
+	bool init();
+	bool loadFromFile (const char* fname);
 
-	bool Ok() const;
+	bool ok() const;
 };
 
 #endif	/* _BATTLEFIELD_H */

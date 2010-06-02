@@ -27,12 +27,12 @@ public:
 	Initialaiser (string name)
 	: Sectionp (name, '='), filename ("field.map")
 	{
-		Add_param (new St_loader<string > ("file", &filename));
+		addParam (new St_loader<string > ("file", &filename));
 	}
 
 	virtual ~Initialaiser ()
 	{
-		Delete_props ();
+		deleteProps ();
 	}
 }; // </editor-fold>
 
@@ -45,14 +45,14 @@ Battlefield::Battlefield ():cells (0), parser (new Initialaiser("[Map]"))
 //--------------------------------------------------------------------------------------------------
 Battlefield::~Battlefield ()
 {
-	assert(Ok());
+	assert(ok());
 
 	_tileFactory.clear();
 	if (cells) delete [] cells;
 	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
-Serializator* Battlefield::Get_parser()
+Serializator* Battlefield::getParser()
 {
 	return parser;
 }
@@ -73,7 +73,7 @@ void Draw_cage (Canvas* c, Point start, Point full_size, Point num_cells, Color 
 		c->line (begin, end, col);
 	}
 }
-
+//--------------------------------------------------------------------------------------------------
 void Battlefield::drawField (Canvas* c) const
 {
     int start = - _tileFactory.getSize().x / 2;
@@ -108,10 +108,10 @@ void Battlefield::drawField (Canvas* c) const
     }
 }
 //----------------------------------------
-void Battlefield::Draw (Graphic_subsystem* c) const
+void Battlefield::draw (Graphic_subsystem* c) const
 {
-    assert(Ok());
-    Canvas *canv = c->Get_screen ();
+    assert(ok());
+    Canvas *canv = c->getScreen ();
 
     drawField(canv);
     
@@ -127,21 +127,21 @@ void Battlefield::Draw (Graphic_subsystem* c) const
         for (int j = 0; j < size.y; ++j)
         {
 			Color bkg =  Color (80, 80, 80);
-			if (Is_rough (i, j)) bkg = Color (100, 50, 50);
-			if (Is_sand (i, j))  bkg = Color (100, 100, 50);
+			if (isRough (i, j)) bkg = Color (100, 50, 50);
+			if (isSand (i, j))  bkg = Color (100, 100, 50);
 
             Draw_cage (canv, Point(i, j)*csize, Point (csize, csize),
                             Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), bkg);
         }
 }
 //--------------------------------------------------------------------------------------------------
-bool Battlefield::Init()
+bool Battlefield::init()
 {
-	return Load_from_file (parser->filename.c_str());
+	return loadFromFile (parser->filename.c_str());
 }
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-bool Battlefield::Load_from_file (const char* fname)
+bool Battlefield::loadFromFile (const char* fname)
 {
 	ifstream file (fname);
 	if (!file.is_open()) return false;
@@ -153,7 +153,7 @@ bool Battlefield::Load_from_file (const char* fname)
 	    
 	cells = new unsigned char[size.x * size.y];
 	if (cells == 0) return false;
-	Clean_field ('0');
+	cleanField ('0');
 
 	for (int i = 0; i < size.y * size.x; )
 	{
@@ -167,7 +167,7 @@ bool Battlefield::Load_from_file (const char* fname)
 	No_spaces_begin (file);
 	while (file.peek() == '(')
 	{
-		resur_points.push_back (Read_respoint (file));
+		resur_points.push_back (readRespoint (file));
 		No_spaces_begin (file);
 	}
 	cur_res_point = resur_points.begin();
@@ -177,10 +177,10 @@ bool Battlefield::Load_from_file (const char* fname)
 	_tileFactory.toIsometric();
 
 	file.close();
-	return Ok();
+	return ok();
 }
 //--------------------------------------------------------------------------------------------------
-Point Battlefield::Read_respoint (ifstream& file)
+Point Battlefield::readRespoint (ifstream& file)
 {
 	No_spaces_begin (file);
 	Point ret;
@@ -197,7 +197,7 @@ Point Battlefield::Read_respoint (ifstream& file)
 	return ret;
 }
 //--------------------------------------------------------------------------------------------------
-Point Battlefield::Get_next_res_point()
+Point Battlefield::getNextResPoint()
 {
 	if (resur_points.size() == 0) return Point();
 
@@ -208,32 +208,32 @@ Point Battlefield::Get_next_res_point()
 }
 //--------------------------------------------------------------------------------------------------
 
-bool Battlefield::Is_rough (int x, int y) const
+bool Battlefield::isRough (int x, int y) const
 {
 
     return  _tileFactory.getTile(CELL(x, y))->isObstacle();
 //	return CELL(x, y) != '1' && CELL(x, y) != '2' && CELL(x, y) != '3';
 }
 //--------------------------------------------------------------------------------------------------
-bool Battlefield::No_road (int x, int y) const
+bool Battlefield::noRoad (int x, int y) const
 {
-	return Is_rough (x, y) || Is_sand (x, y);
+	return isRough (x, y) || isSand (x, y);
 //	return CELL(x, y) != '1';
 }
 //--------------------------------------------------------------------------------------------------
-bool Battlefield::Is_sand (int x, int y) const
+bool Battlefield::isSand (int x, int y) const
 {
 	return _tileFactory.getTile(CELL(x, y))->isSand();
 }
 //--------------------------------------------------------------------------------------------------
-float Battlefield::Friction (int x, int y) const
+float Battlefield::friction (int x, int y) const
 {
 	return _tileFactory.getTile(CELL(x, y))->getFriction();
 }
 //--------------------------------------------------------------------------------------------------
-void Battlefield::Clean_field (char fill_cell)
+void Battlefield::cleanField (char fill_cell)
 {
-	assert(Ok());
+	assert(ok());
 	for (int i = size.x*size.y - 1; i >= 0; --i)
 	{
 		cells[i] = fill_cell;
@@ -241,7 +241,7 @@ void Battlefield::Clean_field (char fill_cell)
 }
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-bool Battlefield::Ok() const
+bool Battlefield::ok() const
 {
 	return parser != 0 && cells != 0;//sizeof cells = 4!! && (sizeof (cells)/sizeof (char) == size.x*size.y);
 }

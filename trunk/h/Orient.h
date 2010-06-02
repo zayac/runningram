@@ -11,7 +11,7 @@
 
 
 const float PI = 3.1415926;
-inline float In_range (float what) {while (what > PI) what -= 2*PI; while (what < -PI) what += 2*PI; return what;}
+inline float inRange (float what) {while (what > PI) what -= 2*PI; while (what < -PI) what += 2*PI; return what;}
 
 class Orient
 {
@@ -28,12 +28,12 @@ public:
 	Orient (const Orient& orig);
 	virtual ~Orient();
 
-	void Set_angle (float a);
-	void Update();
+	void setAngle (float a);
+	void update();
 
-	float Get_angle() const;
-	Vector2f Get_dir() const;
-	Vector2f Get_dir();
+	float getAngle() const;
+	Vector2f getDir() const;
+	Vector2f getDir();
 
 	Orient operator -() const;
 	Orient operator - (const Orient& that) const;
@@ -50,13 +50,13 @@ public:
 	inline bool operator > (float that) const {return ang > that;}
 	inline bool operator > (const Orient& that) const {return ang > that.ang;}
 
-	Vector2f Rotate (Vector2f what);
+	Vector2f rotate (Vector2f what);
 
-	bool Ok() const;
+	bool ok() const;
 };
 
-inline float operator - (float one, const Orient& two) {return In_range (one - two.Get_angle());}
-inline float operator + (float one, const Orient& two) {return In_range (one + two.Get_angle());}
+inline float operator - (float one, const Orient& two) {return inRange (one - two.getAngle());}
+inline float operator + (float one, const Orient& two) {return inRange (one + two.getAngle());}
 
 #endif	/* _ORIENT_H */
 

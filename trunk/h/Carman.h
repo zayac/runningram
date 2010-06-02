@@ -73,8 +73,8 @@ class Carman: public Transmitted
 		Creation (const Creation&);
 		Creation (int model, Vector2f pos, Orient start_orient, int pl_id, int car_id);
 
-		int Export (char* buffer, int size) const;
-		int Import (char* buffer, int size);
+		int exp (char* buffer, int size) const;
+		int imp (char* buffer, int size);
 	};
 	
 	list<Car_creator*> models;//May be it needed vector here for speed???
@@ -95,19 +95,19 @@ public:
 	Carman();
 	virtual ~Carman();
 
-	Serializator* Get_parser();
+	Serializator* getParcer();
 
-	void Add_model (Car_creator* m) {models.push_back(m);}
+	void addModel (Car_creator* m) {models.push_back(m);}
 	
-	Car* Create_car (int model, Vector2f pos, Orient start_orient, Player* host, int id = 0);
-	void Clear_last_creations();
+	Car* createCar (int model, Vector2f pos, Orient start_orient, Player* host, int id = 0);
+	void clesrLastActions();
 	
-	void Set_pm (Player_manager* pm) {hosts = pm;}
-	void Set_am (Activeman* am) {objs = am;}
-	void Set_em (Effects_manager* em_) {effm = em_;}
+	void setPM (Player_manager* pm) {hosts = pm;}
+	void setAM (Activeman* am) {objs = am;}
+	void setEM (Effects_manager* em_) {effm = em_;}
 
-	int Export (char* buffer, int size) const;
-	int Import (char* buffer, int size);
+	int exp (char* buffer, int size) const;
+	int imp (char* buffer, int size);
 
 };
 

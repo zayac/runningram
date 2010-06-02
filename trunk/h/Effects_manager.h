@@ -29,14 +29,14 @@ public:
     Effects_manager(const Effects_manager&);
     virtual ~Effects_manager();
 
-    void Create_explosion (Vector2f pos, float size);
+    void createExplosion (Vector2f pos, float size);
     
-    Serializator* Get_parser();
-    bool Init();
-    void exp_add(Sprite* );
+    Serializator* getParser();
+    bool init();
+    void expAdd(Sprite* );
     
-    void exp_draw(Canvas* );
-    void exp_clean();
+    void expDraw(Canvas* );
+    void expClean();
 };
 
 
