@@ -225,13 +225,11 @@ bool Battlefield::isRough (int x, int y) const
 {
 
     return  _tileFactory.getTile(CELL(x, y))->isObstacle();
-//	return CELL(x, y) != '1' && CELL(x, y) != '2' && CELL(x, y) != '3';
 }
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::noRoad (int x, int y) const
 {
 	return isRough (x, y) || isSand (x, y);
-//	return CELL(x, y) != '1';
 }
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::isSand (int x, int y) const

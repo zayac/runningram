@@ -18,6 +18,7 @@ class Carman;
 class Player_manager;
 class Console_output;
 class Effects_manager;
+class Button;
 
 class Server;
 class Client;
@@ -37,12 +38,13 @@ class Game_manager
 	Activeman* cars;
 	Carman* models;
 	Player_manager* players;
-        Effects_manager* eff;
-//        Explosion* exp;
+	Effects_manager* eff;
 	Server* serv;
 	Client* clie;
 
 	Std_output_err* co;//for Exceptions
+
+	Button* butt;
 
 	char buffer[1048576];
 
