@@ -24,6 +24,7 @@
 
 #include "Client.h"
 #include "Server.h"
+#include "Button.h"
 
 enum NET_STATUS
 {
@@ -35,7 +36,7 @@ enum NET_STATUS
 Game_manager::Game_manager (int argc, char *argv[])
 : pic (new Graphic_subsystem), sense (new Eventman), look (new Camera), ground (new Battlefield),
 cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman)
-, eff (new Effects_manager)
+, eff (new Effects_manager), butt (new Button)
 {
 	co = new Output_cerr;
 	Exception::setOutput (co);
@@ -102,7 +103,6 @@ bool Game_manager::init (int argc, char *argv[])
 		fl.readSector (&gen);
 
 		models->setAM (cars);
-		int ggg = cars->size ();
 		models->setPM (players);
 		models->setEM (eff);
 
@@ -126,6 +126,7 @@ bool Game_manager::init (int argc, char *argv[])
 		result = result && eff->init ();
 
 		cmd->registerProcessor ("quit", new Arg_Method <int, lua_State*, Game_manager > (this, &Game_manager::stop));
+		butt->init (sense, new Arg_Method <void, void, Eventman> (sense, &Eventman::stop));
 
 		//                result = result && eff->Init();
 		//		if (co) delete co;
@@ -203,6 +204,7 @@ bool Game_manager::mainLoop ()
 
 			Draw_fps (dt);
 
+			butt->draw (*pic->getScreen ());
 			pic->draw (look);
 			if (nstate != netclient) players->createCarsForPoors (models, cars, ground);
 

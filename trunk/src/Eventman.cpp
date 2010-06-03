@@ -41,6 +41,9 @@ void Eventman::applayEvent (const Mouse_move& ev)
 	for (mmiter i = mmove_acts.begin(); i != mmove_acts.end(); ++i)
 		if (i->ev.contain (ev))
 			(*i->mh)(ev.pos);
+	for (mbiter i = mbtn_acts.begin(); i != mbtn_acts.end(); ++i)
+		if (i->ev.contain (ev))//process "away" event
+			(*i->mh)(ev.pos);
 }
 //--------------------------------------------------------------------------------------------------
 void Eventman::clearActions()

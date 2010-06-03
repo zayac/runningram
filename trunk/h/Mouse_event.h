@@ -29,13 +29,14 @@ enum Mouse_btns
 	MBTN_WHEEL_UP =		4,
 	MBTN_WHEEL_DOWN =	5,
 	MBTN_X1 =			6,
-	MBTN_X2 =			7
+	MBTN_X2 =			7,
+	MBTN_AWAY
 };
 
 enum Mbtn_events
 {
-	MBTN_PRESSED = 0,
-	MBTN_RELEASED = 1
+	MBTN_RELEASED = 0,
+	MBTN_PRESSED = 1
 };
 //==================================================================================
 struct Mouse_btn
@@ -102,6 +103,11 @@ struct Mouse_btn_event
 	{
 		return ev.button == button && ev.state == state &&
 			((brd.w == 0 && brd.h == 0) || brd.contain (ev.pos));
+	}
+	inline bool contain (const Mouse_move& ev)
+	{
+		return	button == MBTN_AWAY && ((state&ev.state) == state) &&
+				!brd.contain (ev.pos) && brd.contain (ev.pos - ev.rel);
 	}
 };
 //==================================================================================
