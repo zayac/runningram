@@ -76,7 +76,7 @@ void Draw_cage (Canvas* c, Point start, Point full_size, Point num_cells, Color 
 //--------------------------------------------------------------------------------------------------
 void Battlefield::drawField (Canvas* c) const
 {
-	int start = -_tileFactory.getSize ().x / 2;
+	int start = 0;
 	Rect frame = c->getClipRect ();
 	frame.enlarge (_tileFactory.getSize ()); //compute manifold of tile positions
 	frame.move (-_tileFactory.getSize ()); //really displayed on the screen
