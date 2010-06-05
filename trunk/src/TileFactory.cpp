@@ -103,7 +103,6 @@ void TileFactory::init(ifstream& file, Point size)
 	Sectionp tile_props("gensec", '\n');
 	tile_props.addParam (new Field_set ("tile", _tiles));
 	tile_props.unserialise (file);
-
 }
 
 
