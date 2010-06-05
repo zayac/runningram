@@ -47,7 +47,7 @@ Car::Car (Vector2f coor, float health_, float motor_force_, float bouncy_, float
 }
 Car::~Car()
 {
-	if (em) em->createExplosion (pos, r);
+	if (em) em->createExplosion (Canvas::transform (pos), r);
 }
 //--------------------------------------------------------------------------------------------------
 void Car::actions (float dt)
@@ -511,21 +511,26 @@ void Car::applForce (Vector2f f, Vector2f papp, bool resistancive)
 //--------------------------------------------------------------------------------------------------
 int Car::signDataLen() const
 {
-	return Active::signDataLen () + sizeof (back) + sizeof (front) + sizeof (rmass) + sizeof (lenght) +
+	return Active::signDataLen () + back.signDataLen() + front.signDataLen () + sizeof (rmass) + sizeof (lenght) +
 		sizeof (health) + sizeof (motor_force) + sizeof (bouncy) +
 		sizeof (angular_vel) + sizeof (rudder_spring);
 }
 //--------------------------------------------------------------------------------------------------
-int Car::exp (char* buffer, int size) const
+int Car::expo (char* buffer, int size) const
 {
-	int disp = Active::exp (buffer, size);
-	if (disp == -1) return -1;
 	if (signDataLen () > size) return -1;
+	int disp = Active::expo (buffer, size);
+	if (disp == -1) return -1;
+	int delta = back.expo (buffer + disp, size - disp);
+	if (-1 == delta) return -1;
+	disp += delta;
+	delta = front.expo (buffer + disp, size - disp);
+	if (-1 == delta) return -1;
+	disp += delta;
+
 
 #define WRITE(field) memcpy (buffer + disp, &field, sizeof(field)); disp += sizeof(field);
 
-	WRITE(back)
-	WRITE(front)
 	WRITE(rmass)
 	WRITE(lenght)
 	WRITE(health)
@@ -537,16 +542,20 @@ int Car::exp (char* buffer, int size) const
 	return disp;
 }
 //--------------------------------------------------------------------------------------------------
-int Car::imp (char* buffer, int size)
+int Car::impo (char* buffer, int size)
 {
-	int disp = Active::imp (buffer, size);
-	if (disp == -1) return -1;
 	if (signDataLen () > size) return -1;
+	int disp = Active::impo (buffer, size);
+	if (disp == -1) return -1;
+	int delta = back.impo (buffer + disp, size - disp);
+	if (-1 == delta) return -1;
+	disp += delta;
+	delta = front.impo (buffer + disp, size - disp);
+	if (-1 == delta) return -1;
+	disp += delta;
 
 #define READ(field) memcpy (&field, buffer + disp, sizeof(field)); disp += sizeof(field);
 
-	READ(back)
-	READ(front)
 	READ(rmass)
 	READ(lenght)
 	READ(health)
@@ -610,7 +619,7 @@ bool Car::ok() const
 
 
 //--------------------------------------------------------------------------------------------------
-int Active::exp (char* buffer, int size) const
+int Limited::expo (char* buffer, int size) const
 {
 	if (sizeof (pos) + sizeof (r) > size) return -1;
 	
@@ -621,7 +630,7 @@ int Active::exp (char* buffer, int size) const
 	return sizeof (pos) + sizeof (r);
 }
 //--------------------------------------------------------------------------------------------------
-int Active::imp (char* buffer, int size)
+int Limited::impo (char* buffer, int size)
 {
 	if (sizeof (pos) + sizeof (r) > size) return -1;
 	
@@ -632,3 +641,71 @@ int Active::imp (char* buffer, int size)
 	return sizeof (pos) + sizeof (r);
 }
 //--------------------------------------------------------------------------------------------------
+
+#define WRITE(field) memcpy (buffer + disp, &field, sizeof(field)); disp += sizeof(field);
+#define READ(field) memcpy (&field, buffer + disp, sizeof(field)); disp += sizeof(field);
+//--------------------------------------------------------------------------------------------------
+int Body::signDataLen() const
+{
+	return Limited::signDataLen() + sizeof(rev_mass) + 
+			sizeof(vel) + sizeof (force) + sizeof (resist);
+}
+//--------------------------------------------------------------------------------------------------
+int Body::expo (char* buffer, int size) const
+{
+	if (signDataLen () > size) return -1;
+	int disp = Limited::expo (buffer, size);
+	if (disp == -1) return -1;
+
+
+	WRITE(rev_mass)
+	WRITE(vel)
+	WRITE(force)
+	WRITE(resist)
+	return disp;
+}
+//--------------------------------------------------------------------------------------------------
+int Body::impo (char* buffer, int size)
+{
+	if (signDataLen () > size) return -1;
+	int disp = Limited::impo (buffer, size);
+	if (disp == -1) return -1;
+
+
+	READ(rev_mass)
+	READ(vel)
+	READ(force)
+	READ(resist)
+	return disp;
+}
+//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
+int Dir_body::signDataLen() const
+{
+	return Body::signDataLen() + sizeof(orient) + sizeof(fric);
+}
+//--------------------------------------------------------------------------------------------------
+int Dir_body::expo (char* buffer, int size) const
+{
+	if (signDataLen () > size) return -1;
+	int disp = Body::expo (buffer, size);
+	if (disp == -1) return -1;
+
+	WRITE(orient)
+	WRITE(fric)
+	return disp;
+}
+//--------------------------------------------------------------------------------------------------
+int Dir_body::impo (char* buffer, int size)
+{
+	if (signDataLen () > size) return -1;
+	int disp = Body::impo (buffer, size);
+	if (disp == -1) return -1;
+
+	READ(orient)
+	READ(fric)
+	return disp;
+}
+//--------------------------------------------------------------------------------------------------
+#undef WRITE
+#undef READ
