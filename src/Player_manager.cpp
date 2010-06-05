@@ -118,7 +118,7 @@ int Player_manager::imp (char* buffer, int size)
 		char next = *(buffer + offset++);
 		if (next == 's')
 		{
-			erase (i, end());
+			if (i != end()) erase (i, end());
 			return offset;
 		}
 		if (next != 'c') return -1;			//if not 's' and not 'c' I can't determine what it is

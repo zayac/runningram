@@ -36,7 +36,7 @@ enum NET_STATUS
 Game_manager::Game_manager (int argc, char *argv[])
 : pic (new Graphic_subsystem), sense (new Eventman), look (new Camera), ground (new Battlefield),
 cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman)
-, eff (new Effects_manager), butt (new Button)
+, eff (new Effects_manager)
 {
 	co = new Output_cerr;
 	Exception::setOutput (co);
@@ -118,7 +118,7 @@ bool Game_manager::init (int argc, char *argv[])
 								EV_KEYDOWN, KI_x);
 
 
-		font.openfont ("default.ttf", 16);
+		font.openFont ("default.ttf", 16);
 		font.setFG (Color (100, 100, 200)); //!!! deprecated
 
 		result = result && cmd->init (pic);
@@ -126,7 +126,10 @@ bool Game_manager::init (int argc, char *argv[])
 		result = result && eff->init ();
 
 		cmd->registerProcessor ("quit", new Arg_Method <int, lua_State*, Game_manager > (this, &Game_manager::stop));
-		butt->init (sense, new Arg_Method <void, void, Eventman> (sense, &Eventman::stop));
+		btl.init(sense);
+		btl.addButton (new Arg_Method <void, void, Eventman> (sense, &Eventman::stop), Point(500, 433));
+		btl.addButton (new Arg_Method <void, void, Eventman> (sense, &Eventman::stop), Point(400, 433));
+		btl.addButton (new Arg_Method <void, void, Eventman> (sense, &Eventman::stop), Point(300, 433));
 
 		//                result = result && eff->Init();
 		//		if (co) delete co;
@@ -166,7 +169,6 @@ bool Game_manager::init (int argc, char *argv[])
 	return result && ok ();
 }
 //--------------------------------------------------------------------------------------------------
-
 bool Game_manager::mainLoop ()
 {
 	try
@@ -204,7 +206,7 @@ bool Game_manager::mainLoop ()
 
 			Draw_fps (dt);
 
-			butt->draw (*pic->getScreen ());
+			btl.draw (*pic->getScreen ());
 			pic->draw (look);
 			if (nstate != netclient) players->createCarsForPoors (models, cars, ground);
 

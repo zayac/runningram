@@ -26,7 +26,8 @@ class lua_State;
 
 #include <Fontc.h>
 
-#include "Exception.h"//!!! deprecated
+#include "Exception.h"
+#include "Button.h"//!!! deprecated
 
 class Game_manager
 {
@@ -44,7 +45,7 @@ class Game_manager
 
 	Std_output_err* co;//for Exceptions
 
-	Button* butt;
+	Btnlist btl;
 
 	char buffer[1048576];
 

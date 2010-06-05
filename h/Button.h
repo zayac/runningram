@@ -28,11 +28,10 @@ class Button
 	} st;
 
 public:
-	Button();
-	Button(const Button& orig);
+	Button ();
 	virtual ~Button();
 	
-	void init (Eventman* eve, Functor* on_press);
+	void init (Eventman* eve, Functor* on_press, Point pos);
 
 	void onAway (Point p)
 	{
@@ -48,9 +47,20 @@ public:
 	}
 	void onRelease (Point p)
 	{
+		if (st == PUSHED && on_press) (*on_press)();
 		st = ACTIVE;
-		if (on_press) (*on_press)();
 	}
+
+	void draw (Canvas c) const;
+};
+
+class Btnlist :private list <Button>
+{
+	Eventman* sense;
+
+public:
+	void init (Eventman* eve);
+	void addButton (Functor* on_press, Point pos);
 
 	void draw (Canvas c) const;
 };
