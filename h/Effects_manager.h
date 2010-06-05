@@ -17,26 +17,25 @@ using std::list;
 
 class Effects_manager
 {
-    class Initialaiser;
-    Initialaiser* parser;
-    list <Sprite*> boom;
-    int k;// number of sprites
-    list <Sprite*>::iterator is;
-    list <Explosion*> exp;
-    list <Explosion*>::iterator i;
+	class Initialaiser;
+	Initialaiser* parser;
+	list <Sprite*> boom;
+	int k; // number of sprites
+	list <Sprite*>::iterator is;
+	list <Explosion*> exp;
+	list <Explosion*>::iterator i;
 public:
-    Effects_manager();
-    Effects_manager(const Effects_manager&);
-    virtual ~Effects_manager();
+	Effects_manager();
+	virtual ~Effects_manager();
 
-    void createExplosion (Vector2f pos, float size);
-    
-    Serializator* getParser();
-    bool init();
-    void expAdd(Sprite* );
-    
-    void expDraw(Canvas* );
-    void expClean();
+	void createExplosion(Vector2f pos, float size);
+
+	Serializator* getParser();
+	bool init();
+	void expAdd(Sprite*);
+
+	void expDraw(Canvas*);
+	void expClean();
 };
 
 

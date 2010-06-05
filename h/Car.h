@@ -28,11 +28,16 @@ class Limited
 protected:
 	Vector2f pos;
 	float r;
+
+	virtual int signDataLen() const {return sizeof(pos) + sizeof(r);}
 public:
 	Limited (Vector2f position, float r_):pos(position), r(r_){}
 	
 	inline float getR() const {return r;}
 	inline Vector2f getPos() const {return pos;}
+
+	virtual int expo (char* buffer, int size) const;
+	virtual int impo (char* buffer, int size);
 	
 	virtual bool ok() const {return r >= 0;}
 };
@@ -40,7 +45,6 @@ public:
 class Active :public Limited, public Identified<Active>, public Drawable
 {
 protected:
-	virtual int signDataLen() const {return sizeof(pos) + sizeof(r);}
 public:
 	Active (Vector2f position, float r_, int id = 0):Limited (position, r_), Identified<Active> (id) {}
 	virtual ~Active() {}
@@ -50,8 +54,8 @@ public:
 	virtual void driveSand (Rect width, float fric) = 0;
 	virtual void collisObj (Active* that) = 0;
 
-	virtual int exp (char* buffer, int size) const;
-	virtual int imp (char* buffer, int size);
+//	virtual int expo (char* buffer, int size) const;
+//	virtual int impo (char* buffer, int size);
 	
 	virtual int myType() const {return No_type;}
 	virtual bool dead() const = 0;
@@ -67,6 +71,7 @@ protected:
 	Vector2f resist;
 
 protected:
+	virtual int signDataLen() const;
 	inline Vector2f getVel() {return vel;}
 	virtual Vector2f resistance(){};
 
@@ -125,6 +130,9 @@ public:
 	}
 	inline void applImpulce (Vector2f imp) {vel += imp*rev_mass;}
 
+	virtual int expo (char* buffer, int size) const;
+	virtual int impo (char* buffer, int size);
+
 	inline bool ok() const {return rev_mass > 0;}
 };
 
@@ -135,6 +143,7 @@ protected:
 	Orient orient;
 	Vector2f fric;//[0] = x = parallel, [1] = y = normal friction
 
+	virtual int signDataLen() const;
 	virtual Vector2f resistance()
 	{
 		Vector2f dir = orient.getDir();
@@ -152,6 +161,9 @@ public:
 		Vector2f proj = (velocity^dir)*dir;
 		return -fric[0]*proj - fric[1]*(velocity - proj);
 	}
+
+	virtual int expo (char* buffer, int size) const;
+	virtual int impo (char* buffer, int size);
 
 	inline bool ok() const {return Body::ok() && fric.x > 0 && fric.y > 0 && orient.ok();}
 };
@@ -232,8 +244,8 @@ public:
 	void applImpulse (Vector2f imp, Vector2f papp, float destructive_k = 2);
 	void applForce (Vector2f f, Vector2f papp, bool resistancive);
 
-	virtual int exp (char* buffer, int size) const;
-	virtual int imp (char* buffer, int size);
+	virtual int expo (char* buffer, int size) const;
+	virtual int impo (char* buffer, int size);
 	
 	virtual int myType() const {return Car_type;}
 	virtual bool dead() const;

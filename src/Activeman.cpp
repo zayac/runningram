@@ -188,7 +188,7 @@ int Activeman::exp (char* buffer, int size) const
 		*((int*)(buffer + offset)) = (**i).id();
 		offset += sizeof (int);
 		
-		int cur_offs = (**i).exp (buffer + offset, size - offset);
+		int cur_offs = (**i).expo (buffer + offset, size - offset);
 		if (cur_offs == -1) return -1;
 		offset += cur_offs;
 		
@@ -229,7 +229,7 @@ int Activeman::imp (char* buffer, int size)
 			if (found)
 			{
 				std::swap (*i, *j);
-				len = (**i).imp (buffer + offset, size - offset);
+				len = (**i).impo (buffer + offset, size - offset);
 			}
 //			else
 //			{
@@ -237,7 +237,7 @@ int Activeman::imp (char* buffer, int size)
 //				len = (**j).Import (buffer + offset, size - offset);
 //			}
 		}
-		else	len = (**i).imp (buffer + offset, size - offset);
+		else	len = (**i).impo (buffer + offset, size - offset);
 		
 		if (len == -1) return -1;
 		offset += len;

@@ -26,7 +26,7 @@ Explosion::~Explosion()
 
 bool Explosion::draw(Canvas* c)
 {
-    if(run)
+    if (run)
     {
         spr->setFrame(index);
         spr->draw(c, pos);
