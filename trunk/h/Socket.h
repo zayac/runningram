@@ -41,6 +41,11 @@ public:
 		int copy_to (char* dst, int max_size);
 	protected:
 		void deleteData();
+	public:
+		~package()
+		{
+			destroy();
+		}
 
 	};
 

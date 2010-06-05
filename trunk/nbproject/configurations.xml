@@ -32,6 +32,7 @@
       <df name="h">
         <in>Activeman.h</in>
         <in>Battlefield.h</in>
+        <in>Button.h</in>
         <in>Camera.h</in>
         <in>Canvas.h</in>
         <in>Car.h</in>
@@ -40,6 +41,7 @@
         <in>Collision_detection.h</in>
         <in>Console.h</in>
         <in>Control.h</in>
+        <in>Drawable.h</in>
         <in>Effects_manager.h</in>
         <in>Eventman.h</in>
         <in>Exception.h</in>
@@ -51,8 +53,10 @@
         <in>Identified.h</in>
         <in>IsometricField.h</in>
         <in>Key_event.h</in>
+        <in>Mouse_event.h</in>
         <in>Orient.h</in>
         <in>Player_manager.h</in>
+        <in>Rect.h</in>
         <in>Server.h</in>
         <in>Socket.h</in>
         <in>Sprite.h</in>
@@ -76,6 +80,7 @@
       <df name="src">
         <in>Activeman.cpp</in>
         <in>Battlefield.cpp</in>
+        <in>Button.cpp</in>
         <in>Camera.cpp</in>
         <in>Canvas.cpp</in>
         <in>Car.cpp</in>
@@ -94,6 +99,7 @@
         <in>Key_event.cpp</in>
         <in>Orient.cpp</in>
         <in>Player_manager.cpp</in>
+        <in>Rect.cpp</in>
         <in>Server.cpp</in>
         <in>Socket.cpp</in>
         <in>Sprite.cpp</in>

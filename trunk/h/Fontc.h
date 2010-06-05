@@ -45,7 +45,7 @@ public:
 	~Fontc();
 
 	Fontc& operator= (const Fontc& orig);
-	void openfont (const char* fname, int height);
+	void openFont (const char* fname, int height);
 
 	void setBG (const Color& b) {bgcol = b;}
 	void setFG (const Color& f) {col = f;}
@@ -83,7 +83,7 @@ public:
 protected:
 	virtual bool afterRead (ifstream &file)
 	{
-		object->openfont (fname.c_str(), height);
+		object->openFont (fname.c_str(), height);
 		if (quality == "good")
 			object->setFQ (Fontc::fqGOOD);
 		else if (quality == "transparent")

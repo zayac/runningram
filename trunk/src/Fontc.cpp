@@ -31,7 +31,7 @@ void Fontc::deleteData()
 		TTF_CloseFont (data());
 }
 //--------------------------------------------------------------------------------------------------
-void Fontc::openfont (const char* fname, int height)
+void Fontc::openFont (const char* fname, int height)
 {
 	if (!TTF_WasInit () && TTF_Init() == -1) return;
 
