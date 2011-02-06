@@ -1,15 +1,5 @@
 #include "Game_manager.h"
 
-#include "Battlefield.h"
-#include "Exception.h"
-#include "Console.h"
-
-extern "C"
-{
-	#include "lua.h"
-	#include "lualib.h"
-	#include "lauxlib.h"
-}
 //--------------------------------------------------------------------------------------------------
 int main (int argc, char *argv[])
 {

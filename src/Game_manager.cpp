@@ -21,6 +21,7 @@
 #include "Carman.h"
 #include "Player_manager.h"
 #include "Effects_manager.h"
+#include "Interpreter.h"
 
 #include "Client.h"
 #include "Server.h"
@@ -36,7 +37,7 @@ enum NET_STATUS
 Game_manager::Game_manager (int argc, char *argv[])
 : pic (new Graphic_subsystem), sense (new Eventman), look (new Camera), ground (new Battlefield),
 cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman)
-, eff (new Effects_manager)
+, eff (new Effects_manager), interp(Interpreter::create(argc, argv))
 {
 	co = new Output_cerr;
 	Exception::setOutput (co);
@@ -50,31 +51,20 @@ cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman)
 
 Game_manager::~Game_manager ()
 {
-	if (players) delete players;
-	players = 0;
-	if (ground) delete ground;
-	ground = 0;
-	if (models) delete models;
-	models = 0;
-	if (sense) delete sense;
-	sense = 0;
-	if (look) delete look;
-	look = 0;
-	if (cars) delete cars;
-	cars = 0;
-	if (cmd) delete cmd;
-	cmd = 0;
-	if (pic) delete pic;
-	pic = 0;
-	if (co) delete co;
-	co = 0;
-	if (eff) delete eff;
-	eff = 0;
+	if (players)	delete players;	players = 0;
+	if (ground)		delete ground;	ground = 0;
+	if (models)		delete models;	models = 0;
+	if (sense)		delete sense;	sense = 0;
+	if (look)		delete look;	look = 0;
+	if (cars)		delete cars;	cars = 0;
+	if (cmd)		delete cmd;		cmd = 0;
+	if (pic)		delete pic;		pic = 0;
+	if (co)			delete co;		co = 0;
+	if (eff)		delete eff;		eff = 0;
+	if (interp)		Interpreter::destroy(); interp = 0;
 
-	if (serv) delete serv;
-	serv = 0;
-	if (clie) delete clie;
-	clie = 0;
+	if (serv)		delete serv;	serv = 0;
+	if (clie)		delete clie;	clie = 0;
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -121,11 +111,11 @@ bool Game_manager::init (int argc, char *argv[])
 		font.openFont ("default.ttf", 16);
 		font.setFG (Color (100, 100, 200)); //!!! deprecated
 
-		result = result && cmd->init (pic);
+		result = result && cmd	 ->init (pic, interp);
 		result = result && ground->init ();
-		result = result && eff->init ();
+		result = result && eff	 ->init ();
 
-		cmd->registerProcessor ("quit", new Arg_Method <int, lua_State*, Game_manager > (this, &Game_manager::stop));
+		interp->regFun("quit", new Arg_Method<void, void, Game_manager> (this, &Game_manager::stop));
 		btl.init(sense);
 		btl.addButton (new Arg_Method <void, void, Eventman> (sense, &Eventman::stop), Point(500, 433));
 		btl.addButton (new Arg_Method <void, void, Eventman> (sense, &Eventman::stop), Point(400, 433));
@@ -145,6 +135,7 @@ bool Game_manager::init (int argc, char *argv[])
 			clie->push_back (cars);
 			clie->push_back (models);
 			clie->setPM (players);
+
 			break;
 		case netserver:
 			serv = new Server (4334);
@@ -171,56 +162,60 @@ bool Game_manager::init (int argc, char *argv[])
 //--------------------------------------------------------------------------------------------------
 bool Game_manager::mainLoop ()
 {
-	try
+    try
+    {
+	unsigned int last_time = SDL_GetTicks ();
+	float dt = 0;
+
+
+	while (!sense->stopped ())
 	{
-		unsigned int last_time = SDL_GetTicks ();
-		float dt = 0;
+	    sense->acts ();
+	    dt = 0.001 * (SDL_GetTicks () - last_time);
+	    cars->activate (dt);
 
+	    if (nstate != netclient)
+	    {
+		cars->collisBrd (ground);
+		cars->processCollisions ();
+	    }
 
-		while (!sense->stopped ())
-		{
-			sense->acts ();
-			dt = 0.001 * (SDL_GetTicks () - last_time);
-			cars->activate (dt);
+	    last_time = SDL_GetTicks ();
 
-			if (nstate != netclient)
-			{
-				cars->collisBrd (ground);
-				cars->processCollisions ();
-			}
+	    fillZbuffer ();
+	    ground->draw (pic);
+	    cmd->draw (pic);
 
-			last_time = SDL_GetTicks ();
+	    eff->expDraw (pic->getScreen ());
+	    eff->expClean ();
 
-			fillZbuffer ();
-			ground->draw (pic);
-			cmd->draw (pic);
+	    players->drawCompTable (pic->getScreen (), &font);
 
-			eff->expDraw (pic->getScreen ());
-			eff->expClean ();
+	    if (!look->hasTarget () && cars->size () > 0)
+		if (players->getCamTarget ())
+		    look->setTarget (players->getCamTarget ()->getCar ());
+		else
+		    look->setTarget (*cars->begin ());
+	    look->actions ();
+	    cars->deleteDeadalives ();
 
-			players->drawCompTable (pic->getScreen (), &font);
+	    Draw_fps (dt);
 
-			if (!look->hasTarget () && cars->size () > 0) look->setTarget (*cars->begin ());
-			look->actions ();
-			cars->deleteDeadalives ();
+	    btl.draw (*pic->getScreen ());
+	    pic->draw (look);
+	    if (nstate != netclient) players->createCarsForPoors (models, cars, ground);
 
-			Draw_fps (dt);
-
-			btl.draw (*pic->getScreen ());
-			pic->draw (look);
-			if (nstate != netclient) players->createCarsForPoors (models, cars, ground);
-
-			if (nstate == netclient) getServerContext ();
-			if (nstate == netserver) sendContext ();
-			models->clesrLastActions ();
-			players->clearEvents ();
-		}
+	    if (nstate == netclient) getServerContext ();
+	    if (nstate == netserver) sendContext ();
+	    models->clesrLastActions ();
+	    players->clearEvents ();
 	}
-	catch (Exception& ex)
-	{
-		ex.print ();
-	}
-	return ok ();
+    }
+    catch (Exception& ex)
+    {
+	ex.print ();
+    }
+    return ok ();
 }
 //--------------------------------------------------------------------------------------------------
 void Game_manager::fillZbuffer ()
@@ -303,10 +298,9 @@ bool Game_manager::cleanup ()
 }
 //--------------------------------------------------------------------------------------------------
 
-int Game_manager::stop (lua_State*)
+void Game_manager::stop()
 {
 	sense->stop ();
-	return 0;
 }
 //--------------------------------------------------------------------------------------------------
 

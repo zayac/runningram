@@ -41,6 +41,7 @@ public:
 	~Player() {delete ks;}
 	
 	Car* Create_car (Carman* shop, Vector2f where);
+	inline Car* getCar() const {return mobile;}
 	
 	void addFrag() {frags++;}
 	void subFrag() {frags--;}
@@ -63,6 +64,8 @@ class Player_manager :public list<Player*>, public Transmitted
 	class Initialaiser;
 	Initialaiser* parser;
 
+	int cam_target;//!!! It isn't synchronized in network game
+
 	void erase (iterator start, iterator finish);
 
 public:
@@ -76,6 +79,8 @@ public:
 	int importEvents (char* buffer, int size);
 	void clearEvents();
 
+	void setFirst2CamTarget()    {cam_target = empty()? -1 : (*begin())->id();}
+	const Player* getCamTarget() const { return cam_target > 0 ? get(cam_target) : 0;}
 	Player* get (int id) const;
 
 	int exp (char* buffer, int size) const;

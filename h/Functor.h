@@ -86,6 +86,16 @@ class Arg_Method <Return_Type, void, T> :public Arg_Functor <Return_Type, void>
 		virtual Return_Type operator ()() {return (object->*func) ();}
 	};
 //-----------------------------------
+template <typename Taken_Type, class T>
+class Arg_Method <void, Taken_Type, T> :public Arg_Functor <void, Taken_Type>
+	{
+	T* object;
+	void (T::*func)(Taken_Type);
+	public:
+		Arg_Method (T* Object, void (T::*Func)(Taken_Type)) :object (Object), func (Func){}
+		virtual void operator ()(Taken_Type arg) {(object->*func) (arg);}
+	};
+//-----------------------------------
 template <class T>
 class Arg_Method <void, void, T> :public Arg_Functor <void, void>
 	{

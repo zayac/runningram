@@ -19,10 +19,10 @@ class Player_manager;
 class Console_output;
 class Effects_manager;
 class Button;
+class Interpreter;
 
 class Server;
 class Client;
-class lua_State;
 
 #include <Fontc.h>
 
@@ -42,6 +42,7 @@ class Game_manager
 	Effects_manager* eff;
 	Server* serv;
 	Client* clie;
+	Interpreter* interp;
 
 	Std_output_err* co;//for Exceptions
 
@@ -59,7 +60,7 @@ public:
 	bool mainLoop();
 	void fillZbuffer();
 	bool cleanup();
-	int stop (lua_State*);
+	void stop();
 	
 
 	void tmpExport();

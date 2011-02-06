@@ -200,63 +200,63 @@ int Activeman::exp (char* buffer, int size) const
 //--------------------------------------------------------------------------------------------------
 int Activeman::imp (char* buffer, int size)
 {
-	int offset = 0;
-	for (iterator i = begin();/* i != end()*/;)
+    int offset = 0;
+    for (iterator i = begin (); /* i != end()*/;)
+    {
+	char next = *(buffer + offset++);
+	if (next == 's') //stop
 	{
-		char next = *(buffer + offset++);
-		if (next == 's')		//stop
-		{
-			kill (i, end());
-			return offset;
-		}
-		if (next != 'c') return -1;			//if not 's' and not 'c' I can't determine what it is
-		
-		int id = *((int*)(buffer + offset));
-		offset += sizeof(int);
-
-		int len = -1;
-
-		if (i == end() || id != (**i).id())
-		{
-			bool found = false;
-			iterator j = i;
-			for (j = i; j != end(); ++j)
-				if ((**j).id() == id)
-				{
-					found = true;
-					break;
-				}
-			if (found)
-			{
-				std::swap (*i, *j);
-				len = (**i).impo (buffer + offset, size - offset);
-			}
-//			else
-//			{
-//				j = insert (i, new Player ("no name", 0, Key_storage ()));
-//				len = (**j).Import (buffer + offset, size - offset);
-//			}
-		}
-		else	len = (**i).impo (buffer + offset, size - offset);
-		
-		if (len == -1) return -1;
-		offset += len;
-
-		if (i != end()) ++i;
+	    kill (i, end ());
+	    return offset;
 	}
-	return offset;
-	
-//	int offset = 0;
-//	for (const_iterator i = begin(); i != end(); ++i)
-//	{
-//		int cur_offs = (**i).Import (buffer + offset, size - offset);
-//		if (cur_offs == -1) return -1;
-//		offset += cur_offs;
-//		if (*(buffer + cur_offs) != 'e') return -1;//Unknown data
-//		++cur_offs;
-//		if (offset > size) return -1;
-//	}
-//	return offset;
+	if (next != 'c') return -1; //if not 's' and not 'c' I can't determine what it is
+
+	int id = *((int*) (buffer + offset));
+	offset += sizeof (int);
+
+	int len = -1;
+
+	if (i == end () || id != (**i).id ())
+	{
+	    bool found = false;
+	    iterator j = i;
+	    for (j = i; j != end (); ++j)
+		if ((**j).id () == id)
+		{
+		    found = true;
+		    break;
+		}
+	    if (found)
+	    {
+		std::swap (*i, *j);
+		len = (**i).impo (buffer + offset, size - offset);
+	    }
+	    //			else
+	    //			{
+	    //				j = insert (i, new Player ("no name", 0, Key_storage ()));
+	    //				len = (**j).Import (buffer + offset, size - offset);
+	    //			}
+	}
+	else len = (**i).impo (buffer + offset, size - offset);
+
+	if (len == -1) return -1;
+	offset += len;
+
+	if (i != end ()) ++i;
+    }
+    return offset;
+
+    //	int offset = 0;
+    //	for (const_iterator i = begin(); i != end(); ++i)
+    //	{
+    //		int cur_offs = (**i).Import (buffer + offset, size - offset);
+    //		if (cur_offs == -1) return -1;
+    //		offset += cur_offs;
+    //		if (*(buffer + cur_offs) != 'e') return -1;//Unknown data
+    //		++cur_offs;
+    //		if (offset > size) return -1;
+    //	}
+    //	return offset;
 }
 //--------------------------------------------------------------------------------------------------
 void Activeman::kill (iterator start, iterator finish)

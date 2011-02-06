@@ -78,8 +78,9 @@ void Battlefield::drawField (Canvas* c) const
 {
 	int start = 0;
 	Rect frame = c->getClipRect ();
-	frame.enlarge (_tileFactory.getSize ()); //compute manifold of tile positions
-	frame.move (-_tileFactory.getSize ()); //really displayed on the screen
+        Point tSize = _tileFactory.getSize ();
+	frame.enlarge (tSize); //compute manifold of tile positions
+	frame.move (-tSize); //really displayed on the screen
 
 	for (int i = 0; i < size.y; i++)
 	{
@@ -89,7 +90,7 @@ void Battlefield::drawField (Canvas* c) const
 		{
 			Point coor (start + j * _tileFactory.getSize ().x, i * _tileFactory.getSize ().y / 2);
 
-			if (frame.contain (coor))//do not process tiles which won't be displayed
+			if (frame.intersect (Rect(coor - tSize/2, tSize)))//do not process tiles which won't be displayed
 				_tileFactory.getTile (CELL (pos.x, pos.y))-> getSprite ()->draw (c, coor);
 			pos.x++;
 			pos.y--;
