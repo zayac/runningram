@@ -114,7 +114,6 @@ void Car::draw (Canvas* c)
 		c->line (one_trg, two_trg, headc);
 		c->line (two_trg, three_trg, headc);
 		c->line (three_trg, one_trg, headc);
-		c->line (end, one_trg, headc);
 	}
 	if (!dead())
 	{

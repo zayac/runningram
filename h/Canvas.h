@@ -49,6 +49,10 @@ class Canvas :public UniId<SDL_Surface>
 
 	Canvas (SDL_Surface* d);
 
+	/*
+	 * TODO: add position stack for easy usage
+	 */
+
 	Point pos;//permanent addition
 
 	//static float _transformCoef;
