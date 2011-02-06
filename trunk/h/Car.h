@@ -50,6 +50,7 @@ public:
 	virtual ~Active() {}
 	virtual void actions (float dt) = 0;
 	virtual void draw (Canvas*) = 0;
+	virtual void drawSchematic (Canvas*, Vector2f scale, bool trans) = 0;
 	virtual void collisBrd (Rect width, float fric) = 0;
 	virtual void driveSand (Rect width, float fric) = 0;
 	virtual void collisObj (Active* that) = 0;
@@ -218,6 +219,8 @@ class Car :public Active
 
 	void move (Vector2f disp) {back.pos += disp; front.pos += disp;}
 
+	void drawHealthBar (Canvas* c);
+
 protected:
 	virtual int signDataLen() const;
 
@@ -231,6 +234,7 @@ public:
 
 	virtual void actions (float dt);
 	virtual void draw (Canvas*);
+	virtual void drawSchematic (Canvas*, Vector2f scale, bool trans);
 	virtual void collisObj (Active* that);
 	virtual void collisBrd (Rect with, float fric);
 	virtual void driveSand (Rect width, float fric);

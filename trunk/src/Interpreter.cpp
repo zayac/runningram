@@ -123,6 +123,8 @@ Interpreter::~Interpreter()
 #include <iostream>
 UniValue Interpreter::Printer::charWriteHundler (UniValue c)
 {
+	std::cout <<"c:" <<c.getChar() <<std::endl;
+
 	if (preview) (*preview)(accumulator);
 	if (c.getChar() == '\n') charFlushInformer();
 	else accumulator += c.getChar();
@@ -131,6 +133,7 @@ UniValue Interpreter::Printer::charWriteHundler (UniValue c)
 //--------------------------------------------------------------------------------------------------
 UniValue Interpreter::Printer::charFlushInformer()
 {
+	if (flush && !accumulator.empty()) (*flush)();
 	if (preview && !accumulator.empty()) (*preview)(string());
 	accumulator.clear();
 	return UniValue::byBool(false);
@@ -180,9 +183,10 @@ int Interpreter::regHundler (string name, Hundler* fun)
     return fnum;
 }
 //--------------------------------------------------------------------------------------------------
-void Interpreter::regOutput (Arg_Functor<void, const string&> *preview)
+void Interpreter::regOutput (Arg_Functor<void, const string&> *preview, Functor* flush)
 {
 	printer.preview = preview;
+	printer.flush = flush;
 
 	unsafeEval("(defclass console-output "
 			   "(gray:fundamental-character-output-stream)"
@@ -200,7 +204,7 @@ void Interpreter::regOutput (Arg_Functor<void, const string&> *preview)
 
 }
 //--------------------------------------------------------------------------------------------------
-UniValue Interpreter::eval (string code)
+UniValue Interpreter::eval (const string& code)
 {
     cl_object form = eclSafeStringToObj (code);
     if (eclIsError(form))
@@ -214,12 +218,29 @@ UniValue Interpreter::eval (string code)
 	return uniValueByLObj(result);
 }
 //--------------------------------------------------------------------------------------------------
+UniValue Interpreter::evalNprint (const string& code)
+{
+	UniValue rez = eval(code);
+	if (rez.isNull())
+		unsafeEval ("(print nil)");
+	else
+		eclEvalForm(CONS(c_string_to_object("load"),
+					CONS((cl_object)rez.getVal(), Cnil)));
+	return rez;
+}
+//--------------------------------------------------------------------------------------------------
 UniValue Interpreter::unsafeEval (char* code)
 {
 	cl_object rezult = eclEvalForm (c_string_to_object(code));
     if (eclIsError (rezult))
 		return uniValueByLObj(Cnil);//evaluating error
     return uniValueByLObj(rezult);
+}
+//--------------------------------------------------------------------------------------------------
+bool Interpreter::loadFile (char* fname)
+{
+    return eclIsError (eclEvalForm(CONS(c_string_to_object("load"),
+								   CONS(make_constant_base_string(fname), Cnil))));
 }
 //--------------------------------------------------------------------------------------------------
 

@@ -4,36 +4,7 @@
     <df name="runningram" root=".">
       <df name="ecl">
         <df name="ecl-11.1.1" kind="SOURCE_LOGICAL_FOLDER">
-          <in>Copyright</in>
-          <in>LGPL</in>
-          <in>TAGS</in>
-          <in>asdf.fas</in>
-          <in>build-stamp</in>
-          <in>bytecmp.asd</in>
-          <in>bytecmp.fas</in>
-          <in>cmp.asd</in>
-          <in>cmp.fas</in>
-          <in>defsystem.asd</in>
-          <in>defsystem.fas</in>
-          <in>dpp</in>
-          <in>ecl_min</in>
-          <in>help.doc</in>
-          <in>prebuilt-asdf.asd</in>
-          <in>profile.asd</in>
-          <in>profile.fas</in>
-          <in>rt.asd</in>
-          <in>rt.fas</in>
-          <in>sb-bsd-sockets.asd</in>
-          <in>sb-bsd-sockets.fas</in>
-          <in>serve-event.asd</in>
-          <in>serve-event.fas</in>
-          <in>sockets.asd</in>
-          <in>sockets.fas</in>
-          <in>ucd.dat</in>
         </df>
-        <in>libecl.so.11</in>
-        <in>libecl.so.11.1</in>
-        <in>libecl.so.11.1.1</in>
       </df>
       <df name="for_net_tests">
         <df name="sock" kind="SOURCE_LOGICAL_FOLDER">
@@ -129,6 +100,9 @@
         <in>Vec_spec.h</in>
         <in>initparser.h</in>
         <in>mstdint.h</in>
+      </df>
+      <df name="scripts">
+        <in>map_default.lisp</in>
       </df>
       <df name="src">
         <in>Activeman.cpp</in>

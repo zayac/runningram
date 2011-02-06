@@ -12,6 +12,7 @@
 #include "Console.h"
 #include "Graphic_subsystem.h"
 #include "Interpreter.h"
+#include "Car.h"
 
 //extern "C"
 //{
@@ -102,7 +103,9 @@ bool Console::init (Graphic_subsystem* c, Interpreter* interp_)
 	history.captureLastString();
 	interp = interp_;
 	interp->regOutput (new Arg_Method<void, const string&, Lines_view>
-								(&history, &Lines_view::changeCurrentString));
+								(&history, &Lines_view::changeCurrentString),
+					   new Arg_Method<void, void, Lines_view>
+								(&history, &Lines_view::copyCurrentString));
 
 	enabled = false;
 
@@ -128,12 +131,11 @@ void Console::draw (Graphic_subsystem* c) const
 {
 	if (!enabled) return;
 	Canvas* screen = c->getScreen ();
-	Point scr_pos = screen->getPos();
-	screen->setPos (Point());
+	screen->pushPos(Point());
 	assert(ok());
 	history.draw (screen);
 	input.draw (screen);
-	screen->setPos (scr_pos);
+	screen->popPos();
 }
 //--------------------------------------------------------------------------------------------------
 void Console::turn()
@@ -494,6 +496,11 @@ void Lines_view::changeCurrentString (const string& what)
 void Lines_view::releaseCurrentString()
 {
 	last_string_captured = false;
+}
+//--------------------------------------------------------------------------------------------------
+void Lines_view::copyCurrentString()
+{
+	pushString (data.back());
 }
 //--------------------------------------------------------------------------------------------------
 //int Lines_view::getHeight (const Stringc& what) const
