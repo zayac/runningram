@@ -97,6 +97,18 @@ void Canvas::copy (const Canvas from, Rect src_brd, Point to)
 	SDL_BlitSurface (from.data(), src_brdp, data(), addSdl (&my_brd));
 }
 //--------------------------------------------------------------------------------------------------
+void Canvas::pushPos (Point npos)
+{
+	posStack.push_back(pos);
+	pos = npos;
+}
+//--------------------------------------------------------------------------------------------------
+void Canvas::popPos()
+{
+	assert(posStack.size()>0);
+	posStack.pop_back();
+}
+//--------------------------------------------------------------------------------------------------
 void Canvas::draw (Canvas where, Point position) const
 {
     position += pos - where.pos;

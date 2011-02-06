@@ -49,11 +49,8 @@ class Canvas :public UniId<SDL_Surface>
 
 	Canvas (SDL_Surface* d);
 
-	/*
-	 * TODO: add position stack for easy usage
-	 */
-
-	Point pos;//permanent addition
+	Point pos;//permanent addition - top of the above stack
+	vector<Point> posStack;
 
 	//static float _transformCoef;
 	
@@ -96,7 +93,11 @@ public:
 	inline static Point transform(Point old) { return Point (2 * (old.x - old.y), (old.y + old.x)); }
 	inline static Vector2f transform(Vector2f old) { return Vector2f ( 2 * (old.x - old.y), (old.y + old.x)); }
 	void setPos (Point npos) {pos = npos;}
-	Point getPos () const   {return pos;} 
+	Point getPos () const   {return pos;}
+	
+	void pushPos (Point npos);
+	void popPos();
+
 
 	void draw (Canvas where, Point pos) const;
 	void fillRect (Rect r, Color col);

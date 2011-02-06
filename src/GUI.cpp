@@ -59,17 +59,16 @@ bool GUI::init()
 //--------------------------------------------------------------------------------------------------
 void GUI::drawMiniMap (const Battlefield* bf, const Activeman* cars, Graphic_subsystem* gs)
 {
-	bf->drawMinimap (gs, minimap);
-
 	Canvas* canv = gs->getScreen();
-	Point savedPos = canv->getPos();
-	canv->setPos(-minimap.getLUp());
+	canv->pushPos(-minimap.getLUp());
+
+	bf->drawMinimap (canv, minimap.getSize());
 
 	Point scale = (bf->getFullSize())|(minimap.getSize());
 	for (Activeman::const_iterator i = cars->begin(); i != cars->end(); ++i)
 	{
-		canv->fillRect(Rect ((**i).getPos().to<int>()|scale, Point(50, 50)|scale), Color(100, 100, 250));
-	}
-	canv->setPos(savedPos);
+		(**i).drawSchematic(canv, Vector2f(0.86, 0.85)|scale.to<float>(), false);
+	}//							this vector ^ was tuned experimantally
+	canv->popPos();
 }
 //--------------------------------------------------------------------------------------------------

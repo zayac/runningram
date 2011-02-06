@@ -13,6 +13,8 @@
 #include "Graphic_subsystem.h"
 #include "TileFactory.h"
 #include "Canvas.h"
+#include "Console.h"
+#include "Interpreter.h"
 
 using std::ifstream;
 
@@ -129,14 +131,10 @@ void Battlefield::draw (Graphic_subsystem* c) const
     drawField(canv);
 }
 //--------------------------------------------------------------------------------------------------
-void Battlefield::drawMinimap (Graphic_subsystem* c, Rect pos) const
+void Battlefield::drawMinimap (Canvas* canv, Point limit) const
 {
     assert(ok());
-    Canvas *canv = c->getScreen ();
-	Point cellrect = (pos.getSize()|size);
-
-	Point savedPos = canv->getPos();
-	canv->setPos(-pos.getLUp());
+	Point cellrect = (limit|size);
 
 	for (int i = 0; i < size.x; ++i)
         for (int j = 0; j < size.y; ++j)
@@ -148,12 +146,15 @@ void Battlefield::drawMinimap (Graphic_subsystem* c, Rect pos) const
             Draw_cage (canv, Point(i, j)&cellrect, cellrect,
                             Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), bkg);
         }
-	canv->setPos(savedPos);
 }
 //--------------------------------------------------------------------------------------------------
-bool Battlefield::init()
+bool Battlefield::init (Interpreter* interp)
 {
-	return loadFromFile (parser->filename.c_str());
+	if (!loadFromFile (parser->filename.c_str()))
+		return false;
+	bool res = interp->loadFile (script_fname);
+	return true;//It's strange, but if i put 'res' here it cause an error in
+				//interpreter (???)
 }
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
@@ -187,6 +188,9 @@ bool Battlefield::loadFromFile (const char* fname)
 		No_spaces_begin (file);
 	}
 	cur_res_point = resur_points.begin();
+
+	file.getline(script_fname, ScriptFnameMaxLen);
+	No_spaces_begin (file);
 
 	_tileFactory.init(file, Point (csize, csize));
 	//_tileFactory.scale (Point (csize, csize));

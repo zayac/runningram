@@ -22,12 +22,16 @@ using std::vector;
 using std::multimap;
 using std::ifstream;
 class Serializator;
+class Interpreter;
+
+const int ScriptFnameMaxLen = 2048;
 
 class Battlefield
 {
 	unsigned char* cells;
 	Point size;
 	int csize;
+	char script_fname[ScriptFnameMaxLen];
 	vector<Point> resur_points;
 	vector<Point>::iterator cur_res_point;
     TileFactory _tileFactory;
@@ -50,7 +54,7 @@ public:
 	Serializator* getParser();
 
 	void draw (Graphic_subsystem* c) const;
-	void drawMinimap (Graphic_subsystem* c, Rect pos) const;
+	void drawMinimap (Canvas* c, Point limit) const;
 
 	const unsigned char* getCells() const {return cells;}
 	Point getSize() const {return size;}
@@ -67,7 +71,7 @@ public:
 	void addDrawable (int z, Drawable* d);
 //	void adsorb (vector<Drawable*>*)
 
-	bool init();
+	bool init (Interpreter* interp);
 	bool loadFromFile (const char* fname);
 
 	bool ok() const;

@@ -76,14 +76,16 @@ private:
 	{
 		string accumulator;
 		Arg_Functor<void, const string&>* preview;
+		Functor* flush;
 
 		UniValue charWriteHundler (UniValue c);
 		UniValue charFlushInformer();
 
-		Printer():preview(0) {}
+		Printer():preview(0), flush(0) {}
 		~Printer()
 		{
 			if (preview) delete preview;
+			if (flush) delete flush;
 		}
 	} printer;
 
@@ -106,10 +108,12 @@ public:
     int regInfo (string name, Informer* fun);
     int regHundler (string name, Hundler* fun);
 
-	void regOutput (Arg_Functor<void, const string&> *preview = 0);
+	void regOutput (Arg_Functor<void, const string&> *preview, Functor* flush);
 
-    UniValue eval (string code);
+    UniValue eval (const string& code);
+    UniValue evalNprint (const string& code);
     UniValue unsafeEval (char* code);//It can break the whole program
+	bool loadFile (char* fname);
 
 };
 

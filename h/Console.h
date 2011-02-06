@@ -35,7 +35,7 @@ class Stringc :public string
 	bool lab_upd;
 
 public:
-	Stringc ():lab_upd(false){}//:font(){}
+	Stringc ():lab_upd (false){}//:font(){}
 	Stringc (const Stringc& orig) :string (orig), font(orig.font), lab_upd(false) {}
 	Stringc (const string& str, Fontc f) :string(str), font(f), lab_upd(false) {}
 
@@ -91,6 +91,7 @@ public:
 	void captureLastString();
 	void changeCurrentString (const string&);//current string will be on the
 	void releaseCurrentString();	//last position while unless it released
+	void copyCurrentString();
 	void draw (Canvas* c) const;
 
 	bool ok() const;

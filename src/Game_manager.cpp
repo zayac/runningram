@@ -116,7 +116,10 @@ bool Game_manager::init (int argc, char *argv[])
 		font.setFG (Color (100, 100, 200)); //!!! deprecated
 
 		result = result && cmd	 ->init (pic, interp);
-		result = result && ground->init ();
+		result = result && ground->init (interp);
+//		interp->loadFile("scripts/default.lisp");
+//		interp->eval("(load \"scripts/default.lisp\")");
+//		interp->eval("(print nil)");
 		result = result && eff	 ->init ();
 		result = result && gui	 ->init ();
 

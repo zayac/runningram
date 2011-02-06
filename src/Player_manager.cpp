@@ -176,8 +176,7 @@ void Player_manager::erase (iterator start, iterator finish)
 #include "Fontc.h"
 void Player_manager::drawCompTable (Canvas* where, Fontc* font)
 {
-	Point where_pos = where->getPos ();
-	where->setPos (Point());
+	where->pushPos(Point());
 
 	int xpos = 100;
 	int ypos = 100;
@@ -198,8 +197,7 @@ void Player_manager::drawCompTable (Canvas* where, Fontc* font)
 		font->drawLine (where, buf, &label_brd);
 		ypos += 20;
 	}
-
-	where->setPos (where_pos);
+	where->popPos();
 }
 //--------------------------------------------------------------------------------------------------
 int Player_manager::exportEvents (char* buffer, int size) const

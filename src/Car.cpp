@@ -90,38 +90,79 @@ void Car::draw (Canvas* c)
 	}
 //	else	//if car hasn't sprite, it will be drawn schematically
 	{
-		dbgcanv = c;//deprecated;
-		assert(ok());
-		Point begin = back.pos.to<int>();
-		Point end = front.pos.to<int>();//(front.orient.Get_dir()*front.r + pos).To<int> ();
-
-		Point leftback = Canvas::transform (Point (back.r*primary_o.getDir().y, -back.r*primary_o.getDir().x) + begin);
-		Point leftfront = Canvas::transform (Point (front.r*primary_o.getDir().y, -front.r*primary_o.getDir().x) + end);
-		Point rightback = Canvas::transform (Point (-back.r*primary_o.getDir().y, back.r*primary_o.getDir().x) + begin);
-		Point rightfront = Canvas::transform (Point (-front.r*primary_o.getDir().y, front.r*primary_o.getDir().x) + end);
-
-		Point one_trg = Canvas::transform (front.r*front.orient.getDir() + front.pos).to<int>();
-		Point two_trg = Canvas::transform (front.r*(front.orient + Orient(2*PI/3)).getDir() + front.pos).to<int>();
-		Point three_trg = Canvas::transform (front.r*(front.orient - Orient(2*PI/3)).getDir() + front.pos).to<int>();
-
-		c->line (leftback, leftfront, Color (150, 200, 200));
-		c->line (leftfront, rightfront, Color (150, 200, 200));
-		c->line (rightfront, rightback, Color (150, 200, 200));
-		c->line (rightback, leftback, Color (150, 200, 200));
-
-		Color headc (200, 150, 150);
-
-		c->line (one_trg, two_trg, headc);
-		c->line (two_trg, three_trg, headc);
-		c->line (three_trg, one_trg, headc);
+		drawSchematic(c, Vector2f(1, 1), true);
 	}
 	if (!dead())
 	{
-		Color headc (200, 150, 150);
-		int hlen = health/max_health*Health_indicator_len;
-		Rect hline (pos.x - hlen/2, pos.y + Health_indicator_offset, hlen, Health_indicator_height);
-		c->fillRect (hline, headc);
+		drawHealthBar(c);
 	}
+}
+//--------------------------------------------------------------------------------------------------
+void Car::drawHealthBar (Canvas* c)
+{
+	Color headc (200, 150, 150);
+	int hlen = health/max_health*Health_indicator_len;
+	Point hpos = pos.to<int>() + Point (-hlen/2, Health_indicator_offset);
+	hpos = Canvas::transform (hpos);
+	Rect hline (hpos, Point (hlen, Health_indicator_height));
+	c->fillRect (hline, headc);
+}
+//--------------------------------------------------------------------------------------------------
+inline void drawCycle3 (Point one, Point two, Point three, Canvas* c, Color& col)
+{
+	c->line (one, two, col);
+	c->line (two, three, col);
+	c->line (three, one, col);
+}
+//--------------------------------------------------------------------------------------------------
+inline void drawCycle4 (Point one, Point two, Point three, Point four, Canvas* c, Color& col)
+{
+	c->line (one, two, col);
+	c->line (two, three, col);
+	c->line (three, four, col);
+	c->line (four, one, col);
+}
+//--------------------------------------------------------------
+void Car::drawSchematic (Canvas* c, Vector2f scale, bool trans)
+{
+	Vector2f primary_dir = back.orient.getDir();
+	dbgcanv = c;//deprecated;
+	assert(ok());
+	Vector2f begin = back.pos&scale;
+	Vector2f end = scale&(primary_dir*front.r + pos);
+
+	Vector2f leftbackf = (scale&Vector2f (back.r*primary_dir.y,
+										 -back.r*primary_dir.x)) + begin;
+	Vector2f leftfrontf = (scale&Vector2f (front.r*primary_dir.y,
+										  -front.r*primary_dir.x)) + end;
+	Vector2f rightbackf = (scale&Vector2f (-back.r*primary_dir.y,
+											back.r*primary_dir.x)) + begin;
+	Vector2f rightfrontf= (scale&Vector2f (-front.r*primary_dir.y,
+											front.r*primary_dir.x)) + end;
+
+	Vector2f one_trgf = (scale&(front.r*front.orient.getDir())) + end;
+	Vector2f two_trgf = (scale&(front.r*(front.orient + Orient(2*PI/3)).getDir())) + end;
+	Vector2f three_trgf = (scale&(front.r*(front.orient - Orient(2*PI/3)).getDir())) + end;
+
+	if (trans)
+	{
+		leftbackf = Canvas::transform (leftbackf);
+		leftfrontf = Canvas::transform (leftfrontf);
+		rightbackf = Canvas::transform (rightbackf);
+		rightfrontf = Canvas::transform (rightfrontf);
+
+		one_trgf = Canvas::transform (one_trgf);
+		two_trgf = Canvas::transform (two_trgf);
+		three_trgf = Canvas::transform (three_trgf);
+	}
+
+	Color bodyc (150, 200, 200);
+	Color headc (200, 150, 150);
+
+	drawCycle4 (leftbackf.to<int>(), leftfrontf.to<int>(),
+				rightfrontf.to<int>(), rightbackf.to<int>(), c, bodyc);
+	drawCycle3 (one_trgf.to<int>(), two_trgf.to<int>(),
+				three_trgf.to<int>(), c, headc);
 }
 //--------------------------------------------------------------------------------------------------
 void Car::collisObj (Active* that)
