@@ -7,8 +7,9 @@
 ## This file is generated automatically, but edited manually by abovementioned.
 ##
 
-LUA_LIB_FILE = lua/liblua5.1.a
-LINK_LIBS = $(LUA_LIB_FILE) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx -lSDL_image
+INTERPRETER_FLAGS = -Dlinux -Wl,--rpath,./ecl/
+INTERPRETER_LIBS = -L./ecl/ -lecl -ldl -lm
+LINK_LIBS = $(INTERPRETER_LIBS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx -lSDL_image
 
 #### Compiler and tool definitions shared by all build targets #####
 CCC = g++
@@ -24,34 +25,34 @@ vpath %.cpp .:src
 
 # Define the target directories.
 TARGETDIR=GNU-i386-Linux
-## Target: runningram
-CPPFLAGS_runningram = -Ih -Ilua/include/
+
+
+CPPFLAGS = -Ih $(INTERPRETER_FLAGS)
 OBJS =  $(patsubst src/%.cpp,$(TARGETDIR)/%.o,$(wildcard src/*.cpp)) \
         $(patsubst %.cpp, $(TARGETDIR)/%.o, $(wildcard *.cpp))
 
-SYSLIBS_runningram = -lm
-USERLIBS_runningram = $(SYSLIBS_runningram)
-DEPLIBS_runningram =
-LDLIBS_runningram = $(USERLIBS_runningram)
+DEPLIBS =
+LDLIBS = -lm $(LINK_LIBS)
 
 
-install: all
+install: runningram
+
+runningram: $(TARGETDIR)/runningram
 	cp $(TARGETDIR)/runningram .
+
 run: install
 	./runningram
 
-all: $(TARGETDIR)/runningram
-
 
 # Link
-$(TARGETDIR)/runningram: $(TARGETDIR) $(OBJS) $(DEPLIBS_runningram)
-	$(LINK.cc) $(CCFLAGS_runningram) $(CPPFLAGS_runningram) -o $@ $(OBJS) $(LDLIBS_runningram) $(LINK_LIBS)
+$(TARGETDIR)/runningram: $(TARGETDIR) $(OBJS) $(DEPLIBS)
+	$(LINK.cc) $(CCFLAGS) $(CPPFLAGS) -o $@ $(OBJS) $(LDLIBS)
 
 
 # Compile source files into .o files
 
 $(TARGETDIR)/%.o: %.cpp
-	$(COMPILE.cc) -MMD $(CCFLAGS_runningram) $(CPPFLAGS_runningram) $< -o $@
+	$(COMPILE.cc) -MMD $(CCFLAGS) $(CPPFLAGS) $< -o $@
 
 include $(wildcard $(TARGETDIR)/*.d)
 

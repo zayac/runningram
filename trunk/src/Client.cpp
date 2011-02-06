@@ -95,7 +95,7 @@ void Client::sendReaction (char* buffer, int bsize)
 
 	*(buffer + offset++) = 'c';//"confirmation" id
 	*(int*)(buffer + offset) = 1;//confirmation code
-	offset += 4;
+	offset += sizeof(int);
 
 
 	if (-1 == send (buffer, offset))
@@ -121,9 +121,4 @@ int Client::combineUndelivered (char* buf, int bsize)
 	undelivered.clear ();
 	return writed;
 }
-//--------------------------------------------------------------------------------------------------
-//void Client::Confirm (int code)
-//{
-//	if (!Socket::send ((char*)&code, sizeof(code))) throw Exception ("could not confirm.");
-//}
 //--------------------------------------------------------------------------------------------------

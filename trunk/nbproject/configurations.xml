@@ -1,7 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="65">
+<configurationDescriptor version="69">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <df name="runningram" root=".">
+      <df name="ecl">
+        <df name="ecl-11.1.1" kind="SOURCE_LOGICAL_FOLDER">
+          <in>Copyright</in>
+          <in>LGPL</in>
+          <in>TAGS</in>
+          <in>asdf.fas</in>
+          <in>build-stamp</in>
+          <in>bytecmp.asd</in>
+          <in>bytecmp.fas</in>
+          <in>cmp.asd</in>
+          <in>cmp.fas</in>
+          <in>defsystem.asd</in>
+          <in>defsystem.fas</in>
+          <in>dpp</in>
+          <in>ecl_min</in>
+          <in>help.doc</in>
+          <in>prebuilt-asdf.asd</in>
+          <in>profile.asd</in>
+          <in>profile.fas</in>
+          <in>rt.asd</in>
+          <in>rt.fas</in>
+          <in>sb-bsd-sockets.asd</in>
+          <in>sb-bsd-sockets.fas</in>
+          <in>serve-event.asd</in>
+          <in>serve-event.fas</in>
+          <in>sockets.asd</in>
+          <in>sockets.fas</in>
+          <in>ucd.dat</in>
+        </df>
+        <in>libecl.so.11</in>
+        <in>libecl.so.11.1</in>
+        <in>libecl.so.11.1.1</in>
+      </df>
       <df name="for_net_tests">
         <df name="sock" kind="SOURCE_LOGICAL_FOLDER">
           <df name="bin" kind="SOURCE_LOGICAL_FOLDER">
@@ -27,9 +60,34 @@
           <in>msock.h</in>
         </df>
       </df>
-      <df name="GNU-i386-Linux">
-      </df>
       <df name="h">
+        <df name="ecl">
+          <df name="gc" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="private" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <df name="impl" kind="SOURCE_LOGICAL_FOLDER">
+            <in>math_dispatch.h</in>
+            <in>math_dispatch2.h</in>
+            <in>math_fenv.h</in>
+            <in>math_fenv_msvc.h</in>
+          </df>
+          <in>bytecodes.h</in>
+          <in>config.h</in>
+          <in>configpre.h</in>
+          <in>cs.h</in>
+          <in>ecl-cmp.h</in>
+          <in>ecl-inl.h</in>
+          <in>ecl.h</in>
+          <in>eval.h</in>
+          <in>external.h</in>
+          <in>internal.h</in>
+          <in>number.h</in>
+          <in>object.h</in>
+          <in>page.h</in>
+          <in>stacks.h</in>
+          <in>unify.h</in>
+        </df>
         <in>Activeman.h</in>
         <in>Battlefield.h</in>
         <in>Button.h</in>
@@ -67,15 +125,6 @@
         <in>Vec_spec.h</in>
         <in>initparser.h</in>
         <in>mstdint.h</in>
-      </df>
-      <df name="lua">
-        <df name="include" kind="SOURCE_LOGICAL_FOLDER">
-          <in>lauxlib.h</in>
-          <in>lua.h</in>
-          <in>lua.hpp</in>
-          <in>luaconf.h</in>
-          <in>lualib.h</in>
-        </df>
       </df>
       <df name="src">
         <in>Activeman.cpp</in>

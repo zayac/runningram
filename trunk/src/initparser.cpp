@@ -191,10 +191,10 @@ bool St_loader<bool>::readFrag (ifstream &file)
 	No_spaces_begin (file);
 	char istr[1024] = "wrong value";
 	file.getline (istr, 1024);
-	if (istr[0] == 't' || istr[0] == '1')
-		*_val = true;
-	else
+	if (istr[0] == 'f' || istr[0] == '0')// "false" or "0"
 		*_val = false;
+	else
+		*_val = true;
 	return true;
 }
 //-----------------------------------------------------------------------------------------------

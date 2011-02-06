@@ -106,6 +106,9 @@ public:
 	void setAM (Activeman* am) {objs = am;}
 	void setEM (Effects_manager* em_) {effm = em_;}
 
+	bool empty() const {return models.size() == 0;}
+	void clear() {models.clear(); last_creations.clear();}
+
 	int exp (char* buffer, int size) const;
 	int imp (char* buffer, int size);
 

@@ -37,17 +37,23 @@ public:
 	string pname;
 	int model;
 	Key_storage ks;
+	bool is_target;
 
 protected:
 	virtual bool afterRead (ifstream &file)
 	{
-		host->push_back (new Player (pname, model, ks.createCopy ()));
-		return true;
+	    host->push_front (new Player (pname, model, ks.createCopy ()));
+	    if (is_target) host->setFirst2CamTarget();
+	    return true;
+	}
+	virtual bool beforeRead (ifstream &file)
+	{
+	    is_target = false;
 	}
 public:
 
 	Initialaiser (const char* name, Player_manager* chost, Eventman* sense)
-	: Sectionp (name, '='), host (chost)
+	: Sectionp (name, '='), host (chost), is_target (false)
 	{
 		ks.evman = sense;
 		addParam (new St_loader<string> ("name", &pname));
@@ -56,6 +62,7 @@ public:
 		addParam (new St_loader<Key_id> ("down key", &ks.down));
 		addParam (new St_loader<Key_id> ("left key", &ks.left));
 		addParam (new St_loader<Key_id> ("right key", &ks.right));
+		addParam (new St_loader<bool>   ("attract cam", &is_target));
 	}
 
 	virtual ~Initialaiser ()
@@ -65,7 +72,7 @@ public:
 }; // </editor-fold>
 
 Player_manager::Player_manager (Eventman* sense)
-:Transmitted('P', false), parser (new Initialaiser ("[Player]", this, sense)) { }
+:Transmitted ('P', false), parser (new Initialaiser ("[Player]", this, sense)) { }
 
 Player_manager::~Player_manager ()
 {

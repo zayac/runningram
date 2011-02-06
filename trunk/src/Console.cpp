@@ -11,13 +11,14 @@
 #include "initparser.h"
 #include "Console.h"
 #include "Graphic_subsystem.h"
+#include "Interpreter.h"
 
-extern "C"
-{
-	#include "lua.h"
-	#include "lauxlib.h"
-	#include "lualib.h"
-}
+//extern "C"
+//{
+//	#include "lua.h"
+//	#include "lauxlib.h"
+//	#include "lualib.h"
+//}
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
 
@@ -54,17 +55,17 @@ public:
 //!!! only for debug
 Console* interface = 0;
 
-int Lua_execute (lua_State* ls)
-{
-	typedef Arg_Functor <int, lua_State*> Tfun;
-	Tfun* function = (Tfun*)(long)lua_tonumber(ls, lua_upvalueindex(1));
-	if (function)
-		return (*function)(ls);
-	lua_error (ls);
-	return 0;
-}
+//int Lua_execute (lua_State* ls)
+//{
+//	typedef Arg_Functor <int, lua_State*> Tfun;
+//	Tfun* function = (Tfun*)(long)lua_tonumber(ls, lua_upvalueindex(1));
+//	if (function)
+//		return (*function)(ls);
+//	lua_error (ls);
+//	return 0;
+//}
 
-Console::Console () :parser (new Initialaiser ("[Console]", &font)), history (font, 50), input (font), vm(lua_open())
+Console::Console () :parser (new Initialaiser ("[Console]", &font)), history (font, 50), input (font)//, vm(lua_open())
 {
     //!!! only for debug
     interface = this;
@@ -72,7 +73,7 @@ Console::Console () :parser (new Initialaiser ("[Console]", &font)), history (fo
 //--------------------------------------------------------------------------------------------------
 Console::~Console ()
 {
-	lua_close (vm);
+//	lua_close (vm);
 	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
@@ -81,7 +82,7 @@ Serializator* Console::getParser()
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
-bool Console::init (Graphic_subsystem* c)
+bool Console::init (Graphic_subsystem* c, Interpreter* interp_)
 {
 //	font.Open_font (parser->font_fname.c_str(), parser->height);
 
@@ -93,36 +94,21 @@ bool Console::init (Graphic_subsystem* c)
 	history.init (borders);
 	history.pushString ("You are welcome!");
 
-	luaopen_base (vm);
-	luaopen_math (vm);
-	luaopen_string (vm);
-//	luaopen_io (vm);
-	luaopen_os (vm);
-	luaopen_table (vm);
-
-	registerProcessor ("print", new Arg_Method <int, lua_State*, Console> (this, &Console::output));
-
 	borders.y = borders.h;
 	borders.h = font.height ();
 	input.init  (borders, new Arg_Method<void, const string&, Console> (this, &Console::onEnterString), "You:>");
+
+	
+	history.captureLastString();
+	interp = interp_;
+	interp->regOutput (new Arg_Method<void, const string&, Lines_view>
+								(&history, &Lines_view::changeCurrentString));
 
 	enabled = false;
 
 	assert(ok());
 
 	return true;
-}
-//--------------------------------------------------------------------------------------------------
-void Console::registerProcessor (string name, int (*fun)(lua_State*))
-{
-	lua_register (vm, name.c_str(), fun);
-}
-//--------------------------------------------------------------------------------------------------
-void Console::registerProcessor (string name, Arg_Functor <int, lua_State*>* f)
-{
-	lua_pushnumber (vm, (double)(long)(f));
-	lua_pushcclosure (vm, Lua_execute, 1);
-	lua_setglobal (vm, name.c_str());
 }
 //--------------------------------------------------------------------------------------------------
 void Console::cleanup()
@@ -159,18 +145,24 @@ void Console::onEnterString (const string& str)
 {
 	assert(ok());
 	history.pushString (input.getGreeting() + str);
-	luaL_dostring (vm, str.c_str());
+	eval(str);
+	history.releaseCurrentString();
+	history.pushString("");
+	history.captureLastString();
+}
+//--------------------------------------------------------------------------------------------------
+void Console::eval(string str)
+{
+	if (str[0] != '(')
+		interp->eval("(" + str + ")");
+	else
+		interp->eval(str);
 }
 //--------------------------------------------------------------------------------------------------
 void Console::pushString (const string& str)
 {
 	assert(ok());
 	history.pushString (str);
-}
-//--------------------------------------------------------------------------------------------------
-int Console::output (lua_State* ls)
-{
-	pushString (lua_tostring (ls, -1));
 }
 //--------------------------------------------------------------------------------------------------
 bool Console::ok() const
@@ -181,10 +173,7 @@ bool Console::ok() const
 void Line_edit::init (const Rect& brd, Arg_Functor <void, const string&> *enter, string gr)
 {
 	on_enter = enter;
-	data = "Very very very long  long test edit string for test drawing of text A same characters other"
-		   "Very very very long  long test edit string for test drawing of text A same characters other"
-		   "Very very very long  long test edit string for test drawing of text A same characters other"
-		   "Very very very long  long test edit string for test drawing of text A same characters other";
+	data = "";
 	data.setFont (font);
 	cursor_pos = 0;
 	start_view = 0;
@@ -360,7 +349,7 @@ Line_edit::~Line_edit()
 	if (on_enter) delete on_enter;
 }
 //--------------------------------------------------------------------------------------------------
-void Line_edit::finishInput ()
+void Line_edit::finishInput()
 {
 	assert(ok());
 	cursor_pos = 0;
@@ -470,28 +459,55 @@ void Lines_view::init (const Rect& brd)
 {
 	assert(ok());
 	borders = brd;
+	last_string_captured = false;
 }
 //--------------------------------------------------------------------------------------------------
 void Lines_view::pushString (const string &what)
 {
 	assert(ok());
-	data.push_back (Stringc (what, font));
+	if (last_string_captured)
+	{
+		Stringc current = data.back();
+		data.pop_back();
+		data.push_back (Stringc (what, font));
+		data.push_back (current);
+	}
+	else
+		data.push_back (Stringc (what, font));
 	if (data.size () > max_lines)
 		data.erase (data.begin());
 }
 //--------------------------------------------------------------------------------------------------
-int Lines_view::getHeight (const Stringc& what) const
+void Lines_view::captureLastString()
+{
+	last_string_captured = true;
+}
+//--------------------------------------------------------------------------------------------------
+void Lines_view::changeCurrentString (const string& what)
 {
 	assert(ok());
-	Point size = what.pSize();
-	float nlines = float(size.x)/borders.w;
-
-	if (nlines - float(int(nlines)) > 0.01) nlines += 1;//for tail
-
-	int num_lines = int (nlines);
-	if (num_lines < 1) num_lines = 1;
-	return size.y*num_lines;
+	data.pop_back();
+	data.push_back (Stringc (what, font));
+	last_string_captured = true;
 }
+//--------------------------------------------------------------------------------------------------
+void Lines_view::releaseCurrentString()
+{
+	last_string_captured = false;
+}
+//--------------------------------------------------------------------------------------------------
+//int Lines_view::getHeight (const Stringc& what) const
+//{
+//	assert(ok());
+//	Point size = what.pSize();
+//	float nlines = float(size.x)/borders.w;
+//
+//	if (nlines - float(int(nlines)) > 0.01) nlines += 1;//for tail
+//
+//	int num_lines = int (nlines);
+//	if (num_lines < 1) num_lines = 1;
+//	return size.y*num_lines;
+//}
 //--------------------------------------------------------------------------------------------------
 int Lines_view::Draw_tolerable_line (Canvas* screen, const Stringc& text, int offset, Rect brd) const
 {
@@ -539,7 +555,8 @@ void Lines_view::draw (Canvas* c) const
 
 	for (list <Stringc>::const_reverse_iterator i = data.rbegin(); i != data.rend(); ++i)
 	{
-		height += getHeight (*i);
+		if (i->empty()) continue;
+		height += i->getFullHeight (borders.w);
 		if (height > borders.h)
 		{
 			start_y = height - borders.h;
@@ -555,6 +572,7 @@ void Lines_view::draw (Canvas* c) const
 	int total_height = -start_y;
 	for (list <Stringc>::const_iterator i = start; i != data.end(); ++i)
 	{
+		if (i->empty()) continue;
 		cur_height = drawText (c, *i, total_height);
 		if (cur_height == 0 && i->size() > 0) return;//!!! Error
 		total_height += cur_height;
@@ -575,6 +593,19 @@ void Stringc::updateLab()
 {
 	lab = font.createLabel (c_str(), false);
 	lab_upd = true;
+}
+//--------------------------------------------------------------------------------------------------
+int Stringc::getFullHeight (Uint16 max_width) const
+{
+	assert(ok());
+	Point size = pSize();
+	float nlines = float(size.x)/max_width;
+
+	if (nlines - float(int(nlines)) > 0.01) nlines += 1;//for tail
+
+	int num_lines = int (nlines);
+	if (num_lines < 1) num_lines = 1;
+	return size.y*num_lines;
 }
 //--------------------------------------------------------------------------------------------------
 Stringc Stringc::getBorderedSubstring (int width, int offset) const

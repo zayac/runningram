@@ -647,7 +647,7 @@ int Limited::impo (char* buffer, int size)
 //--------------------------------------------------------------------------------------------------
 int Body::signDataLen() const
 {
-	return Limited::signDataLen() + sizeof(rev_mass) + 
+	return Limited::signDataLen() + sizeof (rev_mass) +
 			sizeof(vel) + sizeof (force) + sizeof (resist);
 }
 //--------------------------------------------------------------------------------------------------

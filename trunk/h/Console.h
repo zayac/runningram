@@ -22,7 +22,7 @@
 using std::string;
 using std::list;
 
-class lua_State;
+class Interpreter;
 
 const int cursor_width = 2;
 const int blink_interval = 300;
@@ -36,6 +36,7 @@ class Stringc :public string
 
 public:
 	Stringc ():lab_upd(false){}//:font(){}
+	Stringc (const Stringc& orig) :string (orig), font(orig.font), lab_upd(false) {}
 	Stringc (const string& str, Fontc f) :string(str), font(f), lab_upd(false) {}
 
 	Stringc& operator = (const string& str) {string::operator =(str); lab_upd = false;}
@@ -60,6 +61,8 @@ public:
 	inline int height (int offset = 0) const {return pSize (offset).y;}
 	inline int width (int offset = 0) const {return pSize (offset).x;}
 
+	int getFullHeight (Uint16 max_width) const;
+
 	Stringc getBorderedSubstring (int width, int offset = 0) const;
 			//There are more problems width russian characters
 
@@ -74,18 +77,20 @@ class Lines_view
 	Fontc& font;
 	Rect borders;
 	list <Stringc> data;
+	bool last_string_captured;
 
 	int drawText (Canvas* screen, const Stringc&, int start_offset) const;
 	int Draw_tolerable_line (Canvas* screen, const Stringc&, int offset, Rect brd) const;
 		
-
-	int getHeight (const Stringc& what) const;
-
 public:
-	Lines_view (Fontc& f, int max_lines_) :font(f), max_lines (max_lines_){}
+	Lines_view (Fontc& f, int max_lines_) :font(f), max_lines (max_lines_),
+											last_string_captured (false) {}
 
 	void init (const Rect&);
 	void pushString (const string&);
+	void captureLastString();
+	void changeCurrentString (const string&);//current string will be on the
+	void releaseCurrentString();	//last position while unless it released
 	void draw (Canvas* c) const;
 
 	bool ok() const;
@@ -139,27 +144,25 @@ class Console
 	Lines_view history;
 	Line_edit input;
 
-	lua_State* vm;
+	Interpreter* interp;
 
 	class Initialaiser;
 	Initialaiser* parser;
+
+	void eval(string str);
 
 public:
 	Console();
 	virtual ~Console();
 
 	Serializator* getParser();
-	bool init (Graphic_subsystem* c);
+	bool init (Graphic_subsystem* c, Interpreter* interp);
 	void cleanup();
 	void onEnterString (const string& str);
 	void pushString (const string&);
-	int output (lua_State* ls);
 
 	void operate (Kbd_event ev);
 	void draw (Graphic_subsystem* c) const;
-
-	void registerProcessor (string name, int (*fun)(lua_State*));
-	void registerProcessor (string name, Arg_Functor <int, lua_State*>*);
 
 	void turn();
 
