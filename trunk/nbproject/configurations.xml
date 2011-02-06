@@ -60,6 +60,8 @@
           <in>msock.h</in>
         </df>
       </df>
+      <df name="GNU-i386-Linux">
+      </df>
       <df name="h">
         <df name="ecl">
           <df name="gc" kind="SOURCE_LOGICAL_FOLDER">
@@ -106,9 +108,11 @@
         <in>Explosion.h</in>
         <in>Fontc.h</in>
         <in>Functor.h</in>
+        <in>GUI.h</in>
         <in>Game_manager.h</in>
         <in>Graphic_subsystem.h</in>
         <in>Identified.h</in>
+        <in>Interpreter.h</in>
         <in>IsometricField.h</in>
         <in>Key_event.h</in>
         <in>Mouse_event.h</in>
@@ -143,8 +147,10 @@
         <in>Exception.cpp</in>
         <in>Explosion.cpp</in>
         <in>Fontc.cpp</in>
+        <in>GUI.cpp</in>
         <in>Game_manager.cpp</in>
         <in>Graphic_subsystem.cpp</in>
+        <in>Interpreter.cpp</in>
         <in>Key_event.cpp</in>
         <in>Orient.cpp</in>
         <in>Player_manager.cpp</in>

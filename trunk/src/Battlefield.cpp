@@ -126,27 +126,29 @@ void Battlefield::draw (Graphic_subsystem* c) const
 {
     assert(ok());
     Canvas *canv = c->getScreen ();
-
     drawField(canv);
-    
-	for(int i = 1; i <= size.x; i++)
-	{
-		canv->line(Canvas::transform(Point (0, (i - 1) * csize)), Canvas::transform(Point (0, i * csize)), Color (0, 255, 0));
-		canv->line(Canvas::transform(Point (csize * size.x, (i - 1) * csize)), Canvas::transform(Point (csize * size.x, i * csize)), Color (0, 255, 0));
-		canv->line(Canvas::transform(Point ((i - 1) * csize, 0)), Canvas::transform(Point (i * csize, 0)), Color (0, 255, 0));
-		canv->line(Canvas::transform(Point ((i - 1) * csize, csize * size.y)), Canvas::transform(Point (i * csize, csize * size.y)), Color(0, 255, 0));
-	}
-	
+}
+//--------------------------------------------------------------------------------------------------
+void Battlefield::drawMinimap (Graphic_subsystem* c, Rect pos) const
+{
+    assert(ok());
+    Canvas *canv = c->getScreen ();
+	Point cellrect = (pos.getSize()|size);
+
+	Point savedPos = canv->getPos();
+	canv->setPos(-pos.getLUp());
+
 	for (int i = 0; i < size.x; ++i)
         for (int j = 0; j < size.y; ++j)
         {
 			Color bkg =  Color (80, 80, 80);
 			if (isRough (i, j)) bkg = Color (100, 50, 50);
-			if (isSand (i, j))  bkg = Color (100, 100, 50);
+			if (isSand (i, j))  bkg = Color (160, 160, 50);
 
-            Draw_cage (canv, Point(i, j)*csize, Point (csize, csize),
+            Draw_cage (canv, Point(i, j)&cellrect, cellrect,
                             Point (CELL(i, j) - '0' + 1, CELL(i, j) - '0' + 1), bkg);
         }
+	canv->setPos(savedPos);
 }
 //--------------------------------------------------------------------------------------------------
 bool Battlefield::init()

@@ -22,10 +22,12 @@
 #include "Player_manager.h"
 #include "Effects_manager.h"
 #include "Interpreter.h"
+#include "GUI.h"
 
 #include "Client.h"
 #include "Server.h"
 #include "Button.h"
+#include "GUI.h"
 
 enum NET_STATUS
 {
@@ -37,7 +39,7 @@ enum NET_STATUS
 Game_manager::Game_manager (int argc, char *argv[])
 : pic (new Graphic_subsystem), sense (new Eventman), look (new Camera), ground (new Battlefield),
 cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman)
-, eff (new Effects_manager), interp(Interpreter::create(argc, argv))
+, eff (new Effects_manager), interp(Interpreter::create(argc, argv)), gui(new GUI)
 {
 	co = new Output_cerr;
 	Exception::setOutput (co);
@@ -61,6 +63,7 @@ Game_manager::~Game_manager ()
 	if (pic)		delete pic;		pic = 0;
 	if (co)			delete co;		co = 0;
 	if (eff)		delete eff;		eff = 0;
+	if (gui)		delete gui;		gui = 0;
 	if (interp)		Interpreter::destroy(); interp = 0;
 
 	if (serv)		delete serv;	serv = 0;
@@ -83,13 +86,14 @@ bool Game_manager::init (int argc, char *argv[])
 		File_loader fl ((char*) "./settings.cfg");
 		fl.readSector (&gen);
 		result = result && pic->init (); //Graphic subsystem must be initialaised previously
-		pic->splashScreen ();
+		pic->splashScreen();
 
 		gen.addParam (cmd->getParser ());
 		gen.addParam (ground->getParser ());
 		gen.addParam (models->getParcer ());
 		gen.addParam (players->getParser ());
 		gen.addParam (eff->getParser ());
+		gen.addParam (gui->getParser ());
 		fl.readSector (&gen);
 
 		models->setAM (cars);
@@ -114,6 +118,7 @@ bool Game_manager::init (int argc, char *argv[])
 		result = result && cmd	 ->init (pic, interp);
 		result = result && ground->init ();
 		result = result && eff	 ->init ();
+		result = result && gui	 ->init ();
 
 		interp->regFun("quit", new Arg_Method<void, void, Game_manager> (this, &Game_manager::stop));
 		btl.init(sense);
@@ -184,6 +189,7 @@ bool Game_manager::mainLoop ()
 
 	    fillZbuffer ();
 	    ground->draw (pic);
+		gui->drawMiniMap(ground, cars, pic);
 	    cmd->draw (pic);
 
 	    eff->expDraw (pic->getScreen ());

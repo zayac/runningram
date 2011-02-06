@@ -25,6 +25,11 @@ public:
     MapTile** _tiles;
 
 public:
+	virtual bool beforeRead (ifstream &file)
+	{
+		fric = 0;
+	}
+
     virtual bool afterRead (ifstream &file)
     {
         Sprite * sp = NULL;
@@ -35,7 +40,7 @@ public:
 
 
         bool sand = false;
-        if ((-aboutnull > (fric - 1) || (fric - 1) > aboutnull) && !rough)
+        if ((-aboutnull > fric || fric > aboutnull) && !rough)
             sand = true;
 
         _tiles[sym] = new MapTile(sp, rough, fric, sand);
@@ -44,7 +49,7 @@ public:
         return true;
     }
 
-    Field_set (string name, MapTile** tiles) : Sectionp (name, '='), _tiles(tiles)
+    Field_set (string name, MapTile** tiles) : Sectionp (name, '='), _tiles(tiles), fric(0)
 	{
 		addParam (new St_loader<unsigned char> ("character", &sym));
 		addParam (new St_loader<string> ("texture", &texture_fname));

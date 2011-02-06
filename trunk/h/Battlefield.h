@@ -50,9 +50,11 @@ public:
 	Serializator* getParser();
 
 	void draw (Graphic_subsystem* c) const;
+	void drawMinimap (Graphic_subsystem* c, Rect pos) const;
 
 	const unsigned char* getCells() const {return cells;}
 	Point getSize() const {return size;}
+	Point getFullSize() const {return size*csize;}
 	int getCellSize() const {return csize;}
 	Point getNextResPoint();
 

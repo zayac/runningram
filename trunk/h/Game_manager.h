@@ -20,6 +20,7 @@ class Console_output;
 class Effects_manager;
 class Button;
 class Interpreter;
+class GUI;
 
 class Server;
 class Client;
@@ -43,6 +44,7 @@ class Game_manager
 	Server* serv;
 	Client* clie;
 	Interpreter* interp;
+	GUI* gui;
 
 	Std_output_err* co;//for Exceptions
 
