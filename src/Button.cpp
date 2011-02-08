@@ -7,7 +7,7 @@
 
 #include "Button.h"
 #include "Game_manager.h"
-#include "Eventman.h"
+#include "GUEventman.h"
 
 Button::Button() :on_press(0)
 {
@@ -18,7 +18,7 @@ Button::~Button ()
 	if (on_press) delete on_press;
 }
 //--------------------------------------------------------------------------------------------------
-void Button::init (Eventman* eve, Functor* on_pr, Point pos)
+void Button::init (GUEventman* eve, Functor* on_pr, Point pos)
 {
 	on_press = on_pr;
 	rest_img = Canvas ("textures/blueexit.jpg");
@@ -52,7 +52,7 @@ void Button::draw (Canvas c) const
 	}
 }
 //--------------------------------------------------------------------------------------------------
-void Btnlist::init (Eventman* eve)
+void Btnlist::init (GUEventman* eve)
 {
 	sense = eve;
 }

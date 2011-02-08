@@ -10,7 +10,7 @@
 #include "Carman.h"
 #include "Car.h"
 #include "Battlefield.h"
-#include "Eventman.h"
+#include "GUEventman.h"
 #include "Control.h"
 
 // <editor-fold defaultstate="collapsed" desc="From file initialaiser">
@@ -52,7 +52,7 @@ protected:
 	}
 public:
 
-	Initialaiser (const char* name, Player_manager* chost, Eventman* sense)
+	Initialaiser (const char* name, Player_manager* chost, GUEventman* sense)
 	: Sectionp (name, '='), host (chost), is_target (false)
 	{
 		ks.evman = sense;
@@ -71,7 +71,7 @@ public:
 	}
 }; // </editor-fold>
 
-Player_manager::Player_manager (Eventman* sense)
+Player_manager::Player_manager (GUEventman* sense)
 :Transmitted ('P', false), parser (new Initialaiser ("[Player]", this, sense)) { }
 
 Player_manager::~Player_manager ()

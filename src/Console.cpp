@@ -27,20 +27,30 @@ class Console::Initialaiser : public Sectionp
 {
 	Color fg_col;
 	Color bg_col;
-	Fontc* target;
+	Color cmd_col;
+	Color resp_col;
+	Fontc* printFont;
+	Fontc* cmdFont;
+	Fontc* respFont;
 protected:
 	bool afterRead (ifstream&)
 	{
-		target->setFG (fg_col);
-		target->setBG (bg_col);
+		printFont->setFG (fg_col);
+		printFont->setBG (bg_col);
+		*cmdFont = *printFont;
+		cmdFont->setFG(cmd_col);
+		*respFont = *printFont;
+		respFont->setFG(resp_col);
 	}
 public:
 
-	Initialaiser (string name, Fontc* tgt_font)
-	: Sectionp (name, '='), target (tgt_font)
+	Initialaiser (string name, Fontc* cmd_font, Fontc* print_font, Fontc* resp_font)
+	: Sectionp (name, '='), printFont (print_font), cmdFont(cmd_font), respFont(resp_font)
 	{
-		addParam (new Fontc::Initialiser ("font", tgt_font));
+		addParam (new Fontc::Initialiser ("font", print_font));
 		addParam (new Color::Initialiser ("color", &fg_col));
+		addParam (new Color::Initialiser ("commands color", &cmd_col));
+		addParam (new Color::Initialiser ("response color", &resp_col));
 		addParam (new Color::Initialiser ("bgcolor", &bg_col));
 	}
 
@@ -66,7 +76,9 @@ Console* interface = 0;
 //	return 0;
 //}
 
-Console::Console () :parser (new Initialaiser ("[Console]", &font)), history (font, 50), input (font)//, vm(lua_open())
+Console::Console ()
+:parser (new Initialaiser ("[Console]", &cmdFont, &printFont, &respFont)),
+		history (printFont, 50), input (cmdFont)
 {
     //!!! only for debug
     interface = this;
@@ -90,13 +102,13 @@ bool Console::init (Graphic_subsystem* c, Interpreter* interp_)
 //	font.Set_fg (Color(10, 200, 20));
 //	font.Set_bg (Color(10, 20, 20));
 
-	Rect borders = c->getScreen()->getClipRect ();
+	Rect borders = c->getScreen()->getClipRect();
 	borders.h = 210;
 	history.init (borders);
 	history.pushString ("You are welcome!");
 
 	borders.y = borders.h;
-	borders.h = font.height ();
+	borders.h = printFont.height();
 	input.init  (borders, new Arg_Method<void, const string&, Console> (this, &Console::onEnterString), "You:>");
 
 	
@@ -146,19 +158,17 @@ void Console::turn()
 void Console::onEnterString (const string& str)
 {
 	assert(ok());
-	history.pushString (input.getGreeting() + str);
-	eval(str);
-	history.releaseCurrentString();
-	history.pushString("");
-	history.captureLastString();
+	history.pushString (Stringc (input.getGreeting() + str, cmdFont));
+	string response = eval (str);
+	history.pushString (Stringc (response, respFont));
 }
 //--------------------------------------------------------------------------------------------------
-void Console::eval(string str)
+string Console::eval (string str)
 {
 	if (str[0] != '(')
-		interp->eval("(" + str + ")");
-	else
-		interp->eval(str);
+		return interp->toString (interp->eval ("(" + str + ")"));
+
+	return interp->toString (interp->eval (str));
 }
 //--------------------------------------------------------------------------------------------------
 void Console::pushString (const string& str)
@@ -169,7 +179,7 @@ void Console::pushString (const string& str)
 //--------------------------------------------------------------------------------------------------
 bool Console::ok() const
 {
-	return font.ok() && history.ok() && input.ok() && parser != 0;
+	return printFont.ok() && history.ok() && input.ok() && parser != 0;
 }
 //--------------------------------------------------------------------------------------------------
 void Line_edit::init (const Rect& brd, Arg_Functor <void, const string&> *enter, string gr)
@@ -461,46 +471,57 @@ void Lines_view::init (const Rect& brd)
 {
 	assert(ok());
 	borders = brd;
-	last_string_captured = false;
+	last_string_is_captured = false;
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::pushString (const string &what)
+void Lines_view::pushString (Stringc what)
 {
 	assert(ok());
-	if (last_string_captured)
+	if (last_string_is_captured)
 	{
 		Stringc current = data.back();
 		data.pop_back();
-		data.push_back (Stringc (what, font));
+		data.push_back (what);//don't understand why, but if i give a
 		data.push_back (current);
 	}
 	else
-		data.push_back (Stringc (what, font));
+		data.push_back (what);// reference, i receive an error, connected with font
 	if (data.size () > max_lines)
 		data.erase (data.begin());
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::captureLastString()
+void Lines_view::pushString (const string& str)
 {
-	last_string_captured = true;
+	pushString (Stringc (str, fontDefault));
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::changeCurrentString (const string& what)
+void Lines_view::captureLastString()
+{
+	last_string_is_captured = true;
+}
+//--------------------------------------------------------------------------------------------------
+void Lines_view::changeCurrentStringc (Stringc what)
 {
 	assert(ok());
 	data.pop_back();
-	data.push_back (Stringc (what, font));
-	last_string_captured = true;
+	data.push_back (Stringc(what));
+	last_string_is_captured = true;
+}
+//--------------------------------------------------------------------------------------------------
+void Lines_view::changeCurrentString (const string& str)
+{
+	changeCurrentStringc (Stringc (str, fontDefault));
 }
 //--------------------------------------------------------------------------------------------------
 void Lines_view::releaseCurrentString()
 {
-	last_string_captured = false;
+	last_string_is_captured = false;
 }
 //--------------------------------------------------------------------------------------------------
 void Lines_view::copyCurrentString()
 {
-	pushString (data.back());
+	if (data.size() > 0)
+		pushString (data.back());
 }
 //--------------------------------------------------------------------------------------------------
 //int Lines_view::getHeight (const Stringc& what) const
@@ -535,7 +556,7 @@ int Lines_view::drawText (Canvas* screen, const Stringc& text, int start_offset)
 	Rect brd = borders;
 	brd.cutTop (start_offset);
 
-	int fheight = font.height ();
+	int fheight = fontDefault.height ();
 
 	while (symbols_showed < total_symbols)
 	{
@@ -574,7 +595,7 @@ void Lines_view::draw (Canvas* c) const
 	}
 	if (lesser) start_y = height - borders.h;//snuggle bottom
 
-	c->fillRect (borders, font.bg);
+	c->fillRect (borders, fontDefault.bg);
 	int cur_height = 0;
 	int total_height = -start_y;
 	for (list <Stringc>::const_iterator i = start; i != data.end(); ++i)
@@ -593,7 +614,7 @@ bool Lines_view::ok() const
 	for (list<Stringc>::const_iterator i = data.begin(); i != data.end(); ++i)
 		if (!i->Ok ()) return false;
 #endif
-	return font.ok();
+	return fontDefault.ok();
 }
 //--------------------------------------------------------------------------------------------------
 void Stringc::updateLab()

@@ -27,35 +27,21 @@ public:
 public:
 	explicit UniValue (SomeValueType* val_):val(val_) {};
 	UniValue (const UniValue& orig);
-	static UniValue byBool (bool orig);
-	static UniValue byChar (char orig);
-	static UniValue byInt (int orig);
-	static UniValue byFloat (float orig);
-	static UniValue byDouble (double orig);
-	static UniValue byStr (const char* orig);
-	static UniValue byString (const string& orig);
+
+	template <typename T>
+	static inline UniValue by (T orig);
 
 	void append (UniValue& what);
 	UniValue head();		//Makes sense only in list case
 	UniValue tail();
-
-	bool getBool();
-	char getChar();
-	int getInt();
-	float getFloat();
-	double getDouble();
-	char* getStr();
-	string getString();
+	template <typename T>
+	T get();
 
 	bool isNull();
-
-	bool isBool();
-	bool isChar();
-	bool isInt();
-	bool isFloat();
-	bool isDouble();
-	bool isString();
 	bool isList();
+
+	template <typename T>
+	bool is(); 
 };
 
 typedef Arg_Functor<UniValue, UniValue, void> Hundler;
@@ -110,12 +96,85 @@ public:
 
 	void regOutput (Arg_Functor<void, const string&> *preview, Functor* flush);
 
+	UniValue funcall (const string& name, const UniValue& arg);
     UniValue eval (const string& code);
     UniValue evalNprint (const string& code);
     UniValue unsafeEval (char* code);//It can break the whole program
+	string toString (const UniValue& val);
 	bool loadFile (char* fname);
 
 };
 
-#endif	/* INTERPRETER_H */
+template <typename T>
+class InfoTrans :public Informer
+{
+	Arg_Functor<T, void, void>* fun;
+	public:
+		InfoTrans (Arg_Functor<T, void, void>* _fun)
+		:fun(_fun) {}
+		virtual UniValue operator ()()
+		{
+			if (!fun) return UniValue::by ((*fun)());
+			return UniValue::by (false);
+		}
+		virtual ~InfoTrans()
+		{ if (!fun) delete fun;};
+};
 
+template <typename RET, typename TAK>
+class HundTrans :public Hundler
+{
+	Arg_Functor<RET, TAK, void>* fun;
+	public:
+		HundTrans (Arg_Functor<RET, TAK, void>* _fun)
+		:fun(_fun) {}
+		virtual UniValue operator ()(UniValue val)
+		{
+			if (!fun) return UniValue::by ((*fun)(val.get<TAK>()));
+			return UniValue::by (false);
+		}
+		virtual ~HundTrans()
+		{ if (!fun) delete fun;};
+};
+
+class InformerS :public Informer
+{
+	string exec;
+public:
+	InformerS (const string& exe) :exec (exe) {}
+	virtual UniValue operator ()()
+	{ return Interpreter::getInstance()->eval(exec); }
+};
+
+class HundlerS :public Hundler
+{
+	string exec;
+public:
+	HundlerS (const string& exe) :exec (exe) {}
+	virtual UniValue operator ()(UniValue arg)
+	{ return Interpreter::getInstance()->funcall(exec, arg); }
+};
+
+template <typename T>
+class InfoTranS: public Arg_Functor<T, void, void>
+{
+	string exec;
+public:
+	InfoTranS (const string& exe) :exec (exe) {}
+	virtual T operator ()()
+	{ return Interpreter::getInstance()->eval(exec).get<T>(); }
+};
+
+template <typename RET, typename TAK>
+class HundlTranS: public Arg_Functor<RET, TAK, void>
+{
+	string exec;
+public:
+	HundlTranS (const string& exe) :exec (exe) {}
+	virtual RET operator ()(TAK val)
+	{ UniValue ret = Interpreter::getInstance()->
+				funcall (exec, UniValue::by<TAK>(val));//TODO optimize this.
+	return ret.get<RET>();}
+};
+
+#endif	/* INTERPRETER_H */

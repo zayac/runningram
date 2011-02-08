@@ -5,19 +5,19 @@
  * Created on January 7, 2010, 10:27 PM
  */
 #include <SDL/SDL.h>
-#include "Eventman.h"
+#include "GUEventman.h"
 #include "Console.h"
 
-Eventman::Eventman () :stop_ (false)
+GUEventman::GUEventman () :stop_ (false)
 {
 }
 //--------------------------------------------------------------------------------------------------
-Eventman::~Eventman ()
+GUEventman::~GUEventman ()
 {
 	clearActions();
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::applayEvent (const Kbd_event& ev)
+void GUEventman::applayEvent (const Kbd_event& ev)
 {
 	assert(ok());
 	for (koiter i = kbd_opers.begin(); i != kbd_opers.end(); ++i)
@@ -27,7 +27,7 @@ void Eventman::applayEvent (const Kbd_event& ev)
 			(*i->fun)();
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::applayEvent (const Mouse_btn& ev)
+void GUEventman::applayEvent (const Mouse_btn& ev)
 {
 	assert(ok());
 	for (mbiter i = mbtn_acts.begin(); i != mbtn_acts.end(); ++i)
@@ -35,7 +35,7 @@ void Eventman::applayEvent (const Mouse_btn& ev)
 			(*i->mh)(ev.pos);
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::applayEvent (const Mouse_move& ev)
+void GUEventman::applayEvent (const Mouse_move& ev)
 {
 	assert(ok());
 	for (mmiter i = mmove_acts.begin(); i != mmove_acts.end(); ++i)
@@ -46,7 +46,7 @@ void Eventman::applayEvent (const Mouse_move& ev)
 			(*i->mh)(ev.pos);
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::clearActions()
+void GUEventman::clearActions()
 {
 	assert(ok());
 	for (kiter i = kbdacts.begin(); i != kbdacts.end(); ++i)
@@ -64,34 +64,34 @@ void Eventman::clearActions()
 	mmove_acts.clear ();//!!! not debugged
 }
 //--------------------------------------------------------------------------------------------------
-int Eventman::registerKeyAction (Functor* fun, Uint8 event, Key_id key, Key_mode mod)
+int GUEventman::registerKeyAction (Functor* fun, Uint8 event, Key_id key, Key_mode mod)
 {
 	assert(ok());
 	kbdacts.push_back (Kbd_action (fun, key, event, mod));
 	return kbdacts.rbegin()->id();
 }
 //--------------------------------------------------------------------------------------------------
-int Eventman::registerMouseAction (Mevent_handler* fun, Mouse_move_event mme)
+int GUEventman::registerMouseAction (Mevent_handler* fun, Mouse_move_event mme)
 {
 	assert(ok());
 	mmove_acts.push_back (Mmove_action (fun, mme));
 	return mmove_acts.rbegin()->id();
 }
 //--------------------------------------------------------------------------------------------------
-int Eventman::registerMouseAction (Mevent_handler* fun, Mouse_btn_event mbe)
+int GUEventman::registerMouseAction (Mevent_handler* fun, Mouse_btn_event mbe)
 {
 	assert(ok());
 	mbtn_acts.push_back (Mbtn_action (fun, mbe));
 	return mbtn_acts.rbegin()->id();
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::registerKeyOper (Kbd_oper op)
+void GUEventman::registerKeyOper (Kbd_oper op)
 {
 	assert(ok());
 	kbd_opers.push_back (op);
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::unregisterKeyAction (int id)
+void GUEventman::unregisterKeyAction (int id)
 {
 	for (kiter i = kbdacts.begin(); i != kbdacts.end(); ++i)
 		if (i->id() == id)
@@ -102,7 +102,7 @@ void Eventman::unregisterKeyAction (int id)
 		}
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::unregisterMouseMoveAction (int id)
+void GUEventman::unregisterMouseMoveAction (int id)
 {
 	for (mmiter i = mmove_acts.begin(); i != mmove_acts.end(); ++i)
 		if (i->id() == id)
@@ -113,7 +113,7 @@ void Eventman::unregisterMouseMoveAction (int id)
 		}
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::unregisterMouseBtnAction (int id)
+void GUEventman::unregisterMouseBtnAction (int id)
 {
 	for (mbiter i = mbtn_acts.begin(); i != mbtn_acts.end(); ++i)
 		if (i->id() == id)
@@ -124,7 +124,7 @@ void Eventman::unregisterMouseBtnAction (int id)
 		}
 }
 //--------------------------------------------------------------------------------------------------
-void Eventman::acts()
+void GUEventman::acts()
 {
 	assert(ok());
     SDL_Event event;
@@ -155,14 +155,14 @@ void Eventman::acts()
 	}
 }
 //--------------------------------------------------------------------------------------------------
-bool Eventman::stopped() const
+bool GUEventman::stopped() const
 {
 	assert(ok());
 	return stop_;
 }
 //--------------------------------------------------------------------------------------------------
 inline bool Boolly (bool arg) {return arg == true || arg == false;}
-bool Eventman::ok() const
+bool GUEventman::ok() const
 {
 	for (list <Kbd_action>::const_iterator i = kbdacts.begin(); i != kbdacts.end(); ++i)
 		if (!i->ok()) return false;

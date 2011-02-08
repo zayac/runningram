@@ -59,7 +59,168 @@ cl_object eclCallCHundler (cl_object fnum, cl_object arg)
 //-----------------------------------------------------------
 
 
+//+++++++++++++UniValue+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//--------------------------------------------------------------------------------------------------
+UniValue::UniValue (const UniValue& orig) :val (orig.val) {}
+//--------------------------------------------------------------------------------------------------
+UniValue uniValueByLObj(cl_object obj)
+{
+	return UniValue((SomeValueType*)obj);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+UniValue UniValue::by<bool> (bool orig)
+{
+	return UniValue((SomeValueType*)ecl_make_bool(orig));
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+UniValue UniValue::by<char> (char orig)
+{
+	return UniValue((SomeValueType*)CODE_CHAR(orig));
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+UniValue UniValue::by<int> (int orig)
+{
+	return UniValue((SomeValueType*)ecl_make_integer(orig));
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+UniValue UniValue::by<float> (float orig)
+{
+	return UniValue((SomeValueType*)ecl_make_singlefloat(orig));
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+UniValue UniValue::by<double> (double orig)
+{
+	return UniValue((SomeValueType*)ecl_make_doublefloat(orig));
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+UniValue UniValue::by<const char*> (const char* orig)
+{
+	return UniValue((SomeValueType*)make_constant_base_string(orig));
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+UniValue UniValue::by<string> (string /*const string&*/ orig)
+{
+	return UniValue((SomeValueType*)make_constant_base_string(orig.c_str()));
+}
+//--------------------------------------------------------------------------------------------------
+void UniValue::append (UniValue& what)
+{
+	val = (SomeValueType*)CONS((cl_object)what.val, (cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+UniValue UniValue::head()
+{
+	return UniValue((SomeValueType*)cl_car((cl_object)val));
+}
+//--------------------------------------------------------------------------------------------------
+UniValue UniValue::tail()
+{
+	return UniValue((SomeValueType*)cl_cdr((cl_object)val));
+}
+//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
+template <>
+bool UniValue::get<bool>()
+{
+	return ecl_to_bool((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+char UniValue::get<char>()
+{
+	return ecl_to_char((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+int UniValue::get<int>()
+{
+	return ecl_to_int((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+float UniValue::get<float>()
+{
+	return ecl_to_float((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+double UniValue::get<double>()
+{
+	return ecl_to_double((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+char* UniValue::get<char*>()
+{
+	return ecl_base_string_pointer_safe((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+string UniValue::get<string>()
+{
+	return ecl_base_string_pointer_safe((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
+bool UniValue::isNull()
+{
+	return (cl_object)val == Cnil;
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+bool UniValue::is<bool>()
+{
+	return (cl_object)val == Ct || (cl_object)val == Cnil;
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+bool UniValue::is<char>()
+{
+	return CHARACTERP((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+bool UniValue::is<int>()
+{
+	return FIXNUMP((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+bool UniValue::is<float>()
+{
+	return ECL_SINGLE_FLOAT_P((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+bool UniValue::is<double>()
+{
+	return ECL_DOUBLE_FLOAT_P((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+bool UniValue::is<string>()
+{
+	return ECL_STRINGP((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+bool UniValue::isList()
+{
+	return LISTP((cl_object)val);
+}
+//--------------------------------------------------------------------------------------------------
+//=====================UniValue=====================================================================
 
+
+
+
+//++++++++++++++++++++Interpreter+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Interpreter* Interpreter::create (int argc, char *argv[])
 {
     if (instance) return 0;//You can create only one instance
@@ -120,14 +281,11 @@ Interpreter::~Interpreter()
     cl_shutdown();
 }
 //--------------------------------------------------------------------------------------------------
-#include <iostream>
 UniValue Interpreter::Printer::charWriteHundler (UniValue c)
 {
-	std::cout <<"c:" <<c.getChar() <<std::endl;
-
 	if (preview) (*preview)(accumulator);
-	if (c.getChar() == '\n') charFlushInformer();
-	else accumulator += c.getChar();
+	if (c.get<char>() == '\n') charFlushInformer();
+	else accumulator += c.get<char>();
 	return c;
 }
 //--------------------------------------------------------------------------------------------------
@@ -136,7 +294,7 @@ UniValue Interpreter::Printer::charFlushInformer()
 	if (flush && !accumulator.empty()) (*flush)();
 	if (preview && !accumulator.empty()) (*preview)(string());
 	accumulator.clear();
-	return UniValue::byBool(false);
+	return UniValue::by<bool>(false);
 }
 //--------------------------------------------------------------------------------------------------
 void Interpreter::defun (const string& name, const char* dispatcher,
@@ -204,6 +362,15 @@ void Interpreter::regOutput (Arg_Functor<void, const string&> *preview, Functor*
 
 }
 //--------------------------------------------------------------------------------------------------
+UniValue Interpreter::funcall (const string& name, const UniValue& arg)
+{
+	cl_object rezult = eclEvalForm(CONS(c_string_to_object(name.c_str()),
+								   CONS((cl_object)arg.getVal(), Cnil)));
+    if (eclIsError (rezult))
+		return uniValueByLObj(Cnil);//evaluating error
+    return uniValueByLObj(rezult);
+}
+//--------------------------------------------------------------------------------------------------
 UniValue Interpreter::eval (const string& code)
 {
     cl_object form = eclSafeStringToObj (code);
@@ -237,145 +404,16 @@ UniValue Interpreter::unsafeEval (char* code)
     return uniValueByLObj(rezult);
 }
 //--------------------------------------------------------------------------------------------------
+string Interpreter::toString (const UniValue& val)
+{
+	UniValue rez = funcall("princ-to-string", val);
+	return rez.get<string>();
+}
+//--------------------------------------------------------------------------------------------------
 bool Interpreter::loadFile (char* fname)
 {
     return eclIsError (eclEvalForm(CONS(c_string_to_object("load"),
 								   CONS(make_constant_base_string(fname), Cnil))));
 }
 //--------------------------------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------------------------------
-UniValue::UniValue (const UniValue& orig) :val (orig.val) {}
-//--------------------------------------------------------------------------------------------------
-UniValue uniValueByLObj(cl_object obj)
-{
-	return UniValue((SomeValueType*)obj);
-}
-//--------------------------------------------------------------------------------------------------
-UniValue UniValue::byBool (bool orig)
-{
-	return UniValue((SomeValueType*)ecl_make_bool(orig));
-}
-//--------------------------------------------------------------------------------------------------
-UniValue UniValue::byChar (char orig)
-{
-	return UniValue((SomeValueType*)CODE_CHAR(orig));
-}
-//--------------------------------------------------------------------------------------------------
-UniValue UniValue::byInt (int orig)
-{
-	return UniValue((SomeValueType*)ecl_make_integer(orig));
-}
-//--------------------------------------------------------------------------------------------------
-UniValue UniValue::byFloat (float orig)
-{
-	return UniValue((SomeValueType*)ecl_make_singlefloat(orig));
-}
-//--------------------------------------------------------------------------------------------------
-UniValue UniValue::byDouble (double orig)
-{
-	return UniValue((SomeValueType*)ecl_make_doublefloat(orig));
-}
-//--------------------------------------------------------------------------------------------------
-UniValue UniValue::byStr (const char* orig)
-{
-	return UniValue((SomeValueType*)make_constant_base_string(orig));
-}
-//--------------------------------------------------------------------------------------------------
-UniValue UniValue::byString (const string& orig)
-{
-	return UniValue((SomeValueType*)make_constant_base_string(orig.c_str()));
-}
-//--------------------------------------------------------------------------------------------------
-void UniValue::append (UniValue& what)
-{
-	val = (SomeValueType*)CONS((cl_object)what.val, (cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-UniValue UniValue::head()
-{
-	return UniValue((SomeValueType*)cl_car((cl_object)val));
-}
-//--------------------------------------------------------------------------------------------------
-UniValue UniValue::tail()
-{
-	return UniValue((SomeValueType*)cl_cdr((cl_object)val));
-}
-//--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-bool UniValue::getBool()
-{
-	return ecl_to_bool((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-char UniValue::getChar()
-{
-	return ecl_to_char((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-int UniValue::getInt()
-{
-	return ecl_to_int((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-float UniValue::getFloat()
-{
-	return ecl_to_float((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-double UniValue::getDouble()
-{
-	return ecl_to_double((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-char* UniValue::getStr()
-{
-	return ecl_base_string_pointer_safe((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-string UniValue::getString()
-{
-	return ecl_base_string_pointer_safe((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-bool UniValue::isNull()
-{
-	return (cl_object)val == Cnil;
-}
-//--------------------------------------------------------------------------------------------------
-bool UniValue::isBool()
-{
-	return (cl_object)val == Ct || (cl_object)val == Cnil;
-}
-//--------------------------------------------------------------------------------------------------
-bool UniValue::isChar()
-{
-	return CHARACTERP((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-bool UniValue::isInt()
-{
-	return FIXNUMP((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-bool UniValue::isFloat()
-{
-	return ECL_SINGLE_FLOAT_P((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-bool UniValue::isDouble()
-{
-	return ECL_DOUBLE_FLOAT_P((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-bool UniValue::isString()
-{
-	return ECL_STRINGP((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
-bool UniValue::isList()
-{
-	return LISTP((cl_object)val);
-}
-//--------------------------------------------------------------------------------------------------
+//====================Interpreter===================================================================

@@ -25,7 +25,7 @@ class Car;
 class Canvas;
 class Fontc;
 class Battlefield;
-class Eventman;
+class GUEventman;
 class Control;
 
 struct Player :public Identified<Player>
@@ -69,7 +69,7 @@ class Player_manager :public list<Player*>, public Transmitted
 	void erase (iterator start, iterator finish);
 
 public:
-	Player_manager (Eventman* sense);
+	Player_manager (GUEventman* sense);
 	virtual ~Player_manager();
 
 	Serializator* getParser();
