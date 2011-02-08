@@ -10,7 +10,7 @@
 
 #include "Canvas.h"
 #include "Functor.h"
-class Eventman;
+class GUEventman;
 
 class Button
 {
@@ -31,7 +31,7 @@ public:
 	Button ();
 	virtual ~Button();
 	
-	void init (Eventman* eve, Functor* on_press, Point pos);
+	void init (GUEventman* eve, Functor* on_press, Point pos);
 
 	void onAway (Point p)
 	{
@@ -56,10 +56,10 @@ public:
 
 class Btnlist :private list <Button>
 {
-	Eventman* sense;
+	GUEventman* sense;
 
 public:
-	void init (Eventman* eve);
+	void init (GUEventman* eve);
 	void addButton (Functor* on_press, Point pos);
 
 	void draw (Canvas c) const;

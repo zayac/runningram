@@ -5,8 +5,8 @@
  * Created on January 7, 2010, 10:27 PM
  */
 
-#ifndef _EVENTMAN_H
-#define	_EVENTMAN_H
+#ifndef _GUEventman_H
+#define	_GUEventman_H
 
 #include <list>
 #include <assert.h>
@@ -20,7 +20,7 @@ using std::list;
 typedef Arg_Functor <void, Point> Mevent_handler;
 typedef Arg_Functor <void, Kbd_event>* Kbd_oper;
 
-class Eventman
+class GUEventman
 {
 	struct Kbd_action :public Identified <Kbd_action>
 	{
@@ -74,8 +74,8 @@ class Eventman
 	void clearActions();
 
 public:
-	Eventman();
-	virtual ~Eventman();
+	GUEventman();
+	virtual ~GUEventman();
 
 	int registerKeyAction (Functor* fun, Uint8 event, Key_id key, Key_mode mod = KM_NONE);
 	int registerMouseAction (Mevent_handler* fun, Mouse_move_event mme);
@@ -93,5 +93,5 @@ public:
 	bool ok() const;
 };
 
-#endif	/* _EVENTMAN_H */
+#endif	/* _GUEventman_H */
 

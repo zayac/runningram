@@ -14,7 +14,7 @@
 #include "Key_event.h"
 
 class Car;
-class Eventman;
+class GUEventman;
 
 enum Button_cases
 {
@@ -67,7 +67,7 @@ struct Key_storage :public Control
 	Key_id left;
 	Key_id right;
 
-	Eventman* evman;
+	GUEventman* evman;
 
 	void setControl (Car*);
 	Key_storage* createCopy();

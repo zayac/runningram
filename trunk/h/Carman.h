@@ -18,7 +18,7 @@
 using std::list;
 using std::string;
 
-class Eventman;
+class GUEventman;
 class Car;
 class Player;
 class Key_storage;

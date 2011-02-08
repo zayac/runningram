@@ -10,7 +10,7 @@
 #include "Console.h"
 #include "Game_manager.h"
 #include "Graphic_subsystem.h"
-#include "Eventman.h"
+#include "GUEventman.h"
 #include "initparser.h"
 #include "Camera.h"
 #include "Functor.h"
@@ -37,7 +37,7 @@ enum NET_STATUS
 } nstate = net0;
 
 Game_manager::Game_manager (int argc, char *argv[])
-: pic (new Graphic_subsystem), sense (new Eventman), look (new Camera), ground (new Battlefield),
+: pic (new Graphic_subsystem), sense (new GUEventman), look (new Camera), ground (new Battlefield),
 cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman)
 , eff (new Effects_manager), interp(Interpreter::create(argc, argv)), gui(new GUI)
 {
@@ -125,9 +125,9 @@ bool Game_manager::init (int argc, char *argv[])
 
 		interp->regFun("quit", new Arg_Method<void, void, Game_manager> (this, &Game_manager::stop));
 		btl.init(sense);
-		btl.addButton (new Arg_Method <void, void, Eventman> (sense, &Eventman::stop), Point(500, 433));
-		btl.addButton (new Arg_Method <void, void, Eventman> (sense, &Eventman::stop), Point(400, 433));
-		btl.addButton (new Arg_Method <void, void, Eventman> (sense, &Eventman::stop), Point(300, 433));
+		btl.addButton (new Arg_Method <void, void, GUEventman> (sense, &GUEventman::stop), Point(500, 433));
+		btl.addButton (new Arg_Method <void, void, GUEventman> (sense, &GUEventman::stop), Point(400, 433));
+		btl.addButton (new Arg_Method <void, void, GUEventman> (sense, &GUEventman::stop), Point(300, 433));
 
 		//                result = result && eff->Init();
 		//		if (co) delete co;

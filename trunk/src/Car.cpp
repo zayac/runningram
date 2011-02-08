@@ -9,7 +9,6 @@
 #include "Orient.h"
 #include "Canvas.h"
 #include "Sprite.h"
-#include "Eventman.h"
 #include "Player_manager.h"
 #include "Effects_manager.h"
 
@@ -88,7 +87,7 @@ void Car::draw (Canvas* c)
 		float angle = PI + inRange(primary_o.getAngle() + PI/4);//PI/4 for isometric projection
 		pic->draw (c, Canvas::transform (pos.to<int>()), angle/PI/2);
 	}
-//	else	//if car hasn't sprite, it will be drawn schematically
+	else	//if car hasn't sprite, it will be drawn schematically
 	{
 		drawSchematic(c, Vector2f(1, 1), true);
 	}

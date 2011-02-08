@@ -9,7 +9,7 @@
 #define	_GAME_MANAGER_H
 
 class Graphic_subsystem;
-class Eventman;
+class GUEventman;
 class Camera;
 class Battlefield;
 class Console;
@@ -33,7 +33,7 @@ class Client;
 class Game_manager
 {
 	Graphic_subsystem *pic;
-	Eventman *sense;
+	GUEventman *sense;
 	Camera* look;
 	Battlefield* ground;
 	Console* cmd;

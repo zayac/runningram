@@ -74,11 +74,11 @@
         <in>Control.h</in>
         <in>Drawable.h</in>
         <in>Effects_manager.h</in>
-        <in>Eventman.h</in>
         <in>Exception.h</in>
         <in>Explosion.h</in>
         <in>Fontc.h</in>
         <in>Functor.h</in>
+        <in>GUEventman.h</in>
         <in>GUI.h</in>
         <in>Game_manager.h</in>
         <in>Graphic_subsystem.h</in>
@@ -102,7 +102,6 @@
         <in>mstdint.h</in>
       </df>
       <df name="scripts">
-        <in>map_default.lisp</in>
       </df>
       <df name="src">
         <in>Activeman.cpp</in>
@@ -117,10 +116,10 @@
         <in>Console.cpp</in>
         <in>Control.cpp</in>
         <in>Effects_manager.cpp</in>
-        <in>Eventman.cpp</in>
         <in>Exception.cpp</in>
         <in>Explosion.cpp</in>
         <in>Fontc.cpp</in>
+        <in>GUEventman.cpp</in>
         <in>GUI.cpp</in>
         <in>Game_manager.cpp</in>
         <in>Graphic_subsystem.cpp</in>

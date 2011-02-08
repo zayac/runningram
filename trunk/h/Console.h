@@ -35,7 +35,7 @@ class Stringc :public string
 	bool lab_upd;
 
 public:
-	Stringc ():lab_upd (false){}//:font(){}
+	Stringc ():lab_upd (false){}
 	Stringc (const Stringc& orig) :string (orig), font(orig.font), lab_upd(false) {}
 	Stringc (const string& str, Fontc f) :string(str), font(f), lab_upd(false) {}
 
@@ -74,23 +74,25 @@ public:
 class Lines_view
 {
 	int max_lines;
-	Fontc& font;
+	Fontc& fontDefault;
 	Rect borders;
 	list <Stringc> data;
-	bool last_string_captured;
+	bool last_string_is_captured;
 
 	int drawText (Canvas* screen, const Stringc&, int start_offset) const;
 	int Draw_tolerable_line (Canvas* screen, const Stringc&, int offset, Rect brd) const;
 		
 public:
-	Lines_view (Fontc& f, int max_lines_) :font(f), max_lines (max_lines_),
-											last_string_captured (false) {}
+	Lines_view (Fontc& f, int max_lines_) :fontDefault(f), max_lines (max_lines_),
+											last_string_is_captured (false) {}
 
 	void init (const Rect&);
-	void pushString (const string&);
-	void captureLastString();
-	void changeCurrentString (const string&);//current string will be on the
-	void releaseCurrentString();	//last position while unless it released
+	void pushString (Stringc);
+	void pushString (const string& str);
+	void captureLastString();				 //current string will be on the
+	void changeCurrentStringc (Stringc);//last position while unless it released
+	void changeCurrentString (const string& str);
+	void releaseCurrentString();			
 	void copyCurrentString();
 	void draw (Canvas* c) const;
 
@@ -141,7 +143,9 @@ public:
 class Console
 {
 	bool enabled;
-	Fontc font;
+	Fontc cmdFont;
+	Fontc printFont;
+	Fontc respFont;
 	Lines_view history;
 	Line_edit input;
 
@@ -150,7 +154,7 @@ class Console
 	class Initialaiser;
 	Initialaiser* parser;
 
-	void eval(string str);
+	string eval(string str);
 
 public:
 	Console();
