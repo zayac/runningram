@@ -2,65 +2,7 @@
 <configurationDescriptor version="69">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <df name="runningram" root=".">
-      <df name="ecl">
-        <df name="ecl-11.1.1" kind="SOURCE_LOGICAL_FOLDER">
-          <df name=".svn">
-            <df name="prop-base" kind="SOURCE_LOGICAL_FOLDER">
-              <in>asdf.fas.svn-base</in>
-              <in>bytecmp.fas.svn-base</in>
-              <in>cmp.fas.svn-base</in>
-              <in>defsystem.fas.svn-base</in>
-              <in>dpp.svn-base</in>
-              <in>ecl_min.svn-base</in>
-              <in>profile.fas.svn-base</in>
-              <in>rt.fas.svn-base</in>
-              <in>sb-bsd-sockets.fas.svn-base</in>
-              <in>serve-event.fas.svn-base</in>
-              <in>sockets.fas.svn-base</in>
-              <in>ucd.dat.svn-base</in>
-            </df>
-            <df name="props" kind="SOURCE_LOGICAL_FOLDER">
-            </df>
-            <df name="text-base" kind="SOURCE_LOGICAL_FOLDER">
-              <in>Copyright.svn-base</in>
-              <in>LGPL.svn-base</in>
-              <in>TAGS.svn-base</in>
-              <in>asdf.fas.svn-base</in>
-              <in>build-stamp.svn-base</in>
-              <in>bytecmp.asd.svn-base</in>
-              <in>bytecmp.fas.svn-base</in>
-              <in>cmp.asd.svn-base</in>
-              <in>cmp.fas.svn-base</in>
-              <in>defsystem.asd.svn-base</in>
-              <in>defsystem.fas.svn-base</in>
-              <in>dpp.svn-base</in>
-              <in>ecl_min.svn-base</in>
-              <in>help.doc.svn-base</in>
-              <in>prebuilt-asdf.asd.svn-base</in>
-              <in>profile.asd.svn-base</in>
-              <in>profile.fas.svn-base</in>
-              <in>rt.asd.svn-base</in>
-              <in>rt.fas.svn-base</in>
-              <in>sb-bsd-sockets.asd.svn-base</in>
-              <in>sb-bsd-sockets.fas.svn-base</in>
-              <in>serve-event.asd.svn-base</in>
-              <in>serve-event.fas.svn-base</in>
-              <in>sockets.asd.svn-base</in>
-              <in>sockets.fas.svn-base</in>
-              <in>ucd.dat.svn-base</in>
-            </df>
-            <df name="tmp" kind="SOURCE_LOGICAL_FOLDER">
-              <df name="prop-base" kind="SOURCE_LOGICAL_FOLDER">
-              </df>
-              <df name="props" kind="SOURCE_LOGICAL_FOLDER">
-              </df>
-              <df name="text-base" kind="SOURCE_LOGICAL_FOLDER">
-              </df>
-            </df>
-            <in>all-wcprops</in>
-            <in>entries</in>
-          </df>
-        </df>
+      <df name="bin">
       </df>
       <df name="for_net_tests">
         <df name="sock" kind="SOURCE_LOGICAL_FOLDER">
@@ -189,6 +131,10 @@
         <in>initparser.h</in>
         <in>mstdint.h</in>
       </df>
+      <df name="lib">
+        <df name="ecl-11.1.1">
+        </df>
+      </df>
       <df name="scripts">
       </df>
       <df name="src">
@@ -224,6 +170,8 @@
       </df>
       <df name="textures">
       </df>
+      <df name="trash">
+      </df>
       <in>main.cpp</in>
       <in>simpp.c</in>
     </df>
@@ -244,6 +192,7 @@
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>GNU|GNU</compilerSet>
+        <fortranRequired>false</fortranRequired>
         <platform>2</platform>
       </toolsSet>
       <makefileType>

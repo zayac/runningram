@@ -7,8 +7,8 @@
 ## This file is generated automatically, but edited manually by abovementioned.
 ##
 
-INTERPRETER_FLAGS = -Dlinux -Wl,--rpath,./ecl/
-INTERPRETER_LIBS = -L./ecl/ -lecl -ldl -lm
+INTERPRETER_FLAGS = -Dlinux -Wl,--rpath,./lib/
+INTERPRETER_LIBS = -L./lib/ -lecl -ldl -lm
 LINK_LIBS = $(INTERPRETER_LIBS) `sdl-config --cflags --libs` -lSDL_ttf -lSDL_gfx -lSDL_image
 
 #### Compiler and tool definitions shared by all build targets #####
@@ -31,8 +31,9 @@ CPPFLAGS = -Ih $(INTERPRETER_FLAGS)
 OBJS =  $(patsubst src/%.cpp,$(TARGETDIR)/%.o,$(wildcard src/*.cpp)) \
         $(patsubst %.cpp, $(TARGETDIR)/%.o, $(wildcard *.cpp))
 
-DEPLIBS =
+DEPLIBS = lib/libecl.so
 LDLIBS = -lm $(LINK_LIBS)
+PROJ_PATH := $(PWD)
 
 
 install: runningram
@@ -47,6 +48,17 @@ run: install
 # Link
 $(TARGETDIR)/runningram: $(TARGETDIR) $(OBJS) $(DEPLIBS)
 	$(LINK.cc) $(CCFLAGS) $(CPPFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+lib/libecl.so: ecl.tar.gz
+	echo "================== building the ECL library ======================"
+	rm ecl -rf
+	tar -xzf ecl.tar.gz
+	cd ecl && ./configure '--prefix=$(PROJ_PATH)' '--includedir=$(PROJ_PATH)/h' \
+		'--libdir=$(PROJ_PATH)/lib' '--datarootdir=$(PROJ_PATH)/trash' \
+		'--localstatedir=$(PROJ_PATH)/trash' -with-cxx
+	cd ecl && $(MAKE)
+	cd ecl && $(MAKE) install
+	rm trash/* -r
 
 
 # Compile source files into .o files
