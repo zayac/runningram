@@ -20,6 +20,7 @@
     </conf>
     <conf name="client" type="0">
       <gizmo_options version="3">
+        <configurationname>GizmoSimple</configurationname>
       </gizmo_options>
       <runprofile version="6">
         <args>127.0.0.1</args>
@@ -34,6 +35,7 @@
     </conf>
     <conf name="server" type="0">
       <gizmo_options version="3">
+        <configurationname>GizmoSimple</configurationname>
       </gizmo_options>
       <runprofile version="6">
         <args>1</args>
