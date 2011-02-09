@@ -4,6 +4,62 @@
     <df name="runningram" root=".">
       <df name="ecl">
         <df name="ecl-11.1.1" kind="SOURCE_LOGICAL_FOLDER">
+          <df name=".svn">
+            <df name="prop-base" kind="SOURCE_LOGICAL_FOLDER">
+              <in>asdf.fas.svn-base</in>
+              <in>bytecmp.fas.svn-base</in>
+              <in>cmp.fas.svn-base</in>
+              <in>defsystem.fas.svn-base</in>
+              <in>dpp.svn-base</in>
+              <in>ecl_min.svn-base</in>
+              <in>profile.fas.svn-base</in>
+              <in>rt.fas.svn-base</in>
+              <in>sb-bsd-sockets.fas.svn-base</in>
+              <in>serve-event.fas.svn-base</in>
+              <in>sockets.fas.svn-base</in>
+              <in>ucd.dat.svn-base</in>
+            </df>
+            <df name="props" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="text-base" kind="SOURCE_LOGICAL_FOLDER">
+              <in>Copyright.svn-base</in>
+              <in>LGPL.svn-base</in>
+              <in>TAGS.svn-base</in>
+              <in>asdf.fas.svn-base</in>
+              <in>build-stamp.svn-base</in>
+              <in>bytecmp.asd.svn-base</in>
+              <in>bytecmp.fas.svn-base</in>
+              <in>cmp.asd.svn-base</in>
+              <in>cmp.fas.svn-base</in>
+              <in>defsystem.asd.svn-base</in>
+              <in>defsystem.fas.svn-base</in>
+              <in>dpp.svn-base</in>
+              <in>ecl_min.svn-base</in>
+              <in>help.doc.svn-base</in>
+              <in>prebuilt-asdf.asd.svn-base</in>
+              <in>profile.asd.svn-base</in>
+              <in>profile.fas.svn-base</in>
+              <in>rt.asd.svn-base</in>
+              <in>rt.fas.svn-base</in>
+              <in>sb-bsd-sockets.asd.svn-base</in>
+              <in>sb-bsd-sockets.fas.svn-base</in>
+              <in>serve-event.asd.svn-base</in>
+              <in>serve-event.fas.svn-base</in>
+              <in>sockets.asd.svn-base</in>
+              <in>sockets.fas.svn-base</in>
+              <in>ucd.dat.svn-base</in>
+            </df>
+            <df name="tmp" kind="SOURCE_LOGICAL_FOLDER">
+              <df name="prop-base" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="props" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="text-base" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+            </df>
+            <in>all-wcprops</in>
+            <in>entries</in>
+          </df>
         </df>
       </df>
       <df name="for_net_tests">
@@ -37,7 +93,37 @@
         <df name="ecl">
           <df name="gc" kind="SOURCE_LOGICAL_FOLDER">
             <df name="private" kind="SOURCE_LOGICAL_FOLDER">
+              <in>cord_pos.h</in>
+              <in>darwin_semaphore.h</in>
+              <in>darwin_stop_world.h</in>
+              <in>dbg_mlc.h</in>
+              <in>gc_hdrs.h</in>
+              <in>gc_locks.h</in>
+              <in>gc_pmark.h</in>
+              <in>gc_priv.h</in>
+              <in>gcconfig.h</in>
+              <in>msvc_dbg.h</in>
+              <in>pthread_stop_world.h</in>
+              <in>pthread_support.h</in>
+              <in>specific.h</in>
+              <in>thread_local_alloc.h</in>
             </df>
+            <in>gc.h</in>
+            <in>gc_allocator.h</in>
+            <in>gc_amiga_redirects.h</in>
+            <in>gc_backptr.h</in>
+            <in>gc_config_macros.h</in>
+            <in>gc_cpp.h</in>
+            <in>gc_gcj.h</in>
+            <in>gc_inline.h</in>
+            <in>gc_mark.h</in>
+            <in>gc_pthread_redirects.h</in>
+            <in>gc_tiny_fl.h</in>
+            <in>gc_typed.h</in>
+            <in>gc_version.h</in>
+            <in>leak_detector.h</in>
+            <in>new_gc_alloc.h</in>
+            <in>weakpointer.h</in>
           </df>
           <df name="impl" kind="SOURCE_LOGICAL_FOLDER">
             <in>math_dispatch.h</in>
@@ -54,6 +140,8 @@
           <in>ecl.h</in>
           <in>eval.h</in>
           <in>external.h</in>
+          <in>gc.h</in>
+          <in>gc_cpp.h</in>
           <in>internal.h</in>
           <in>number.h</in>
           <in>object.h</in>
