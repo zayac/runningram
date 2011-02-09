@@ -74,13 +74,13 @@
 #endif
 
 /* Use Boehm's garbage collector					*/
-#define GBC_BOEHM 1
+#define GBC_BOEHM 0
 #ifdef GBC_BOEHM
 # ifdef ECL_THREADS
 #   define GC_THREADS		/* For >= 7.2 */
 # endif
 # define ECL_DYNAMIC_VV
-# include "gc.h"
+# include "ecl/gc/gc.h"
 /* GC >= 7.2 defines these macros to intercept thread functions, but
  * in doing so it breaks mingw. */
 # if defined(ECL_MS_WINDOWS_HOST) && defined(_beginthreadex)
