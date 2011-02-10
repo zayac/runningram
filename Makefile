@@ -63,7 +63,7 @@ lib/libecl.so: ecl.tar.gz
 
 # Compile source files into .o files
 
-$(TARGETDIR)/%.o: %.cpp
+$(TARGETDIR)/%.o: %.cpp $(DEPLIBS)
 	$(COMPILE.cc) -MMD $(CCFLAGS) $(CPPFLAGS) $< -o $@
 
 include $(wildcard $(TARGETDIR)/*.d)

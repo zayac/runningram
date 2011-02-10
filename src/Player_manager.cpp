@@ -49,6 +49,7 @@ protected:
 	virtual bool beforeRead (ifstream &file)
 	{
 	    is_target = false;
+		return true;
 	}
 public:
 

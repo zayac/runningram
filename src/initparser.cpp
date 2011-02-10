@@ -82,6 +82,7 @@ void Sectionp::addParam (Serializator* p)
 	_props.push_back (p);
 }
 //-----------------------------------------------------------------------------------------------
+#include <iostream>
 bool Sectionp::readFrag (ifstream &file)
 {
 	string cur_name;
@@ -101,6 +102,7 @@ bool Sectionp::readFrag (ifstream &file)
 			{
 				No_spaces_begin (file);
 				(*i)->unserialise (file);
+				std::cout <<cn << " loaded" <<std::endl;
 				is_it_my_param = true;
 				break;
 			}
