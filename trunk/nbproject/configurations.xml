@@ -4,6 +4,372 @@
     <df name="runningram" root=".">
       <df name="bin">
       </df>
+      <df name="ecl">
+        <df name="contrib" kind="SOURCE_LOGICAL_FOLDER">
+          <df name="asdf" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="bytecmp" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="cl-simd" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="defsystem" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="encodings" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="profile" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="rt" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="serve-event" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="sockets" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="unicode" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="win32" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+        </df>
+        <df name="examples" kind="SOURCE_LOGICAL_FOLDER">
+          <df name="asdf" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="cmdline" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="ffi" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="threads" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="import" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="import_win32" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+        </df>
+        <df name="msvc" kind="SOURCE_LOGICAL_FOLDER">
+          <df name="c" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="ffi" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="numbers" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="printer" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="reader" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="threads" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <df name="doc" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="ecl" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="gc" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="gmp" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="build.vc8" kind="SOURCE_LOGICAL_FOLDER">
+              <df name="dll_gmp_amd64" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="dll_gmp_gc" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="dll_gmp_p0" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="dll_gmp_p3" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="dll_gmp_p4" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="dll_mpfr" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="gen-bases" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="gen-fac_ui" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="gen-fib" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="gen-psqr" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="lib_gmp" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="lib_gmp_amd64" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="lib_gmp_gc" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="lib_gmp_p0" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="lib_gmp_p3" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="lib_gmp_p4" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="lib_gmpxx" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="lib_mpfr" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+            </df>
+            <df name="mpn" kind="SOURCE_LOGICAL_FOLDER">
+              <df name="amd64i" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="generic" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="x86i" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="p6" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                  <df name="p3mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+                <df name="pentium4" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                  <df name="sse2" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+              </df>
+            </df>
+            <df name="mpz" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <df name="util" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+        </df>
+        <df name="src" kind="SOURCE_LOGICAL_FOLDER">
+          <df name="c" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="arch" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="ffi" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="numbers" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="printer" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="reader" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="threads" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <df name="clos" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="clx" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="debug" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="demo" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="manual" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <df name="cmp" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="doc" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="gc" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="cord" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="doc" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="include" kind="SOURCE_LOGICAL_FOLDER">
+              <df name="extra" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="private" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+            </df>
+            <df name="libatomic_ops-1.2" kind="SOURCE_LOGICAL_FOLDER">
+              <df name="doc" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="src" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="atomic_ops" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="sysdeps" kind="SOURCE_LOGICAL_FOLDER">
+                    <df name="armcc" kind="SOURCE_LOGICAL_FOLDER">
+                    </df>
+                    <df name="gcc" kind="SOURCE_LOGICAL_FOLDER">
+                    </df>
+                    <df name="hpc" kind="SOURCE_LOGICAL_FOLDER">
+                    </df>
+                    <df name="ibmc" kind="SOURCE_LOGICAL_FOLDER">
+                    </df>
+                    <df name="icc" kind="SOURCE_LOGICAL_FOLDER">
+                    </df>
+                    <df name="msftc" kind="SOURCE_LOGICAL_FOLDER">
+                    </df>
+                    <df name="sunc" kind="SOURCE_LOGICAL_FOLDER">
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+            <df name="Mac_files" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <df name="gmp" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="cxx" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="demos" kind="SOURCE_LOGICAL_FOLDER">
+              <df name="calc" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="expr" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="perl" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="GMP" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+            </df>
+            <df name="doc" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="macos" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="mpbsd" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="mpf" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="mpn" kind="SOURCE_LOGICAL_FOLDER">
+              <df name="a29k" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="alpha" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="ev5" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+                <df name="ev6" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="nails" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+                <df name="ev67" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+              <df name="arm" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="clipper" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="cray" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="cfp" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+                <df name="ieee" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+              <df name="generic" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="i960" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="ia64" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="lisp" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="m68k" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="mc68020" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+              <df name="m88k" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="mc88110" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+              <df name="mips32" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="mips64" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="ns32k" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="pa32" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="hppa1_1" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="pa7100" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+                <df name="hppa2_0" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+              <df name="pa64" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="power" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="powerpc32" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="750" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+                <df name="vmx" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+              <df name="powerpc64" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="mode32" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+                <df name="mode64" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+                <df name="vmx" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+              <df name="pyr" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="s390" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="sh" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="sh2" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+              <df name="sparc32" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="v8" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="supersparc" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+                <df name="v9" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+              </df>
+              <df name="sparc64" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="thumb" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="vax" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="x86" kind="SOURCE_LOGICAL_FOLDER">
+                <df name="fat" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+                <df name="i486" kind="SOURCE_LOGICAL_FOLDER">
+                </df>
+                <df name="k6" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="k62mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                  <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+                <df name="k7" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+                <df name="p6" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                  <df name="p3mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+                <df name="pentium" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+                <df name="pentium4" kind="SOURCE_LOGICAL_FOLDER">
+                  <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                  <df name="sse2" kind="SOURCE_LOGICAL_FOLDER">
+                  </df>
+                </df>
+              </df>
+              <df name="x86_64" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="z8000" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+              <df name="z8000x" kind="SOURCE_LOGICAL_FOLDER">
+              </df>
+            </df>
+            <df name="mpq" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="mpz" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="printf" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="scanf" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+            <df name="tune" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <df name="h" kind="SOURCE_LOGICAL_FOLDER">
+            <df name="impl" kind="SOURCE_LOGICAL_FOLDER">
+            </df>
+          </df>
+          <df name="lsp" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="new-cmp" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+          <df name="util" kind="SOURCE_LOGICAL_FOLDER">
+          </df>
+        </df>
+      </df>
       <df name="for_net_tests">
         <df name="sock" kind="SOURCE_LOGICAL_FOLDER">
           <df name="bin" kind="SOURCE_LOGICAL_FOLDER">
@@ -35,61 +401,10 @@
         <df name="ecl">
           <df name="gc" kind="SOURCE_LOGICAL_FOLDER">
             <df name="private" kind="SOURCE_LOGICAL_FOLDER">
-              <in>cord_pos.h</in>
-              <in>darwin_semaphore.h</in>
-              <in>darwin_stop_world.h</in>
-              <in>dbg_mlc.h</in>
-              <in>gc_hdrs.h</in>
-              <in>gc_locks.h</in>
-              <in>gc_pmark.h</in>
-              <in>gc_priv.h</in>
-              <in>gcconfig.h</in>
-              <in>msvc_dbg.h</in>
-              <in>pthread_stop_world.h</in>
-              <in>pthread_support.h</in>
-              <in>specific.h</in>
-              <in>thread_local_alloc.h</in>
             </df>
-            <in>gc.h</in>
-            <in>gc_allocator.h</in>
-            <in>gc_amiga_redirects.h</in>
-            <in>gc_backptr.h</in>
-            <in>gc_config_macros.h</in>
-            <in>gc_cpp.h</in>
-            <in>gc_gcj.h</in>
-            <in>gc_inline.h</in>
-            <in>gc_mark.h</in>
-            <in>gc_pthread_redirects.h</in>
-            <in>gc_tiny_fl.h</in>
-            <in>gc_typed.h</in>
-            <in>gc_version.h</in>
-            <in>leak_detector.h</in>
-            <in>new_gc_alloc.h</in>
-            <in>weakpointer.h</in>
           </df>
           <df name="impl" kind="SOURCE_LOGICAL_FOLDER">
-            <in>math_dispatch.h</in>
-            <in>math_dispatch2.h</in>
-            <in>math_fenv.h</in>
-            <in>math_fenv_msvc.h</in>
           </df>
-          <in>bytecodes.h</in>
-          <in>config.h</in>
-          <in>configpre.h</in>
-          <in>cs.h</in>
-          <in>ecl-cmp.h</in>
-          <in>ecl-inl.h</in>
-          <in>ecl.h</in>
-          <in>eval.h</in>
-          <in>external.h</in>
-          <in>gc.h</in>
-          <in>gc_cpp.h</in>
-          <in>internal.h</in>
-          <in>number.h</in>
-          <in>object.h</in>
-          <in>page.h</in>
-          <in>stacks.h</in>
-          <in>unify.h</in>
         </df>
         <in>Activeman.h</in>
         <in>Battlefield.h</in>
@@ -132,8 +447,6 @@
         <in>mstdint.h</in>
       </df>
       <df name="lib">
-        <df name="ecl-11.1.1">
-        </df>
       </df>
       <df name="scripts">
       </df>
