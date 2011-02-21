@@ -34,6 +34,10 @@ public:
 	inline Point getLUp() const {return Point (x, y);}
 	inline Point getSize() const {return Point (w, h);}
 	inline Point getRDown() const {return getLUp() + getSize();}
+	inline int getLeft() const {return x;}
+	inline int getUp() const {return y;}
+	inline int getRight() const {return x + w;}
+	inline int getDown() const {return y + h;}
 
 	inline bool contain (Point p) const
 	{

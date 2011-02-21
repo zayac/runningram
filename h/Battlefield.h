@@ -67,6 +67,15 @@ public:
 	bool isSand (int x, int y) const;
 	float friction (int x, int y) const;
 
+	inline bool isRough (Point cell) const
+	{return isRough (cell.x, cell.y);}
+	inline bool noRoad (Point cell) const
+	{return noRoad (cell.x, cell.y);}
+	inline bool isSand (Point cell) const
+	{return isSand (cell.x, cell.y);}
+	inline float friction (Point cell) const
+	{return friction (cell.x, cell.y);}
+
 	void cleanZbuffer();
 	void addDrawable (int z, Drawable* d);
 //	void adsorb (vector<Drawable*>*)
