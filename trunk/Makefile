@@ -58,7 +58,9 @@ lib/libecl.so: ecl.tar.gz
 		'--localstatedir=$(PROJ_PATH)/trash' -with-cxx
 	cd ecl && $(MAKE)
 	cd ecl && $(MAKE) install
+	cd ecl && $(MAKE) clean
 	rm trash/* -r
+	echo "================== ECL build finished ======================"
 
 
 # Compile source files into .o files
@@ -73,6 +75,7 @@ clean: clean_obj
 	rm -f runningram $(TARGETDIR)/runningram
 	$(CCADMIN)
 	rm -rf $(TARGETDIR)
+	cd ecl && $(MAKE) clean
 
 clean_obj:
 	rm -f $(OBJS)

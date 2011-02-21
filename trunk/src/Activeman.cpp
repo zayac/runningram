@@ -35,7 +35,104 @@ void Activeman::draw (Canvas* c)
 		(**i).draw (c);
 }
 //--------------------------------------------------------------------------------------------------
-#define CELL(a, b) cells[size.x*(b) + a]
+inline bool isNotInLimits (const Point& lup, const Point& rdown, const Point & full_size)
+{
+	return lup.x > full_size.x || lup.y > full_size.y ||
+		   rdown.x < 0		   || rdown.y < 0;
+}
+//-----------------
+inline bool isNotInBox (const int left, const int right, const int up, const int down,
+						const Point& box_lup, const Point& box_rdown)
+{
+	return  right < box_lup.x || left > box_rdown.x ||
+			up > box_rdown.y  || down < box_lup.y;
+}
+//-----------------
+inline void forceInLimits (Point* lup, Point* rdown, const Point & full_size)
+{
+	if (lup->x < 0)					lup->x = 0;
+	if (lup->y < 0)					lup->y = 0;
+	if (rdown->y > full_size.y)	rdown->y = full_size.y;
+	if (rdown->x > full_size.x)	rdown->x = full_size.x;
+}
+//-----------------
+inline Rect expandAllianceHorisontal (const Battlefield* bf, const Point& size, const int csize,
+									  const int left_lim, const int right_lim, const int center_y,
+									  const Point start, int left, int right, int up, int down)
+{
+	int nx = start.x;
+	const int y = start.y;
+
+	while (++nx < size.x && right <= right_lim) // go right
+	{
+		if (bf->isRough (nx, y)||
+			(center_y < up && y - 1 >=  0 && bf->isRough(nx, y-1)) ||	//for gnawed corners
+			(center_y > down && y + 1 < size.y && bf->isRough(nx, y+1)))
+			right += csize;			//cell alliance expansion
+		else break;
+	}
+	nx = start.x;
+	while (--nx >= 0 && left > left_lim) // go left
+	{
+		if (bf->isRough (nx, y) && bf->isRough (nx, y)||
+			(center_y < up && y - 1 >=  0 && bf->isRough (nx, y-1)) ||	//for gnawed corners
+			(center_y > down && y + 1 < size.y && bf->isRough (nx, y+1)))
+			left -= csize;			//cell alliance expansion
+		else break;
+	}
+	return Rect (left, up, right - left, down - up);
+}
+//-----------------
+inline Rect expandAllianceVertical (const Battlefield* bf, const Point& size, const int csize,
+									  const int up_lim, const int down_lim, const int center_x,
+									  const Point start, int left, int right, int up, int down)
+{
+	int ny = start.y;
+	const int x = start.x;
+	while (++ny < size.y && down <= down_lim) //go down
+	{
+		if (bf->isRough (x, ny)||
+			(center_x < left && x - 1 >=  0 && bf->isRough (x-1, ny)) ||	//for gnawed corners
+			(center_x > right && x + 1 < size.x && bf->isRough (x+1, ny)))
+			down += csize;			//cell alliance expansion
+		else break;
+	}
+	ny = start.y;
+	while (--ny >= 0 && up > up_lim) //go up
+	{
+		if (bf->isRough (x, ny) ||
+			(center_x < left && x - 1 >=  0 && bf->isRough (x-1, ny)) ||	//for gnawed corners
+			(center_x > right && x + 1 < size.x && bf->isRough (x+1, ny)))
+			up -= csize;			//cell alliance expansion
+		else break;
+	}
+	return Rect (left, up, right - left, down - up);
+}
+//-----------------
+inline void processRoughWalls (const Battlefield* bf, Active* cur,
+							   const Point& lup, const Point& pos, const Point& rdown,
+							   const Point cell, int left, int right, int up, int down)
+{
+	const Point size = bf->getSize();
+	const int csize = bf->getCellSize();
+	Rect wall;
+
+	if (pos.y < up || pos.y > down)//we need a horisontal full lenght wall
+		wall = expandAllianceHorisontal	(bf, size, csize,
+										 lup.x, rdown.x, pos.y,
+										 cell, left, right, up, down);
+	else						   // we need a vertical full lenght wall
+		wall = expandAllianceVertical (bf, size, csize,
+									   lup.y, lup.y, pos.x,
+									   cell, left, right, up, down);
+
+	if (globb) globb->fillRect (wall, Color (200, 0, 124));//!!! deprecated
+	cur->collisBrd (wall, bf->friction (cell.x, cell.y));
+}
+//-----------------
+#define FOR_ALL_CELLS_IN(cell, limits) \
+		for (cell.x = limits.getLeft(); cell.x < limits.getRight(); ++cell.x)\
+			for (cell.y = limits.getUp(); cell.y < limits.getDown(); ++cell.y)
 //--------------------------------------------------------------------------------------------------
 void Activeman::collisBrd (const Battlefield* bf)
 {
@@ -43,10 +140,10 @@ void Activeman::collisBrd (const Battlefield* bf)
 	assert (bf != 0 && bf->ok());
 
 	const unsigned char* cells = bf->getCells ();
-	Point size = bf->getSize ();
-	int csize = bf->getCellSize();
+	const Point size = bf->getSize();
+	const int csize = bf->getCellSize();
 
-	Point full_size = Point (csize*size.x, csize*size.y);
+	Point full_size = csize*Point (size.x, size.y);
 
 	for (iterator i = begin(); i != end(); ++i)
 	{
@@ -55,87 +152,37 @@ void Activeman::collisBrd (const Battlefield* bf)
 		Point lup = pos - Point (r, r);
 		Point rdown = pos + Point (r, r);
 
-		if (lup.x > full_size.x) continue;
-		if (lup.y > full_size.y) continue;
-		if (rdown.x < 0) continue;
-		if (rdown.y < 0) continue;
+		if (isNotInLimits (lup, rdown, full_size)) continue;
 
-		if (lup.x < 0) lup.x = 0;
-		if (lup.y < 0) lup.y = 0;
-		if (rdown.y > full_size.y) rdown.y = full_size.y;
-		if (rdown.x > full_size.x) rdown.x = full_size.x;
+		forceInLimits (&lup, &rdown, full_size);
 
-		for (int x = 0; x < size.x; ++x)
-			for (int y = 0; y < size.y; ++y)
-				if (bf->noRoad(x, y))
-				{
-					int left = x*csize;
-					int right = left + csize;//cell borders
-					int up = y*csize;
-					int down = up + csize;
+		Point lup_limit = lup/csize - Point (1, 1);
+		Point rdown_limit = rdown/csize + Point (1, 1);
+		forceInLimits (&lup_limit, &rdown_limit, size);
 
-					if (right < lup.x) continue;
-					if (left > rdown.x) continue;//necessary conditions
-					if (up > rdown.y) continue;
-					if (down < lup.y) continue;
+//		Rect brds(Point(), size);//TODO: optimize if to be small area for checking
+		Rect brds(lup_limit, rdown_limit - lup_limit);
+		Point cell;
+		FOR_ALL_CELLS_IN(cell, brds)
+			if (bf->noRoad (cell))
+			{
+				int left = cell.x*csize;
+				int right = left + csize;//cell borders
+				int up = cell.y*csize;
+				int down = up + csize;
 
-					if (bf->isSand (x, y))
-					{
-						Rect cell (left, up, right - left, down - up);
-						(**i).driveSand (cell, bf->friction (x, y));
-						continue;						//sands acts lonesome
-					}
+				if (isNotInBox (left, right, up, down, lup, rdown)) continue;
 
-					if (pos.y < up || pos.y > down)//we need a horisontal full lenght wall
-					{
-						int nx = x;
-
-						while (++nx < size.x && right <= rdown.x)
-						{
-							if (bf->isRough (nx, y)||
-								(pos.y < up && y - 1 >=  0 && bf->isRough(nx, y-1)) ||	//for gnawed corners
-								(pos.y > down && y + 1 < size.y && bf->isRough(nx, y+1)))
-								right += csize;			//cell alliance expansion
-							else break;
-						}
-						nx = x;
-						while (--nx >= 0 && left > lup.x)
-						{
-							if (bf->isRough (nx, y) && bf->isRough (nx, y)||
-								(pos.y < up && y - 1 >=  0 && bf->isRough (nx, y-1)) ||	//for gnawed corners
-								(pos.y > down && y + 1 < size.y && bf->isRough (nx, y+1)))
-								left -= csize;			//cell alliance expansion
-							else break;
-						}
-					}
-					else // we need a vertical full lenght wall
-					{
-						int ny = y;
-						while (++ny < size.y && down <= rdown.y)
-						{
-							if (bf->isRough (x, ny)||
-								(pos.x < left && x - 1 >=  0 && bf->isRough (x-1, ny)) ||	//for gnawed corners
-								(pos.x > right && x + 1 < size.x && bf->isRough (x+1, ny)))
-								down += csize;			//cell alliance expansion
-							else break;
-						}
-						ny = y;
-						while (--ny >= 0 && up > lup.y)
-						{
-							if (bf->isRough (x, ny) ||
-								(pos.x < left && x - 1 >=  0 && bf->isRough (x-1, ny)) ||	//for gnawed corners
-								(pos.x > right && x + 1 < size.x && bf->isRough (x+1, ny)))
-								up -= csize;			//cell alliance expansion
-							else break;
-						}
-					}
-					Rect cell (left, up, right - left, down - up);
-					if (globb) globb->fillRect (cell, Color (200, 0, 124));//!!! deprecated
-					(**i).collisBrd (cell, bf->friction (x, y));
-				}
+				if (bf->isSand (cell))
+					(**i).driveSand (Rect(left, up, right - left, down - up),
+									 bf->friction (cell));
+				else if (bf->isRough (cell))
+					processRoughWalls (bf, *i, lup, pos, rdown, cell,
+									   left, right, up, down);
+			}
 	}
 }
-#undef CELL
+#undef FOR_ALL_CELLS_IN
 //--------------------------------------------------------------------------------------------------
 void Activeman::processCollisions()
 {

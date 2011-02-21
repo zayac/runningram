@@ -395,8 +395,6 @@
           <in>msock.h</in>
         </df>
       </df>
-      <df name="GNU-i386-Linux">
-      </df>
       <df name="h">
         <df name="ecl">
           <df name="gc" kind="SOURCE_LOGICAL_FOLDER">
@@ -447,6 +445,8 @@
         <in>mstdint.h</in>
       </df>
       <df name="lib">
+        <df name="ecl-11.1.1">
+        </df>
       </df>
       <df name="scripts">
       </df>
