@@ -11,14 +11,9 @@
 #include "Exception.h"
 using namespace std;
 
-Sprite::Sprite() {
-    width = 0;
-    height = 0;
-    speed = 0;
-    run = false;
-    loopToBeginning = true;
-    indexIterator = 0;
-    index = 0;
+Sprite::Sprite()
+:speed (0), run (false), loopToBeginning (true), index (0), indexIterator (0)
+{
 }
 
 Sprite::~Sprite()
@@ -26,23 +21,23 @@ Sprite::~Sprite()
     sprites.clear();
 }
 
-void Sprite::init(Canvas* surface, int maxFrames, int animationSpeed)
+void Sprite::init (Canvas* surface, int maxFrames, int animationSpeed)
 {
     static int I = 0;
     if(surface == NULL || !surface->valid()) 
 	{
 		throw Exception ("failed to load sprite");
-        width = 0; height = 0;
+		size = Point();
         this->speed = 0;
     } else {
-        width = surface->getWidth() / maxFrames;
-        height = surface->getHeight();
+		size.x = surface->getWidth() / maxFrames;
+		size.y = surface->getHeight();
         clog << "successfully loaded sprite " << ++I << endl; //
 
         for(int i = 0; i <  maxFrames; i++)
         {
             Canvas temp;
-            temp = surface->cropRect(Point (i * width, 0), width, height);
+            temp = surface->cropRect (Rect (Point (i * size.x, 0), size));
             sprites.push_back(temp);
         }
         this->speed = animationSpeed;
@@ -69,7 +64,7 @@ Sprite::Sprite(Canvas* canvas, int frames, int speed) {
 }
 
 
-bool Sprite::running() {
+bool Sprite::isRunning() const {
    return run;
 }
 
@@ -78,17 +73,18 @@ void Sprite::stop() {
     index = 0;
 }
 
-int Sprite::getFrame() {
+int Sprite::getFrame() const {
     return index;
 }
 
-int Sprite::getMaxFrames()
+int Sprite::getMaxFrames() const
 {
     return maxFrames;
 }
 
 void Sprite::setFrame(int index_)
 {
+	assert(0 <= index_ && index_ < maxFrames);
     index = index_;
 }
 
@@ -216,8 +212,7 @@ void Sprite::zoom(double zoomx, double zoomy)
     {
        sprites[i].zoom(zoomx, zoomy);
     }
-    width = sprites[0].getWidth();
-    height = sprites[0].getHeight();
+	size = sprites[0].getSize();
 }
 
 void Sprite::ortogonalToIsometric()
@@ -225,18 +220,22 @@ void Sprite::ortogonalToIsometric()
     for(int i = 0; i < maxFrames; i++)
         sprites[i].ortogonalToIsometric();
 
-    width = sprites[0].getWidth();
-    height = sprites[0].getHeight();
+	size = sprites[0].getSize();
 }
 
-int Sprite::getWidth()
+int Sprite::getWidth() const
 {
-    return width;
+    return size.x;
 }
 
-int Sprite::getHeight()
+int Sprite::getHeight() const
 {
-    return height;
+    return size.y;
+}
+
+Point Sprite::getSize() const
+{
+    return size;
 }
 
 void Sprite::saveToBmp (string filename)

@@ -277,7 +277,11 @@ Interpreter::Interpreter (int argc, char *argv[])
 Interpreter::~Interpreter()
 {
     for (vector<Functor*>::iterator i = funcs.begin(); i != funcs.end(); ++i)
-	delete *i;
+		delete *i;
+    for (vector<Informer*>::iterator i = infos.begin(); i != infos.end(); ++i)
+		delete *i;
+    for (vector<Hundler*>::iterator i = hundlers.begin(); i != hundlers.end(); ++i)
+		delete *i;
     cl_shutdown();
 }
 //--------------------------------------------------------------------------------------------------

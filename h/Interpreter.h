@@ -173,7 +173,7 @@ public:
 	HundlTranS (const string& exe) :exec (exe) {}
 	virtual RET operator ()(TAK val)
 	{ UniValue ret = Interpreter::getInstance()->
-				funcall (exec, UniValue::by<TAK>(val));//TODO optimize this.
+				funcall (exec, UniValue::by<TAK>(val));//TODO: optimize this.
 	return ret.get<RET>();}
 };
 

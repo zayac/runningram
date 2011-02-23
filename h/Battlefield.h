@@ -63,14 +63,14 @@ public:
 	Point getNextResPoint();
 
 	bool isRough (int x, int y) const;
-	bool noRoad (int x, int y) const;
+	bool notJustRoad (int x, int y) const;
 	bool isSand (int x, int y) const;
 	float friction (int x, int y) const;
 
 	inline bool isRough (Point cell) const
 	{return isRough (cell.x, cell.y);}
-	inline bool noRoad (Point cell) const
-	{return noRoad (cell.x, cell.y);}
+	inline bool notJustRoad (Point cell) const
+	{return notJustRoad (cell.x, cell.y);}
 	inline bool isSand (Point cell) const
 	{return isSand (cell.x, cell.y);}
 	inline float friction (Point cell) const

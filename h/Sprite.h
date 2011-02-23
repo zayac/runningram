@@ -21,8 +21,9 @@ private:
 
     bool run;
     int speed;
-    int width;
-    int height;
+	Point size;
+//    int width;
+//    int height;
     int index;
     int indexIterator;
     bool loopToBeginning;  // if loop = true iterate through animations from 0 to N, then reset to 0
@@ -51,20 +52,21 @@ public:
 	void saveToBmp(string filename);
 	SDL_Surface* getSurface(int i);
 
-    bool running();
+    bool isRunning() const;
     void stop();
-    int getFrame();
-    int getMaxFrames();
-    int getWidth();
-    int getHeight();
+    int getFrame() const;
+    int getMaxFrames() const;
+    int getWidth() const;
+    int getHeight() const;
+	Point getSize() const;
     void animate();
     void draw (Canvas* buffer, Point point);
     void draw (Canvas* buffer, Point point, float progress);
     void start();
     void restart();
-    void setSpeed(int i);
+    void setSpeed (int i);
     int getSpeed();
-    void setFrame(int );
+    void setFrame (int);
 
 	void setPos (Point npos);
 

@@ -160,11 +160,10 @@ void Activeman::collisBrd (const Battlefield* bf)
 		Point rdown_limit = rdown/csize + Point (1, 1);
 		forceInLimits (&lup_limit, &rdown_limit, size);
 
-//		Rect brds(Point(), size);//TODO: optimize if to be small area for checking
-		Rect brds(lup_limit, rdown_limit - lup_limit);
+		Rect window(lup_limit, rdown_limit - lup_limit);//check only nearest cells
 		Point cell;
-		FOR_ALL_CELLS_IN(cell, brds)
-			if (bf->noRoad (cell))
+		FOR_ALL_CELLS_IN(cell, window)
+			if (bf->notJustRoad (cell))
 			{
 				int left = cell.x*csize;
 				int right = left + csize;//cell borders

@@ -49,37 +49,28 @@ public:
 
 Effects_manager::Effects_manager() : parser(new Initialaiser ("[Explosion]", this))
 {
-    
 }
 
 Effects_manager::~Effects_manager()
 {
 	delete parser;
-	for (is = boom.begin (); is != boom.end (); ++is)
+	for (cur_expl = exp_sprites.begin (); cur_expl != exp_sprites.end (); ++cur_expl)
 	{
-		delete (*is);
+		delete (*cur_expl);
 	}
-	boom.erase (boom.begin (), boom.end ());
+	exp_sprites.erase (exp_sprites.begin (), exp_sprites.end ());
 
 }
 
 bool Effects_manager::init()
 {
-    /*
-    boom.push_back(new Sprite(parser->exp_file.c_str(), parser->exp_frames, parser->exp_speed, true));
-    boom.push_back(new Sprite("textures/image1.png", 31, 100, true));
-    boom.push_back(new Sprite("textures/image2.png", 36, 100, true));
-    boom.push_back(new Sprite("textures/image3.png", 36, 100, true));
-    boom.push_back(new Sprite("textures/image4.png", 48, 100, true));
-    
-     */
-//    return Ok();
-    k = boom.size();
+	cur_expl = exp_sprites.begin();
+	return true;
 }
 
 void Effects_manager::expDraw(Canvas* can)
 {
-	for (i = exp.begin (); i != exp.end (); ++i)
+	for (i = expls.begin (); i != expls.end (); ++i)
 	{
 		(**i).draw (can);
 		(**i).animate ();
@@ -93,40 +84,22 @@ Serializator* Effects_manager::getParser()
 
 void Effects_manager::createExplosion (Vector2f pos, float size)
 {
-	Explosion* a = new Explosion;
-	static int x_os, y_os, j, b = 1;
-	static Point pos_new;
+	++cur_expl;
+	if (cur_expl == exp_sprites.end()) cur_expl = exp_sprites.begin();
 
-	is = boom.begin ();
-
-	for (j = 1; j < b; ++j)
-	{
-		++is;
-	}
-	b++;
-	if (b > k) b = 1;
-
-	x_os = (*is)->getWidth ();
-	y_os = (*is)->getHeight ();
-
-	a->setSprite (*is);
-	pos_new = pos.to<int>();
-	pos_new.x -= x_os / 2;
-	pos_new.y -= y_os / 2;
-
-	a->setPos (pos_new);
-	exp.push_back (a);
+	Explosion* expl = new Explosion (*cur_expl, pos.to<int>() - (*cur_expl)->getSize()/2);
+	expls.push_back (expl);
 }
 
 void Effects_manager::expClean()
 {
-	i = exp.begin ();
-	while (i != exp.end ())
+	i = expls.begin ();
+	while (i != expls.end ())
 	{
-		if (!(**i).getRun ())
+		if (!(**i).isRun ())
 		{
 			delete (*i);
-			i = exp.erase (i);
+			i = expls.erase (i);
 		}
 		else ++i;
 	}
@@ -134,5 +107,5 @@ void Effects_manager::expClean()
 
 void Effects_manager::expAdd (Sprite* sp)
 {
-	boom.push_back (sp);
+	exp_sprites.push_back (sp);
 }

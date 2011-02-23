@@ -113,6 +113,7 @@ public:
 	Rect getClipRect() const;
 	int getWidth() const;
 	int getHeight() const;
+	Point getSize() const {return Point(getWidth(), getHeight());}
 	SDL_Surface* getSurface() { return data(); }
 	//void getSurfaceInformation();
 
