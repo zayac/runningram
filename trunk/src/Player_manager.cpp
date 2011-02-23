@@ -178,26 +178,33 @@ void Player_manager::erase (iterator start, iterator finish)
 void Player_manager::drawCompTable (Canvas* where, Fontc* font)
 {
 	where->pushPos(Point());
+	
+	Point size = where->getSize();
+	Point pos = size/10;
 
-	int xpos = 100;
-	int ypos = 100;
+	Canvas c = where->createCompatible (size - 2*pos);
+	c.setTotalTransparency (200);
+	c.fill (Color (160, 160, 180));
+
+	Rect label_brd;
+	label_brd.x = 0;
+	label_brd.y = 0;
+	label_brd.w = 100;
+	label_brd.h = 100;
 	for (iterator i = begin(); i != end(); ++i)
 	{
-		Rect label_brd;
-		label_brd.x = xpos;
-		label_brd.y = ypos;
-		label_brd.w = 100;
-		label_brd.h = 100;
+		label_brd.x = 0;
 
-		font->drawLine (where, (**i).name.c_str(), &label_brd);
+		font->drawLine (&c, (**i).name.c_str(), &label_brd);
 		label_brd.x += 100;
 
 		char buf[256];
 		#include <stdlib.h>
 		sprintf (buf, "%i", (**i).getFrags ());
-		font->drawLine (where, buf, &label_brd);
-		ypos += 20;
+		font->drawLine (&c, buf, &label_brd);
+		label_brd.y += font->height();
 	}
+	c.draw (*where, pos);
 	where->popPos();
 }
 //--------------------------------------------------------------------------------------------------
