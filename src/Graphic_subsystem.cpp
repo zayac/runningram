@@ -20,17 +20,19 @@ public:
 	int win_x;
 	int win_y;
 	string win_name;
-        string splash_file;
+    string splash_file;
+	string win_scr_file;
 public:
 
 	Initialaiser (char* name)
 	: Sectionp (name, '='), win_x (640), win_y (480), win_name ("Banzay!")
-        , splash_file ("textures/bricks.png")
+        , splash_file ("textures/bricks.png"), win_scr_file("textures/bricks.png")
 	{
 		addParam (new St_loader<int> ("X size", &win_x));
 		addParam (new St_loader<int> ("Y size", &win_y));
 		addParam (new St_loader<string> ("app name", &win_name));
-                addParam (new St_loader<string> ("splash file", &splash_file));
+        addParam (new St_loader<string> ("splash file", &splash_file));
+        addParam (new St_loader<string> ("win screen file", &win_scr_file));
 	}
 
 	virtual ~Initialaiser ()
@@ -71,6 +73,7 @@ bool Graphic_subsystem::init()
 
     /* set the splash picture */
     splash = Canvas(parser->splash_file.c_str());
+	win_scr = Canvas(parser->win_scr_file.c_str());
 
     /*buffer->format->Amask = 0xff000000;
     buffer->format->Ashift = 24;
@@ -109,6 +112,12 @@ bool Graphic_subsystem::ok() const
 void Graphic_subsystem::splashScreen()
 {
     splash.draw (*screen, Point());
+    screen->update();
+}
+//--------------------------------------------------------------------------------------------------
+void Graphic_subsystem::winScreen()
+{
+    win_scr.draw (*screen, Point());
     screen->update();
 }
 //--------------------------------------------------------------------------------------------------

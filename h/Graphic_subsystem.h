@@ -18,7 +18,8 @@ class Graphic_subsystem
 {
 	Canvas* screen;
 	Canvas buffer;
-        Canvas splash;
+    Canvas splash;
+	Canvas win_scr;
 	class Initialaiser;
 	Initialaiser* parser;
 
@@ -29,8 +30,9 @@ public:
 	Serializator* getParser();
 	bool init();
 	void cleanup();
-        void splashScreen();
-        void draw (Camera* look);
+    void splashScreen();
+	void winScreen();
+    void draw (Camera* look);
 	Canvas* getScreen() {return &buffer;};
         
 	bool ok() const;

@@ -30,6 +30,13 @@ class Client;
 #include "Exception.h"
 #include "Button.h"//!!! deprecated
 
+enum GameState
+{
+	MENU,
+	RUNNING,
+	WIN
+};
+
 class Game_manager
 {
 	Graphic_subsystem *pic;
@@ -45,6 +52,8 @@ class Game_manager
 	Client* clie;
 	Interpreter* interp;
 	GUI* gui;
+	GameState state;
+	bool show_frag_table;
 
 	Std_output_err* co;//for Exceptions
 
@@ -63,8 +72,9 @@ public:
 	void fillZbuffer();
 	bool cleanup();
 	void stop();
+	void showFragTable();
+	void hideFragTable();
 	
-
 	void tmpExport();
 	void tmpImport();
 

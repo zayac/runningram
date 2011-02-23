@@ -77,6 +77,7 @@ public:
 	void flipHorizontal();
 	void flipVertical();
 	void setTransparency (Color colorkey);
+	void setTotalTransparency (Uint8 degree);
 	Color getTransparency() const;
 	void zoom (double zoomx, double zoomy); // percentage to zoom in
 	void line (Point start, Point finish, Color c);

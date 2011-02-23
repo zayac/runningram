@@ -258,7 +258,12 @@ Canvas Canvas::cropRect (Point point, int w, int h, bool remember_pos)
 void Canvas::setTransparency(Color colorkey)
 {
     SDL_SetColorKey( data(), SDL_SRCCOLORKEY|SDL_RLEACCEL, colorkey.toInt(data()) );
-	substituteData (SDL_DisplayFormat(data()));
+	substituteData (SDL_DisplayFormat(data()));//!!! What does this line do?
+}
+//--------------------------------------------------------------------------------------------------
+void Canvas::setTotalTransparency (Uint8 degree)
+{
+	SDL_SetAlpha(data(), SDL_SRCALPHA, degree);
 }
 //--------------------------------------------------------------------------------------------------
 void Canvas::setTransparentPixel (Point point)
