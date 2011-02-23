@@ -19,22 +19,21 @@ class Effects_manager
 {
 	class Initialaiser;
 	Initialaiser* parser;
-	list <Sprite*> boom;
-	int k; // number of sprites
-	list <Sprite*>::iterator is;
-	list <Explosion*> exp;
+	list <Sprite*> exp_sprites;
+	list <Sprite*>::iterator cur_expl;
+	list <Explosion*> expls;
 	list <Explosion*>::iterator i;
 public:
 	Effects_manager();
 	virtual ~Effects_manager();
 
-	void createExplosion(Vector2f pos, float size);
+	void createExplosion (Vector2f pos, float size);
 
 	Serializator* getParser();
 	bool init();
-	void expAdd(Sprite*);
+	void expAdd (Sprite*);
 
-	void expDraw(Canvas*);
+	void expDraw (Canvas*);
 	void expClean();
 };
 

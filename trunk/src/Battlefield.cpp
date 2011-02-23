@@ -80,8 +80,8 @@ void Battlefield::drawField (Canvas* c) const
 {
 	int start = 0;
 	Rect frame = c->getClipRect ();
-        Point tSize = _tileFactory.getSize ();
-	frame.enlarge (tSize); //compute manifold of tile positions
+    Point tSize = _tileFactory.getSize ();
+	frame.enlarge (2*tSize); //compute manifold of tile positions
 	frame.move (-tSize); //really displayed on the screen
 
 	for (int i = 0; i < size.y; i++)
@@ -234,7 +234,7 @@ bool Battlefield::isRough (int x, int y) const
     return  _tileFactory.getTile(CELL(x, y))->isObstacle();
 }
 //--------------------------------------------------------------------------------------------------
-bool Battlefield::noRoad (int x, int y) const
+bool Battlefield::notJustRoad (int x, int y) const
 {
 	return isRough (x, y) || isSand (x, y);
 }

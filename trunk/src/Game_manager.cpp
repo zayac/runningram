@@ -181,8 +181,8 @@ bool Game_manager::mainLoop ()
 
 	    if (nstate != netclient)
 	    {
-		cars->collisBrd (ground);
-		cars->processCollisions ();
+			cars->collisBrd (ground);
+			cars->processCollisions ();
 	    }
 
 	    last_time = SDL_GetTicks ();
@@ -193,28 +193,28 @@ bool Game_manager::mainLoop ()
 	    cmd->draw (pic);
 
 	    eff->expDraw (pic->getScreen ());
-	    eff->expClean ();
+	    eff->expClean();
 
 	    players->drawCompTable (pic->getScreen (), &font);
 
 	    if (!look->hasTarget () && cars->size () > 0)
-		if (players->getCamTarget ())
-		    look->setTarget (players->getCamTarget ()->getCar ());
-		else
-		    look->setTarget (*cars->begin ());
-	    look->actions ();
-	    cars->deleteDeadalives ();
+			if (players->getCamTarget ())
+			    look->setTarget (players->getCamTarget ()->getCar ());
+			else
+			    look->setTarget (*cars->begin ());
+	    look->actions();
+	    cars->deleteDeadalives();
 
 	    Draw_fps (dt);
 
-	    btl.draw (*pic->getScreen ());
+	    btl.draw (*pic->getScreen());
 	    pic->draw (look);
 	    if (nstate != netclient) players->createCarsForPoors (models, cars, ground);
 
-	    if (nstate == netclient) getServerContext ();
-	    if (nstate == netserver) sendContext ();
-	    models->clesrLastActions ();
-	    players->clearEvents ();
+	    if (nstate == netclient) getServerContext();
+	    if (nstate == netserver) sendContext();
+	    models->clesrLastActions();
+	    players->clearEvents();
 	}
     }
     catch (Exception& ex)

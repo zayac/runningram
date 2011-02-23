@@ -12,10 +12,9 @@
 #include "Vec.h"
 #include <SDL/SDL.h>
 
-Explosion::Explosion()
+Explosion::Explosion (Sprite* spr_, Point pos_)
+	:spr(spr_), pos (pos_), index (0), run (true)
 {
-    run = true;
-    index = 0;
     last_anim = SDL_GetTicks ();
 }
 
@@ -24,32 +23,16 @@ Explosion::~Explosion()
 //    delete spr;
 }
 
-bool Explosion::draw(Canvas* c)
+void Explosion::draw (Canvas* c)
 {
     if (run)
     {
-        spr->setFrame(index);
-        spr->draw(c, pos);
-        c->update();
+        spr->setFrame (index);
+        spr->draw (c, pos);
     }
 }
 
-void Explosion::setPos(Point pos_)
-{
-    pos = pos_;
-}
-
-void Explosion::setSprite(Sprite* spr_)
-{
-    spr = spr_;
-}
-
-bool Explosion::getRun(void )
-{
-    return run;
-}
-
-void Explosion::animate(void )
+void Explosion::animate()
 {
     static int MaxFrames, speed;
 

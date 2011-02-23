@@ -22,14 +22,12 @@ class Explosion
     int index;
     int last_anim;
 public:
-    Explosion();
+    Explosion (Sprite* spr_, Point pos_);
     virtual ~Explosion();
 
-    bool draw(Canvas*);
-    void setPos(Point );
-    void setSprite(Sprite* );
+    void draw (Canvas*);
 
-    bool getRun(void );
+    bool isRun(void ) const {return run;}
     void animate(void );
 };
 
