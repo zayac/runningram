@@ -42,7 +42,7 @@ public:
 }; // </editor-fold>
 
 
-Graphic_subsystem::Graphic_subsystem () :parser (new Initializer ((char*)"[Graphics]"))
+Graphic_subsystem::Graphic_subsystem ()
 {
 }
 //--------------------------------------------------------------------------------------------------
@@ -51,11 +51,11 @@ Graphic_subsystem::~Graphic_subsystem ()
 	cleanup();//!!! It may be need to add if(initialaised) check for avoid fail of cleanup
 //	SDL_FreeSurface (buffer);
 //	buffer = 0;
-	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
-Serializator* Graphic_subsystem::getParser()
+Serializator* Graphic_subsystem::newParser()
 {
+	parser = new Initializer ((char*)"[Graphics]");
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------

@@ -69,10 +69,10 @@ class Player_manager :public list<Player*>, public Transmitted
 	void erase (iterator start, iterator finish);
 
 public:
-	Player_manager (GUEventman* sense);
+	Player_manager();
 	virtual ~Player_manager();
 
-	Serializator* getParser();
+	Serializator* newParser();
 	void drawCompTable (Canvas* where, Fontc* font);
 
 	int exportEvents (char* buffer, int size) const;

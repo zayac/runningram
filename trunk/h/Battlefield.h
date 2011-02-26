@@ -51,7 +51,7 @@ public:
 	Battlefield();
 	virtual ~Battlefield();
 
-	Serializator* getParser();
+	Serializator* newParser();
 
 	void draw (Graphic_subsystem* c) const;
 	void drawMinimap (Canvas* c, Point limit) const;

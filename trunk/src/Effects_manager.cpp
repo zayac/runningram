@@ -47,13 +47,12 @@ public:
 	}
 }; // </editor-fold>
 
-Effects_manager::Effects_manager() : parser(new Initializer ("[Explosion]", this))
+Effects_manager::Effects_manager()
 {
 }
 
 Effects_manager::~Effects_manager()
 {
-	delete parser;
 	for (cur_expl = exp_sprites.begin (); cur_expl != exp_sprites.end (); ++cur_expl)
 	{
 		delete (*cur_expl);
@@ -77,8 +76,9 @@ void Effects_manager::expDraw(Canvas* can)
 	}
 }
 
-Serializator* Effects_manager::getParser()
+Serializator* Effects_manager::newParser()
 {
+	parser = new Initializer ("[Explosion]", this);
 	return parser;
 }
 

@@ -70,18 +70,17 @@ public:
 	}
 }; // </editor-fold>
 
-Carman::Carman():Transmitted ('C', true),
-parser (new Carman::Initializer ("[Model]", this)), hosts(0), objs(0), effm(0) { }
+Carman::Carman():Transmitted ('C', true), hosts(0), objs(0), effm(0) { }
 
 Carman::~Carman ()
 {
-	delete parser;
 	for (iter i = models.begin(); i != models.end(); ++i)
 		delete *i;
 }
 //--------------------------------------------------------------------------------------------------
-Serializator* Carman::getParcer()
+Serializator* Carman::newParcer()
 {
+	parser = new Carman::Initializer ("[Model]", this);
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------
