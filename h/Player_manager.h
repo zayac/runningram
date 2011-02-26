@@ -61,8 +61,8 @@ public:
 class Player_manager :public list<Player*>, public Transmitted
 {
 
-	class Initialaiser;
-	Initialaiser* parser;
+	class Initializer;
+	Initializer* parser;
 
 	int cam_target;//!!! It isn't synchronized in network game
 

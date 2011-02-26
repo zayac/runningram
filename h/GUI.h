@@ -19,8 +19,8 @@ class GUI
 {
 	Rect minimap;
 
-	class Initialaiser;
-	Initialaiser* parser;
+	class Initializer;
+	Initializer* parser;
 
 public:
 	GUI();

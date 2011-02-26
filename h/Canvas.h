@@ -10,7 +10,6 @@
 #include "mstdint.h"
 #include "Vec.h"
 #include "UniId.h"
-#include "initparser.h"
 #include "Rect.h"
 #include <string>
 #include <vector>
@@ -27,7 +26,7 @@ public:
 	Uint8 b;
 	Uint8 unused;
 
-	class Initialiser;
+	class Initializer;
 
 public:
 	Color (Uint8 red = 0, Uint8 green = 0, Uint8 blue = 0, Uint8 alpha = 255)
@@ -129,8 +128,8 @@ public:
 
 
 #ifdef INITPARSER_H_INCLUDED
-// <editor-fold defaultstate="collapsed" desc="From file color initialaiser">
-class Color::Initialiser : public Sectionp
+// <editor-fold defaultstate="collapsed" desc="From file color Initializer">
+class Color::Initializer : public Sectionp
 {
 public:
 	int r, g, b, unused;
@@ -143,7 +142,7 @@ protected:
 	}
 public:
 
-	Initialiser (string name, Color* what)
+	Initializer (string name, Color* what)
 	: Sectionp (name, '='), object (what), r (what->r), g (what->g), b (what->b), unused (what->unused)
 	{
 		addParam (new St_loader<int > ("red", &r));
@@ -152,7 +151,7 @@ public:
 		addParam (new St_loader<int > ("alpha", &unused));
 	}
 
-	virtual ~Initialiser ()
+	virtual ~Initializer ()
 	{
 		deleteProps ();
 	}

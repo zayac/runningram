@@ -151,8 +151,8 @@ class Console
 
 	Interpreter* interp;
 
-	class Initialaiser;
-	Initialaiser* parser;
+	class Initializer;
+	Initializer* parser;
 
 	string eval(string str);
 

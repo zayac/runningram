@@ -38,8 +38,8 @@ class Battlefield
 	multimap<int, Drawable*> z_buffer;
 	typedef multimap<int, Drawable*>::const_iterator ziter;
 
-	class Initialaiser;
-	Initialaiser* parser;
+	class Initializer;
+	Initializer* parser;
 
 	void cleanField (char fill_cell);
 	Point readRespoint (ifstream& file);

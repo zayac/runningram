@@ -52,8 +52,8 @@ protected:
 		data_ = 0;
 	}
 
-	virtual void deleteData() = 0;//If this function tryes to be called,
-								   //you need to call destroy() from destructor of your class
+	virtual void deleteData() = 0;//If this function tries to be called,
+								   //you must call destroy() from destructor of your class
 
 private:
 	inline void init (T* d, base* tab)

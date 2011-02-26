@@ -20,8 +20,8 @@ class Graphic_subsystem
 	Canvas buffer;
     Canvas splash;
 	Canvas win_scr;
-	class Initialaiser;
-	Initialaiser* parser;
+	class Initializer;
+	Initializer* parser;
 
 public:
 	Graphic_subsystem();

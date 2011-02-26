@@ -5,9 +5,42 @@
  * Created on April 22, 2010, 11:00 AM
  */
 
+#include <map>
+
 #include "Control.h"
 #include "Car.h"
 #include "GUEventman.h"
+#include "initparser.h"
+
+
+Control::ParserContainer* Control::current_parser = 0;
+vector<Control::ParserContainer*> Control::parsers;
+
+// <editor-fold defaultstate="collapsed" desc="From file Initializer">
+
+class Control::Initializer : public St_loader <string>
+{
+public:
+	string parser_name;
+
+protected:
+	virtual bool beforeRead (ifstream& file)
+	{
+		parser_name = "";
+	}
+	virtual bool afterRead (ifstream &file)
+	{
+		Serializator* ser = chooseParser (parser_name);
+		if (!ser) return false;
+		return ser->unserialise (file);
+	}
+public:
+
+	Initializer (const char* name)
+	:St_loader<string> (name, &parser_name)
+	{}
+}; // </editor-fold>
+
 
 //--------------------------------------------------------------------------------------------------
 void Control::applayEvents()
@@ -38,27 +71,32 @@ int Control::imp (char* buffer, int size)
 	return sizeof (events);
 }
 //--------------------------------------------------------------------------------------------------
-void Key_storage::setControl (Car* c)
+Serializator* Control::newParser (const char* name)
 {
-	Control::setControl (c);
-	evman->registerKeyAction (new Arg_Method<void, void, Control> (this, &Control::upPress), EV_KEYDOWN, up);
-	evman->registerKeyAction (new Arg_Method<void, void, Control> (this, &Control::upRelease), EV_KEYUP, up);
-	evman->registerKeyAction (new Arg_Method<void, void, Control> (this, &Control::downPress), EV_KEYDOWN, down);
-	evman->registerKeyAction (new Arg_Method<void, void, Control> (this, &Control::downRelease), EV_KEYUP, down);
-	evman->registerKeyAction (new Arg_Method<void, void, Control> (this, &Control::leftPress), EV_KEYDOWN, left);
-	evman->registerKeyAction (new Arg_Method<void, void, Control> (this, &Control::leftRelease), EV_KEYUP, left);
-	evman->registerKeyAction (new Arg_Method<void, void, Control> (this, &Control::rightPress), EV_KEYDOWN, right);
-	evman->registerKeyAction (new Arg_Method<void, void, Control> (this, &Control::rightRelease), EV_KEYUP, right);
+	current_parser = 0;
+	return new Initializer (name);
 }
 //--------------------------------------------------------------------------------------------------
-Key_storage* Key_storage::createCopy()
+Control* Control::createControl()
 {
-	Key_storage* rez = new Key_storage;
-	rez->down = down;
-	rez->up = up;
-	rez->left = left;
-	rez->right = right;
-	rez->evman = evman;
-	return rez;
+	return current_parser->createControl();
+}
+//--------------------------------------------------------------------------------------------------
+void Control::registerParser (ParserContainer* instance)
+{
+	parsers.push_back (instance);
+}
+//--------------------------------------------------------------------------------------------------
+Serializator* Control::chooseParser (const string& name)
+{
+	for (vector<ParserContainer*>::
+				const_iterator i = parsers.begin();
+			i != parsers.end(); ++i)
+			if ((**i).isItMyName (name))
+			{
+				current_parser = *i;
+				return current_parser->getParser();
+			}
+	return 0;
 }
 //--------------------------------------------------------------------------------------------------
