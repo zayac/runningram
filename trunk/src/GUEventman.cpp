@@ -8,8 +8,15 @@
 #include "GUEventman.h"
 #include "Console.h"
 
+GUEventman GUEventman::instance;
+
 GUEventman::GUEventman () :stop_ (false)
 {
+}
+//--------------------------------------------------------------------------------------------------
+GUEventman* GUEventman::getInstance()
+{
+	return &instance;
 }
 //--------------------------------------------------------------------------------------------------
 GUEventman::~GUEventman ()

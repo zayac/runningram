@@ -12,9 +12,11 @@
 #include "Identified.h"
 #include "mstdint.h"
 #include "Key_event.h"
+#include "initparser.h"
 
 class Car;
 class GUEventman;
+class Serializator;
 
 enum Button_cases
 {
@@ -38,14 +40,14 @@ protected:
 
 public:
 	void upPress()		{setEvent (UP_PRESS);		applayEvents();}
-	void downPress()	{setEvent (DOWN_PRESS);	applayEvents();}
-	void leftPress()	{setEvent (LEFT_PRESS);	applayEvents();}
+	void downPress()	{setEvent (DOWN_PRESS);		applayEvents();}
+	void leftPress()	{setEvent (LEFT_PRESS);		applayEvents();}
 	void rightPress()	{setEvent (RIGHT_PRESS);	applayEvents();}
 
-	void upRelease()	{setEvent (UP_RELEASE);	applayEvents();}
+	void upRelease()	{setEvent (UP_RELEASE);		applayEvents();}
 	void downRelease()	{setEvent (DOWN_RELEASE);	applayEvents();}
 	void leftRelease()	{setEvent (LEFT_RELEASE);	applayEvents();}
-	void rightRelease(){setEvent (RIGHT_RELEASE);	applayEvents();}
+	void rightRelease()	{setEvent (RIGHT_RELEASE);	applayEvents();}
 
 public:
 	Control ():events(0){}
@@ -58,20 +60,31 @@ public:
 
 	virtual int exp (char* buffer, int size) const;
 	virtual int imp (char* buffer, int size);
+
+	static Serializator* newParser (const char* name);
+	static Control* createControl();
+
+protected:
+	class ParserContainer
+	{
+	public:
+		ParserContainer(){}
+
+		virtual Serializator* getParser() = 0;
+		virtual Control* createControl() = 0;
+
+		inline const bool isItMyName (const string& name)
+		{return getParser()->isItMyName (name, false);}
+	};
+
+	static void registerParser (ParserContainer* instance);
+
+private:
+	static vector<ParserContainer*> parsers;
+	static ParserContainer* current_parser;
+	static Serializator* chooseParser (const string& name);
+
+	class Initializer;
 };
-//============================================================================
-struct Key_storage :public Control
-{
-	Key_id up;
-	Key_id down;
-	Key_id left;
-	Key_id right;
-
-	GUEventman* evman;
-
-	void setControl (Car*);
-	Key_storage* createCopy();
-};
-
 #endif	/* _CONTROL_H */
 

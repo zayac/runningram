@@ -73,8 +73,12 @@ class GUEventman
 	void applayEvent (const Mouse_move& ev);
 	void clearActions();
 
-public:
+private:
+	static GUEventman instance;
 	GUEventman();
+
+public:
+	static GUEventman* getInstance();
 	virtual ~GUEventman();
 
 	int registerKeyAction (Functor* fun, Uint8 event, Key_id key, Key_mode mod = KM_NONE);

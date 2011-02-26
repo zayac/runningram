@@ -18,21 +18,21 @@
 
 using std::ifstream;
 
-// <editor-fold defaultstate="collapsed" desc="From file initialaiser">
+// <editor-fold defaultstate="collapsed" desc="From file Initializer">
 
-class Battlefield::Initialaiser : public Sectionp
+class Battlefield::Initializer : public Sectionp
 {
 public:
 	string filename;
 public:
 
-	Initialaiser (string name)
+	Initializer (string name)
 	: Sectionp (name, '='), filename ("field.map")
 	{
 		addParam (new St_loader<string > ("file", &filename));
 	}
 
-	virtual ~Initialaiser ()
+	virtual ~Initializer ()
 	{
 		deleteProps ();
 	}
@@ -40,7 +40,7 @@ public:
 
 #define CELL(a, b) cells[size.x*(b) + a]
 
-Battlefield::Battlefield ():cells (0), parser (new Initialaiser("[Map]"))
+Battlefield::Battlefield ():cells (0), parser (new Initializer("[Map]"))
 {
 //    _tileFactory.clear();
 }

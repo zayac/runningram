@@ -14,9 +14,9 @@
 #include "Sprite.h"
 
 
-// <editor-fold defaultstate="collapsed" desc="from file initialiser">
+// <editor-fold defaultstate="collapsed" desc="from file Initializer">
 
-class Effects_manager::Initialaiser : public Sectionp
+class Effects_manager::Initializer : public Sectionp
 {
 public:
 	string exp_file;
@@ -33,7 +33,7 @@ protected:
 	}
 public:
 
-	Initialaiser (string name, Effects_manager* effect)
+	Initializer (string name, Effects_manager* effect)
 	: Sectionp (name, '='), efm (effect)
 	{
 		addParam (new St_loader<string > ("sprite file", &exp_file));
@@ -41,13 +41,13 @@ public:
 		addParam (new St_loader<int> ("speed", &exp_speed));
 	}
 
-	virtual ~Initialaiser ()
+	virtual ~Initializer ()
 	{
 		deleteProps ();
 	}
 }; // </editor-fold>
 
-Effects_manager::Effects_manager() : parser(new Initialaiser ("[Explosion]", this))
+Effects_manager::Effects_manager() : parser(new Initializer ("[Explosion]", this))
 {
 }
 

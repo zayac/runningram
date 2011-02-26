@@ -12,9 +12,9 @@
 #include "Canvas.h"
 
 
-// <editor-fold defaultstate="collapsed" desc="From file initialaiser">
+// <editor-fold defaultstate="collapsed" desc="From file Initializer">
 
-class Graphic_subsystem::Initialaiser : public Sectionp
+class Graphic_subsystem::Initializer : public Sectionp
 {
 public:
 	int win_x;
@@ -24,7 +24,7 @@ public:
 	string win_scr_file;
 public:
 
-	Initialaiser (char* name)
+	Initializer (char* name)
 	: Sectionp (name, '='), win_x (640), win_y (480), win_name ("Banzay!")
         , splash_file ("textures/bricks.png"), win_scr_file("textures/bricks.png")
 	{
@@ -35,14 +35,14 @@ public:
         addParam (new St_loader<string> ("win screen file", &win_scr_file));
 	}
 
-	virtual ~Initialaiser ()
+	virtual ~Initializer ()
 	{
 		deleteProps ();
 	}
 }; // </editor-fold>
 
 
-Graphic_subsystem::Graphic_subsystem () :parser (new Initialaiser ((char*)"[Graphics]"))
+Graphic_subsystem::Graphic_subsystem () :parser (new Initializer ((char*)"[Graphics]"))
 {
 }
 //--------------------------------------------------------------------------------------------------

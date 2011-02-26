@@ -11,11 +11,12 @@
 #include "Sprite.h"
 #include "Activeman.h"
 #include "Control.h"
+#include "initparser.h"
 
-// <editor-fold defaultstate="collapsed" desc="From file initialaiser">
+// <editor-fold defaultstate="collapsed" desc="From file Initializer">
 
 
-class Carman::Initialaiser : public Sectionp
+class Carman::Initializer : public Sectionp
 {
 public:
 	string spritefname;
@@ -39,7 +40,7 @@ protected:
 	}
 public:
 
-	Initialaiser (const char* name, Carman* chost)
+	Initializer (const char* name, Carman* chost)
 	: Sectionp (name, '='), host (chost), data(), spritefname (""), nsprites(0)
 	{
 		addParam (new St_loader<string> ("name", &data.model_name));
@@ -63,14 +64,14 @@ public:
 		addParam (new St_loader<int> ("sprite centre y", &sprite_offset.y));
 	}
 
-	virtual ~Initialaiser ()
+	virtual ~Initializer ()
 	{
 		deleteProps ();
 	}
 }; // </editor-fold>
 
 Carman::Carman():Transmitted ('C', true),
-parser (new Carman::Initialaiser ("[Model]", this)), hosts(0), objs(0), effm(0) { }
+parser (new Carman::Initializer ("[Model]", this)), hosts(0), objs(0), effm(0) { }
 
 Carman::~Carman ()
 {

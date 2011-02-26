@@ -10,7 +10,6 @@
 #include <list>
 #include <string>
 #include "Orient.h"
-#include "initparser.h"
 #include "Key_event.h"
 #include "Player_manager.h"
 #include "Effects_manager.h"
@@ -26,6 +25,7 @@ class Sprite;
 class Activeman;
 class Player_manager;
 class Effects_manager;
+class Serializator;
 
 class Car_creator
 {
@@ -84,8 +84,8 @@ class Carman: public Transmitted
 	typedef list<Car_creator*>::iterator iter;
 	typedef list<Car_creator*>::const_iterator citer;
 
-	class Initialaiser;
-	Initialaiser* parser;
+	class Initializer;
+	Initializer* parser;
 
 	Player_manager* hosts;
 	Effects_manager* effm;

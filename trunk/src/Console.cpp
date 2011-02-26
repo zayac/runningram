@@ -21,9 +21,9 @@
 //	#include "lualib.h"
 //}
 
-// <editor-fold defaultstate="collapsed" desc="From file initialaiser">
+// <editor-fold defaultstate="collapsed" desc="From file Initializer">
 
-class Console::Initialaiser : public Sectionp
+class Console::Initializer : public Sectionp
 {
 	Color fg_col;
 	Color bg_col;
@@ -44,17 +44,17 @@ protected:
 	}
 public:
 
-	Initialaiser (string name, Fontc* cmd_font, Fontc* print_font, Fontc* resp_font)
+	Initializer (string name, Fontc* cmd_font, Fontc* print_font, Fontc* resp_font)
 	: Sectionp (name, '='), printFont (print_font), cmdFont(cmd_font), respFont(resp_font)
 	{
-		addParam (new Fontc::Initialiser ("font", print_font));
-		addParam (new Color::Initialiser ("color", &fg_col));
-		addParam (new Color::Initialiser ("commands color", &cmd_col));
-		addParam (new Color::Initialiser ("response color", &resp_col));
-		addParam (new Color::Initialiser ("bgcolor", &bg_col));
+		addParam (new Fontc::Initializer ("font", print_font));
+		addParam (new Color::Initializer ("color", &fg_col));
+		addParam (new Color::Initializer ("commands color", &cmd_col));
+		addParam (new Color::Initializer ("response color", &resp_col));
+		addParam (new Color::Initializer ("bgcolor", &bg_col));
 	}
 
-	virtual ~Initialaiser ()
+	virtual ~Initializer ()
 	{
 		deleteProps ();
 	}
@@ -77,7 +77,7 @@ Console* interface = 0;
 //}
 
 Console::Console ()
-:parser (new Initialaiser ("[Console]", &cmdFont, &printFont, &respFont)),
+:parser (new Initializer ("[Console]", &cmdFont, &printFont, &respFont)),
 		history (printFont, 50), input (cmdFont)
 {
     //!!! only for debug
@@ -92,7 +92,7 @@ Console::~Console ()
 //--------------------------------------------------------------------------------------------------
 Serializator* Console::getParser()
 {
-	return parser;
+	return parser;//!!! TODO: return a new instance of parser here. Do not keep it, and do not delete in destructor. Can you?
 }
 //--------------------------------------------------------------------------------------------------
 bool Console::init (Graphic_subsystem* c, Interpreter* interp_)

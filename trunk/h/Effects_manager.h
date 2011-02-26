@@ -17,8 +17,8 @@ using std::list;
 
 class Effects_manager
 {
-	class Initialaiser;
-	Initialaiser* parser;
+	class Initializer;
+	Initializer* parser;
 	list <Sprite*> exp_sprites;
 	list <Sprite*>::iterator cur_expl;
 	list <Explosion*> expls;

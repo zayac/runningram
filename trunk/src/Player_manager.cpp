@@ -13,36 +13,37 @@
 #include "GUEventman.h"
 #include "Control.h"
 
-// <editor-fold defaultstate="collapsed" desc="From file initialaiser">
+// <editor-fold defaultstate="collapsed" desc="From file Initializer">
 
 /*-----------------------------------------------------------------------------------------------*/
-template <>
-bool St_loader<Key_id>::readFrag (ifstream &file)
-{
-	No_spaces_begin (file);
-	char istr[1024] = "wrong value";
-	file.getline (istr, 1024);
-	Cut_end_spaces (istr);
-
-	*_val = getKeyId (istr);
-
-	return *_val != 0;
-}
+//template <>
+//bool St_loader<Key_id>::readFrag (ifstream &file)
+//{
+//	No_spaces_begin (file);
+//	char istr[1024] = "wrong value";
+//	file.getline (istr, 1024);
+//	Cut_end_spaces (istr);
+//
+//	*_val = getKeyId (istr);
+//
+//	return *_val != 0;
+//}
 /*-----------------------------------------------------------------------------------------------*/
 
-class Player_manager::Initialaiser : public Sectionp
+class Player_manager::Initializer : public Sectionp
 {
 public:
 	Player_manager* host;
 	string pname;
 	int model;
-	Key_storage ks;
+//	Key_storage ks;
 	bool is_target;
 
 protected:
 	virtual bool afterRead (ifstream &file)
 	{
-	    host->push_front (new Player (pname, model, ks.createCopy ()));
+//	    host->push_front (new Player (pname, model, ks.createCopy ()));
+	    host->push_front (new Player (pname, model, Control::createControl()));
 	    if (is_target) host->setFirst2CamTarget();
 	    return true;
 	}
@@ -53,27 +54,28 @@ protected:
 	}
 public:
 
-	Initialaiser (const char* name, Player_manager* chost, GUEventman* sense)
+	Initializer (const char* name, Player_manager* chost, GUEventman* sense)
 	: Sectionp (name, '='), host (chost), is_target (false)
 	{
-		ks.evman = sense;
+//		ks.evman = sense;
 		addParam (new St_loader<string> ("name", &pname));
 		addParam (new St_loader<int>	("model", &model));
-		addParam (new St_loader<Key_id> ("up key", &ks.up));
-		addParam (new St_loader<Key_id> ("down key", &ks.down));
-		addParam (new St_loader<Key_id> ("left key", &ks.left));
-		addParam (new St_loader<Key_id> ("right key", &ks.right));
+		addParam (Control::newParser ("control"));
+//		addParam (new St_loader<Key_id> ("up key", &ks.up));
+//		addParam (new St_loader<Key_id> ("down key", &ks.down));
+//		addParam (new St_loader<Key_id> ("left key", &ks.left));
+//		addParam (new St_loader<Key_id> ("right key", &ks.right));
 		addParam (new St_loader<bool>   ("attract cam", &is_target));
 	}
 
-	virtual ~Initialaiser ()
+	virtual ~Initializer ()
 	{
 		deleteProps ();
 	}
 }; // </editor-fold>
 
 Player_manager::Player_manager (GUEventman* sense)
-:Transmitted ('P', false), parser (new Initialaiser ("[Player]", this, sense)) { }
+:Transmitted ('P', false), parser (new Initializer ("[Player]", this, sense)) { }
 
 Player_manager::~Player_manager ()
 {
@@ -152,7 +154,7 @@ int Player_manager::imp (char* buffer, int size)
 			}
 			else
 			{
-				j = insert (i, new Player ("no name", 0, new Key_storage));
+				j = insert (i, new Player ("no name", 0, 0));//here must be smth like exeption!!! (I think)// new Key_storage));
 				len = (**j).imp (buffer + offset, size - offset);
 			}
 		}

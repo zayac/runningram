@@ -23,6 +23,7 @@
 #include "Effects_manager.h"
 #include "Interpreter.h"
 #include "GUI.h"
+#include "Key_storage.h"
 
 #include "Client.h"
 #include "Server.h"
@@ -37,13 +38,14 @@ enum NET_STATUS
 } nstate = net0;
 
 Game_manager::Game_manager (int argc, char *argv[])
-: pic (new Graphic_subsystem), sense (new GUEventman), look (new Camera), ground (new Battlefield),
+: pic (new Graphic_subsystem), sense (GUEventman::getInstance()), look (new Camera), ground (new Battlefield),
 cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman),
 eff (new Effects_manager), interp(Interpreter::create(argc, argv)), gui(new GUI),
 state (RUNNING), show_frag_table (false)
 {
 	co = new Output_cerr;
 	Exception::setOutput (co);
+	Key_storage::preInit (sense);
 
 	players = new Player_manager (sense);
 
@@ -57,7 +59,7 @@ Game_manager::~Game_manager ()
 	if (players)	delete players;	players = 0;
 	if (ground)		delete ground;	ground = 0;
 	if (models)		delete models;	models = 0;
-	if (sense)		delete sense;	sense = 0;
+//	if (sense)		delete sense;	sense = 0; - deleting in GUEventman.cpp (singleton)
 	if (look)		delete look;	look = 0;
 	if (cars)		delete cars;	cars = 0;
 	if (cmd)		delete cmd;		cmd = 0;

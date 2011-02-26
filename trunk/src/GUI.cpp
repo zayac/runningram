@@ -12,16 +12,16 @@
 #include "Car.h"
 
 
-// <editor-fold defaultstate="collapsed" desc="From file initialaiser">
+// <editor-fold defaultstate="collapsed" desc="From file Initializer">
 
-class GUI::Initialaiser : public Sectionp
+class GUI::Initializer : public Sectionp
 {
 public:
 	Point minimapR;
 	Point minimapSize;
 public:
 
-	Initialaiser (string name)
+	Initializer (string name)
 	: Sectionp (name, '='), minimapR(), minimapSize (150, 150)
 	{
 		addParam (new St_loader<int > ("minimap x", &minimapR.x));
@@ -30,14 +30,14 @@ public:
 		addParam (new St_loader<int > ("minimap height", &minimapSize.y));
 	}
 
-	virtual ~Initialaiser ()
+	virtual ~Initializer ()
 	{
 		deleteProps ();
 	}
 }; // </editor-fold>
 
 
-GUI::GUI():parser(new Initialaiser("[GUI]"))
+GUI::GUI():parser(new Initializer("[GUI]"))
 {
 }
 //--------------------------------------------------------------------------------------------------
