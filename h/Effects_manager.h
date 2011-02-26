@@ -29,7 +29,7 @@ public:
 
 	void createExplosion (Vector2f pos, float size);
 
-	Serializator* getParser();
+	Serializator* newParser();
 	bool init();
 	void expAdd (Sprite*);
 

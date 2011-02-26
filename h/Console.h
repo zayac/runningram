@@ -160,7 +160,7 @@ public:
 	Console();
 	virtual ~Console();
 
-	Serializator* getParser();
+	Serializator* newParser();
 	bool init (Graphic_subsystem* c, Interpreter* interp);
 	void cleanup();
 	void onEnterString (const string& str);

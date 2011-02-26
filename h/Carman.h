@@ -95,7 +95,7 @@ public:
 	Carman();
 	virtual ~Carman();
 
-	Serializator* getParcer();
+	Serializator* newParcer();
 
 	void addModel (Car_creator* m) {models.push_back(m);}
 	

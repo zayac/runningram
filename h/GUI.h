@@ -26,7 +26,7 @@ public:
 	GUI();
 	virtual ~GUI();
 
-	Serializator* getParser();
+	Serializator* newParser();
 
 	bool init();
 

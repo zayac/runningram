@@ -77,8 +77,7 @@ Console* interface = 0;
 //}
 
 Console::Console ()
-:parser (new Initializer ("[Console]", &cmdFont, &printFont, &respFont)),
-		history (printFont, 50), input (cmdFont)
+:history (printFont, 50), input (cmdFont)
 {
     //!!! only for debug
     interface = this;
@@ -86,13 +85,12 @@ Console::Console ()
 //--------------------------------------------------------------------------------------------------
 Console::~Console ()
 {
-//	lua_close (vm);
-	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
-Serializator* Console::getParser()
+Serializator* Console::newParser()
 {
-	return parser;//!!! TODO: return a new instance of parser here. Do not keep it, and do not delete in destructor. Can you?
+	parser = new Initializer ("[Console]", &cmdFont, &printFont, &respFont);
+	return parser;
 }
 //--------------------------------------------------------------------------------------------------
 bool Console::init (Graphic_subsystem* c, Interpreter* interp_)

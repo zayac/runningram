@@ -40,7 +40,7 @@ public:
 
 #define CELL(a, b) cells[size.x*(b) + a]
 
-Battlefield::Battlefield ():cells (0), parser (new Initializer("[Map]"))
+Battlefield::Battlefield ():cells (0)
 {
 //    _tileFactory.clear();
 }
@@ -51,11 +51,11 @@ Battlefield::~Battlefield ()
 
 	_tileFactory.clear();
 	if (cells) delete [] cells;
-	delete parser;
 }
 //--------------------------------------------------------------------------------------------------
-Serializator* Battlefield::getParser()
+Serializator* Battlefield::newParser()
 {
+	parser = new Initializer("[Map]");
 	return parser;
 }
 //--------------------------------------------------------------------------------------------------

@@ -27,7 +27,7 @@ public:
 	Graphic_subsystem();
 	virtual ~Graphic_subsystem();
 
-	Serializator* getParser();
+	Serializator* newParser();
 	bool init();
 	void cleanup();
     void splashScreen();

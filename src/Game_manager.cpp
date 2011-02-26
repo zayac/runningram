@@ -47,7 +47,7 @@ state (RUNNING), show_frag_table (false)
 	Exception::setOutput (co);
 	Key_storage::preInit (sense);
 
-	players = new Player_manager (sense);
+	players = new Player_manager();
 
 	init (argc, argv);
 	assert (ok ());
@@ -85,18 +85,18 @@ bool Game_manager::init (int argc, char *argv[])
 	try
 	{
 		Sectionp gen ("gensec", '\n');
-		gen.addParam (pic->getParser ());
+		gen.addParam (pic->newParser ());
 		File_loader fl ((char*) "./settings.cfg");
 		fl.readSector (&gen);
 		result = result && pic->init (); //Graphic subsystem must be initialaised previously
 		pic->splashScreen();
 
-		gen.addParam (cmd->getParser ());
-		gen.addParam (ground->getParser ());
-		gen.addParam (models->getParcer ());
-		gen.addParam (players->getParser ());
-		gen.addParam (eff->getParser ());
-		gen.addParam (gui->getParser ());
+		gen.addParam (cmd->newParser ());
+		gen.addParam (ground->newParser ());
+		gen.addParam (models->newParcer ());
+		gen.addParam (players->newParser ());
+		gen.addParam (eff->newParser ());
+		gen.addParam (gui->newParser ());
 		fl.readSector (&gen);
 
 		models->setAM (cars);
