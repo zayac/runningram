@@ -24,11 +24,12 @@
 #include "Interpreter.h"
 #include "GUI.h"
 #include "Key_storage.h"
-
+#include "MouseTargeter.h"
 #include "Client.h"
 #include "Server.h"
 #include "Button.h"
 #include "GUI.h"
+#include "Timer.h"
 
 enum NET_STATUS
 {
@@ -40,12 +41,13 @@ enum NET_STATUS
 Game_manager::Game_manager (int argc, char *argv[])
 : pic (new Graphic_subsystem), sense (GUEventman::getInstance()), look (new Camera), ground (new Battlefield),
 cmd (new Console), cars (new Activeman), clie (new Client), models (new Carman),
-eff (new Effects_manager), interp(Interpreter::create(argc, argv)), gui(new GUI),
+eff (new Effects_manager), interp(Interpreter::create(argc, argv)), gui(new GUI), time (Timer::getInstance()),
 state (RUNNING), show_frag_table (false)
 {
 	co = new Output_cerr;
 	Exception::setOutput (co);
 	Key_storage::preInit (sense);
+	MouseTargeter::preInit (sense, time, pic);
 
 	players = new Player_manager();
 
@@ -173,16 +175,15 @@ bool Game_manager::mainLoop()
 {
     try
     {
-	unsigned int last_time = SDL_GetTicks();
 	float dt = 0;
-
 	while (!sense->stopped())
 	{
 		switch (state)
 		{
 			case RUNNING:
 				sense->acts();
-				dt = 0.001 * (SDL_GetTicks() - last_time);
+				dt = time->elapsed();
+				time->update();
 				cars->activate (dt);
 
 				if (nstate != netclient)
@@ -190,8 +191,6 @@ bool Game_manager::mainLoop()
 					cars->collisBrd (ground);
 					cars->processCollisions();
 				}
-
-				last_time = SDL_GetTicks();
 
 				fillZbuffer();
 				ground->draw (pic);

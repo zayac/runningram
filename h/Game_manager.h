@@ -21,6 +21,7 @@ class Effects_manager;
 class Button;
 class Interpreter;
 class GUI;
+class Timer;
 
 class Server;
 class Client;
@@ -52,6 +53,7 @@ class Game_manager
 	Client* clie;
 	Interpreter* interp;
 	GUI* gui;
+	Timer* time;
 	GameState state;
 	bool show_frag_table;
 

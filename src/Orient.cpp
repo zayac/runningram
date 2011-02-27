@@ -19,7 +19,7 @@ Orient::Orient (float angle, bool _update) :ang (inRange (angle)), updated (_upd
 	assert(ok());
 }
 //--------------------------------------------------------------------------------------------------
-Orient::Orient (Vector2f direction, bool normed):ang (inRange (atan2(direction.y, direction.x))), dir (1, 0)
+Orient::Orient (Vector2f direction, bool normed) :ang (inRange (atan2(direction.y, direction.x))), dir (1, 0)
 {
 	if (!normed) update ();
 	else

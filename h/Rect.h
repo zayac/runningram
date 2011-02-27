@@ -34,6 +34,7 @@ public:
 	inline Point getLUp() const {return Point (x, y);}
 	inline Point getSize() const {return Point (w, h);}
 	inline Point getRDown() const {return getLUp() + getSize();}
+	inline Point getCenter() const {return getLUp() + getSize()/2;}
 	inline int getLeft() const {return x;}
 	inline int getUp() const {return y;}
 	inline int getRight() const {return x + w;}

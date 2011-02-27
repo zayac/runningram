@@ -14,8 +14,8 @@ static cl_object eclError;
 
 const char* Functor_dispatcher = "dispatch-c-void-function-void";
 const char* Informer_dispatcher = "dispatch-c-cl_object-function-void";
-const char* Hundler_dispatcher = "dispatch-c-cl_object-function-cl_object";
-#define Output_write_hundler "print-character-to-output"
+const char* Handler_dispatcher = "dispatch-c-cl_object-function-cl_object";
+#define Output_write_Handler "print-character-to-output"
 #define Output_flush_informer "flush-printed-string-to-output"
 
 UniValue uniValueByLObj(cl_object obj);
@@ -51,9 +51,9 @@ cl_object eclCallCInfo (cl_object fnum)
     return (cl_object)(*Interpreter::getInfo (fixint(fnum)))().getVal();
 }
 //-----------------------------------------------------------
-cl_object eclCallCHundler (cl_object fnum, cl_object arg)
+cl_object eclCallCHandler (cl_object fnum, cl_object arg)
 {
-    return (cl_object)(*Interpreter::getHundler (fixint(fnum)))
+    return (cl_object)(*Interpreter::getHandler (fixint(fnum)))
 			(uniValueByLObj(arg)).getVal();
 }
 //-----------------------------------------------------------
@@ -245,10 +245,10 @@ Informer* Interpreter::getInfo (int number)
     return instance->infos[number];
 }
 //--------------------------------------------------------------------------------------------------
-Hundler* Interpreter::getHundler (int number)
+Handler* Interpreter::getHandler (int number)
 {
-	assert(0 <= number && number < instance->hundlers.size());
-	return instance->hundlers[number];
+	assert(0 <= number && number < instance->Handlers.size());
+	return instance->Handlers[number];
 }
 //--------------------------------------------------------------------------------------------------
 void Interpreter::destroy()
@@ -264,11 +264,11 @@ Interpreter::Interpreter (int argc, char *argv[])
 
 	regDispatcher (Functor_dispatcher, 1, (void*)eclCallCFun);
 	regDispatcher (Informer_dispatcher, 1, (void*)eclCallCInfo);
-	regDispatcher (Hundler_dispatcher, 2, (void*)eclCallCHundler);
+	regDispatcher (Handler_dispatcher, 2, (void*)eclCallCHandler);
 
-	regHundler (Output_write_hundler,
+	regHandler (Output_write_Handler,
 			new Arg_Method<UniValue, UniValue, Printer>
-							(&printer, &Printer::charWriteHundler));
+							(&printer, &Printer::charWriteHandler));
 	regInfo (Output_flush_informer,
 			new Arg_Method<UniValue, void, Printer>
 							(&printer, &Printer::charFlushInformer));
@@ -280,12 +280,12 @@ Interpreter::~Interpreter()
 		delete *i;
     for (vector<Informer*>::iterator i = infos.begin(); i != infos.end(); ++i)
 		delete *i;
-    for (vector<Hundler*>::iterator i = hundlers.begin(); i != hundlers.end(); ++i)
+    for (vector<Handler*>::iterator i = Handlers.begin(); i != Handlers.end(); ++i)
 		delete *i;
     cl_shutdown();
 }
 //--------------------------------------------------------------------------------------------------
-UniValue Interpreter::Printer::charWriteHundler (UniValue c)
+UniValue Interpreter::Printer::charWriteHandler (UniValue c)
 {
 	if (preview) (*preview)(accumulator);
 	if (c.get<char>() == '\n') charFlushInformer();
@@ -336,12 +336,12 @@ int Interpreter::regInfo (string name, Informer* fun)
     return fnum;
 }
 //--------------------------------------------------------------------------------------------------
-int Interpreter::regHundler (string name, Hundler* fun)
+int Interpreter::regHandler (string name, Handler* fun)
 {
-    int fnum = hundlers.size();
-    hundlers.push_back(fun);
+    int fnum = Handlers.size();
+    Handlers.push_back(fun);
 
-	defun(name, Hundler_dispatcher, fnum, true);
+	defun(name, Handler_dispatcher, fnum, true);
     return fnum;
 }
 //--------------------------------------------------------------------------------------------------
@@ -355,7 +355,7 @@ void Interpreter::regOutput (Arg_Functor<void, const string&> *preview, Functor*
 			   "(last-symbol))");
 	unsafeEval("(defmethod gray:stream-write-char "
 			   "((stream console-output) ch) "
-			   "("Output_write_hundler" ch))");
+			   "("Output_write_Handler" ch))");
 	unsafeEval("(defmethod gray:stream-force-output "
 			   "((stream constol-output))"
 			   "("Output_flush_informer"))");
