@@ -34,6 +34,8 @@ public:
 	void winScreen();
     void draw (Camera* look);
 	Canvas* getScreen() {return &buffer;};
+	Point getCenter() const
+		{return buffer.getClipRect().getCenter();}
         
 	bool ok() const;
 };

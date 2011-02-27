@@ -32,10 +32,10 @@ enum Button_cases
 
 class Control
 {
-	Car* object;
 	Uint32 events;
 
 protected:
+	Car* object;
 	inline void setEvent (Uint32 ev) {events |= ev;}
 
 public:
@@ -51,7 +51,7 @@ public:
 
 public:
 	Control ():events(0){}
-	virtual void setControl (Car* obj) {object = obj;}
+	virtual void setControl (Car* obj_) {object = obj_;}
 	virtual void carCrushed (Car*) {object = 0;}
 
 	void applayEvents();

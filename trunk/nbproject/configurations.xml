@@ -38,10 +38,8 @@
           </df>
           <df name="threads" kind="SOURCE_LOGICAL_FOLDER">
             <df name="import" kind="SOURCE_LOGICAL_FOLDER">
-              <in>import.c</in>
             </df>
             <df name="import_win32" kind="SOURCE_LOGICAL_FOLDER">
-              <in>import.c</in>
             </df>
           </df>
         </df>
@@ -79,16 +77,12 @@
               <df name="dll_mpfr" kind="SOURCE_LOGICAL_FOLDER">
               </df>
               <df name="gen-bases" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gen-bases.c</in>
               </df>
               <df name="gen-fac_ui" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gen-fac_ui.c</in>
               </df>
               <df name="gen-fib" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gen-fib.c</in>
               </df>
               <df name="gen-psqr" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gen-psqr.c</in>
               </df>
               <df name="lib_gmp" kind="SOURCE_LOGICAL_FOLDER">
               </df>
@@ -106,21 +100,11 @@
               </df>
               <df name="lib_mpfr" kind="SOURCE_LOGICAL_FOLDER">
               </df>
-              <in>getopt.c</in>
-              <in>getopt.h</in>
-              <in>gmp.h</in>
-              <in>popham.c</in>
-              <in>unistd.h</in>
             </df>
             <df name="mpn" kind="SOURCE_LOGICAL_FOLDER">
               <df name="amd64i" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="generic" kind="SOURCE_LOGICAL_FOLDER">
-                <in>addsub_n.c</in>
-                <in>divrem_1.c</in>
-                <in>divrem_2.c</in>
-                <in>popham2.c</in>
               </df>
               <df name="x86i" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="p6" kind="SOURCE_LOGICAL_FOLDER">
@@ -135,11 +119,9 @@
                   <df name="sse2" kind="SOURCE_LOGICAL_FOLDER">
                   </df>
                 </df>
-                <in>gmp-mparam.h</in>
               </df>
             </df>
             <df name="mpz" kind="SOURCE_LOGICAL_FOLDER">
-              <in>set_d.c</in>
             </df>
           </df>
           <df name="util" kind="SOURCE_LOGICAL_FOLDER">
@@ -148,8 +130,6 @@
         <df name="src" kind="SOURCE_LOGICAL_FOLDER">
           <df name="c" kind="SOURCE_LOGICAL_FOLDER">
             <df name="arch" kind="SOURCE_LOGICAL_FOLDER">
-              <in>fpe_none.c</in>
-              <in>fpe_x86.c</in>
             </df>
             <df name="ffi" kind="SOURCE_LOGICAL_FOLDER">
             </df>
@@ -161,13 +141,6 @@
             </df>
             <df name="threads" kind="SOURCE_LOGICAL_FOLDER">
             </df>
-            <in>dpp.c</in>
-            <in>ecl_constants.h</in>
-            <in>ecl_features.h</in>
-            <in>iso_latin_names.h</in>
-            <in>newhash.h</in>
-            <in>symbols_list.h</in>
-            <in>symbols_list2.h</in>
           </df>
           <df name="clos" kind="SOURCE_LOGICAL_FOLDER">
           </df>
@@ -178,8 +151,6 @@
             </df>
             <df name="manual" kind="SOURCE_LOGICAL_FOLDER">
             </df>
-            <in>excldep.c</in>
-            <in>socket.c</in>
           </df>
           <df name="cmp" kind="SOURCE_LOGICAL_FOLDER">
           </df>
@@ -187,57 +158,14 @@
           </df>
           <df name="gc" kind="SOURCE_LOGICAL_FOLDER">
             <df name="cord" kind="SOURCE_LOGICAL_FOLDER">
-              <in>cordbscs.c</in>
-              <in>cordprnt.c</in>
-              <in>cordtest.c</in>
-              <in>cordxtra.c</in>
-              <in>de.c</in>
-              <in>de_cmds.h</in>
-              <in>de_win.c</in>
-              <in>de_win.h</in>
             </df>
             <df name="doc" kind="SOURCE_LOGICAL_FOLDER">
             </df>
             <df name="include" kind="SOURCE_LOGICAL_FOLDER">
               <df name="extra" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gc.h</in>
-                <in>gc_cpp.h</in>
               </df>
               <df name="private" kind="SOURCE_LOGICAL_FOLDER">
-                <in>cord_pos.h</in>
-                <in>darwin_semaphore.h</in>
-                <in>darwin_stop_world.h</in>
-                <in>dbg_mlc.h</in>
-                <in>gc_hdrs.h</in>
-                <in>gc_locks.h</in>
-                <in>gc_pmark.h</in>
-                <in>gc_priv.h</in>
-                <in>gcconfig.h</in>
-                <in>msvc_dbg.h</in>
-                <in>pthread_stop_world.h</in>
-                <in>pthread_support.h</in>
-                <in>specific.h</in>
-                <in>thread_local_alloc.h</in>
               </df>
-              <in>cord.h</in>
-              <in>ec.h</in>
-              <in>gc.h</in>
-              <in>gc_allocator.h</in>
-              <in>gc_amiga_redirects.h</in>
-              <in>gc_backptr.h</in>
-              <in>gc_config_macros.h</in>
-              <in>gc_cpp.h</in>
-              <in>gc_gcj.h</in>
-              <in>gc_inline.h</in>
-              <in>gc_mark.h</in>
-              <in>gc_pthread_redirects.h</in>
-              <in>gc_tiny_fl.h</in>
-              <in>gc_typed.h</in>
-              <in>gc_version.h</in>
-              <in>javaxfc.h</in>
-              <in>leak_detector.h</in>
-              <in>new_gc_alloc.h</in>
-              <in>weakpointer.h</in>
             </df>
             <df name="libatomic_ops-1.2" kind="SOURCE_LOGICAL_FOLDER">
               <df name="doc" kind="SOURCE_LOGICAL_FOLDER">
@@ -246,377 +174,89 @@
                 <df name="atomic_ops" kind="SOURCE_LOGICAL_FOLDER">
                   <df name="sysdeps" kind="SOURCE_LOGICAL_FOLDER">
                     <df name="armcc" kind="SOURCE_LOGICAL_FOLDER">
-                      <in>arm_v6.h</in>
                     </df>
                     <df name="gcc" kind="SOURCE_LOGICAL_FOLDER">
-                      <in>alpha.h</in>
-                      <in>arm.h</in>
-                      <in>cris.h</in>
-                      <in>hppa.h</in>
-                      <in>ia64.h</in>
-                      <in>m68k.h</in>
-                      <in>powerpc.h</in>
-                      <in>s390.h</in>
-                      <in>sparc.h</in>
-                      <in>x86.h</in>
-                      <in>x86_64.h</in>
                     </df>
                     <df name="hpc" kind="SOURCE_LOGICAL_FOLDER">
-                      <in>hppa.h</in>
-                      <in>ia64.h</in>
                     </df>
                     <df name="ibmc" kind="SOURCE_LOGICAL_FOLDER">
-                      <in>powerpc.h</in>
                     </df>
                     <df name="icc" kind="SOURCE_LOGICAL_FOLDER">
-                      <in>ia64.h</in>
                     </df>
                     <df name="msftc" kind="SOURCE_LOGICAL_FOLDER">
-                      <in>x86.h</in>
-                      <in>x86_64.h</in>
                     </df>
                     <df name="sunc" kind="SOURCE_LOGICAL_FOLDER">
-                      <in>sparc.h</in>
                     </df>
-                    <in>acquire_release_volatile.h</in>
-                    <in>aligned_atomic_load_store.h</in>
-                    <in>all_acquire_release_volatile.h</in>
-                    <in>all_aligned_atomic_load_store.h</in>
-                    <in>all_atomic_load_store.h</in>
-                    <in>ao_t_is_int.h</in>
-                    <in>atomic_load_store.h</in>
-                    <in>char_acquire_release_volatile.h</in>
-                    <in>char_atomic_load_store.h</in>
-                    <in>emul_cas.h</in>
-                    <in>generic_pthread.h</in>
-                    <in>int_acquire_release_volatile.h</in>
-                    <in>int_aligned_atomic_load_store.h</in>
-                    <in>int_atomic_load_store.h</in>
-                    <in>ordered.h</in>
-                    <in>ordered_except_wr.h</in>
-                    <in>read_ordered.h</in>
-                    <in>short_acquire_release_volatile.h</in>
-                    <in>short_aligned_atomic_load_store.h</in>
-                    <in>short_atomic_load_store.h</in>
-                    <in>standard_ao_double_t.h</in>
-                    <in>test_and_set_t_is_ao_t.h</in>
-                    <in>test_and_set_t_is_char.h</in>
                   </df>
-                  <in>generalize-small.h</in>
-                  <in>generalize.h</in>
                 </df>
-                <in>atomic_ops.c</in>
-                <in>atomic_ops.h</in>
-                <in>atomic_ops_malloc.c</in>
-                <in>atomic_ops_malloc.h</in>
-                <in>atomic_ops_stack.c</in>
-                <in>atomic_ops_stack.h</in>
               </df>
             </df>
             <df name="Mac_files" kind="SOURCE_LOGICAL_FOLDER">
-              <in>MacOS_Test_config.h</in>
-              <in>MacOS_config.h</in>
-              <in>dataend.c</in>
-              <in>datastart.c</in>
             </df>
-            <in>AmigaOS.c</in>
-            <in>MacOS.c</in>
-            <in>add_gc_prefix.c</in>
-            <in>allchblk.c</in>
-            <in>alloc.c</in>
-            <in>backgraph.c</in>
-            <in>blacklst.c</in>
-            <in>checksums.c</in>
-            <in>darwin_stop_world.c</in>
-            <in>dbg_mlc.c</in>
-            <in>dyn_load.c</in>
-            <in>finalize.c</in>
-            <in>gc_cpp.cc</in>
-            <in>gc_cpp.cpp</in>
-            <in>gc_dlopen.c</in>
-            <in>gcj_mlc.c</in>
-            <in>gcname.c</in>
-            <in>headers.c</in>
-            <in>if_mach.c</in>
-            <in>if_not_there.c</in>
-            <in>mach_dep.c</in>
-            <in>malloc.c</in>
-            <in>mallocx.c</in>
-            <in>mark.c</in>
-            <in>mark_rts.c</in>
-            <in>misc.c</in>
-            <in>msvc_dbg.c</in>
-            <in>new_hblk.c</in>
-            <in>obj_map.c</in>
-            <in>os_dep.c</in>
-            <in>pcr_interface.c</in>
-            <in>pthread_stop_world.c</in>
-            <in>pthread_support.c</in>
-            <in>ptr_chck.c</in>
-            <in>real_malloc.c</in>
-            <in>reclaim.c</in>
-            <in>setjmp_t.c</in>
-            <in>specific.c</in>
-            <in>stubborn.c</in>
-            <in>thread_local_alloc.c</in>
-            <in>threadlibs.c</in>
-            <in>typd_mlc.c</in>
-            <in>win32_threads.c</in>
           </df>
           <df name="gmp" kind="SOURCE_LOGICAL_FOLDER">
             <df name="cxx" kind="SOURCE_LOGICAL_FOLDER">
-              <in>dummy.cc</in>
-              <in>isfuns.cc</in>
-              <in>ismpf.cc</in>
-              <in>ismpq.cc</in>
-              <in>ismpz.cc</in>
-              <in>ismpznw.cc</in>
-              <in>osdoprnti.cc</in>
-              <in>osfuns.cc</in>
-              <in>osmpf.cc</in>
-              <in>osmpq.cc</in>
-              <in>osmpz.cc</in>
             </df>
             <df name="demos" kind="SOURCE_LOGICAL_FOLDER">
               <df name="calc" kind="SOURCE_LOGICAL_FOLDER">
-                <in>calc-common.h</in>
-                <in>calc.c</in>
-                <in>calc.h</in>
-                <in>calclex.c</in>
-                <in>calcread.c</in>
               </df>
               <df name="expr" kind="SOURCE_LOGICAL_FOLDER">
-                <in>expr-impl.h</in>
-                <in>expr.c</in>
-                <in>expr.h</in>
-                <in>exprf.c</in>
-                <in>exprfa.c</in>
-                <in>exprq.c</in>
-                <in>exprqa.c</in>
-                <in>exprv.c</in>
-                <in>exprz.c</in>
-                <in>exprza.c</in>
-                <in>run-expr.c</in>
-                <in>t-expr.c</in>
               </df>
               <df name="perl" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="GMP" kind="SOURCE_LOGICAL_FOLDER">
                 </df>
               </df>
-              <in>factorize.c</in>
-              <in>isprime.c</in>
-              <in>pexpr.c</in>
-              <in>primes.c</in>
-              <in>qcn.c</in>
             </df>
             <df name="doc" kind="SOURCE_LOGICAL_FOLDER">
             </df>
             <df name="macos" kind="SOURCE_LOGICAL_FOLDER">
             </df>
             <df name="mpbsd" kind="SOURCE_LOGICAL_FOLDER">
-              <in>itom.c</in>
-              <in>mfree.c</in>
-              <in>min.c</in>
-              <in>mout.c</in>
-              <in>mtox.c</in>
-              <in>rpow.c</in>
-              <in>sdiv.c</in>
-              <in>xtom.c</in>
             </df>
             <df name="mpf" kind="SOURCE_LOGICAL_FOLDER">
-              <in>abs.c</in>
-              <in>add.c</in>
-              <in>add_ui.c</in>
-              <in>ceilfloor.c</in>
-              <in>clear.c</in>
-              <in>cmp.c</in>
-              <in>cmp_d.c</in>
-              <in>cmp_si.c</in>
-              <in>cmp_ui.c</in>
-              <in>div.c</in>
-              <in>div_2exp.c</in>
-              <in>div_ui.c</in>
-              <in>dump.c</in>
-              <in>eq.c</in>
-              <in>fits_s.h</in>
-              <in>fits_sint.c</in>
-              <in>fits_slong.c</in>
-              <in>fits_sshort.c</in>
-              <in>fits_u.h</in>
-              <in>fits_uint.c</in>
-              <in>fits_ulong.c</in>
-              <in>fits_ushort.c</in>
-              <in>get_d.c</in>
-              <in>get_d_2exp.c</in>
-              <in>get_dfl_prec.c</in>
-              <in>get_prc.c</in>
-              <in>get_si.c</in>
-              <in>get_str.c</in>
-              <in>get_ui.c</in>
-              <in>init.c</in>
-              <in>init2.c</in>
-              <in>inp_str.c</in>
-              <in>int_p.c</in>
-              <in>iset.c</in>
-              <in>iset_d.c</in>
-              <in>iset_si.c</in>
-              <in>iset_str.c</in>
-              <in>iset_ui.c</in>
-              <in>mul.c</in>
-              <in>mul_2exp.c</in>
-              <in>mul_ui.c</in>
-              <in>neg.c</in>
-              <in>out_str.c</in>
-              <in>pow_ui.c</in>
-              <in>random2.c</in>
-              <in>reldiff.c</in>
-              <in>set.c</in>
-              <in>set_d.c</in>
-              <in>set_dfl_prec.c</in>
-              <in>set_prc.c</in>
-              <in>set_prc_raw.c</in>
-              <in>set_q.c</in>
-              <in>set_si.c</in>
-              <in>set_str.c</in>
-              <in>set_ui.c</in>
-              <in>set_z.c</in>
-              <in>size.c</in>
-              <in>sqrt.c</in>
-              <in>sqrt_ui.c</in>
-              <in>sub.c</in>
-              <in>sub_ui.c</in>
-              <in>swap.c</in>
-              <in>trunc.c</in>
-              <in>ui_div.c</in>
-              <in>ui_sub.c</in>
-              <in>urandomb.c</in>
             </df>
             <df name="mpn" kind="SOURCE_LOGICAL_FOLDER">
               <df name="a29k" kind="SOURCE_LOGICAL_FOLDER">
               </df>
               <df name="alpha" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="ev5" kind="SOURCE_LOGICAL_FOLDER">
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="ev6" kind="SOURCE_LOGICAL_FOLDER">
                   <df name="nails" kind="SOURCE_LOGICAL_FOLDER">
-                    <in>gmp-mparam.h</in>
                   </df>
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="ev67" kind="SOURCE_LOGICAL_FOLDER">
                 </df>
-                <in>dive_1.c</in>
-                <in>gmp-mparam.h</in>
               </df>
               <df name="arm" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="clipper" kind="SOURCE_LOGICAL_FOLDER">
               </df>
               <df name="cray" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="cfp" kind="SOURCE_LOGICAL_FOLDER">
-                  <in>addmul_1.c</in>
-                  <in>mul_1.c</in>
-                  <in>submul_1.c</in>
                 </df>
                 <df name="ieee" kind="SOURCE_LOGICAL_FOLDER">
-                  <in>addmul_1.c</in>
-                  <in>gmp-mparam.h</in>
-                  <in>invert_limb.c</in>
-                  <in>mul_1.c</in>
-                  <in>mul_basecase.c</in>
-                  <in>sqr_basecase.c</in>
-                  <in>submul_1.c</in>
                 </df>
-                <in>add_n.c</in>
-                <in>gmp-mparam.h</in>
-                <in>hamdist.c</in>
-                <in>lshift.c</in>
-                <in>popcount.c</in>
-                <in>rshift.c</in>
-                <in>sub_n.c</in>
               </df>
               <df name="generic" kind="SOURCE_LOGICAL_FOLDER">
-                <in>add.c</in>
-                <in>add_1.c</in>
-                <in>add_n.c</in>
-                <in>addmul_1.c</in>
-                <in>addsub_n.c</in>
-                <in>bdivmod.c</in>
-                <in>cmp.c</in>
-                <in>dc_divrem_n.c</in>
-                <in>dive_1.c</in>
-                <in>diveby3.c</in>
-                <in>divis.c</in>
-                <in>divrem.c</in>
-                <in>divrem_1.c</in>
-                <in>divrem_2.c</in>
-                <in>dump.c</in>
-                <in>fib2_ui.c</in>
-                <in>gcd.c</in>
-                <in>gcd_1.c</in>
-                <in>gcdext.c</in>
-                <in>get_d.c</in>
-                <in>get_str.c</in>
-                <in>gmp-mparam.h</in>
-                <in>jacbase.c</in>
-                <in>lshift.c</in>
-                <in>mod_1.c</in>
-                <in>mod_34lsub1.c</in>
-                <in>mode1o.c</in>
-                <in>mul.c</in>
-                <in>mul_1.c</in>
-                <in>mul_basecase.c</in>
-                <in>mul_fft.c</in>
-                <in>mul_n.c</in>
-                <in>mullow_basecase.c</in>
-                <in>mullow_n.c</in>
-                <in>perfsqr.c</in>
-                <in>popham.c</in>
-                <in>pow_1.c</in>
-                <in>pre_divrem_1.c</in>
-                <in>pre_mod_1.c</in>
-                <in>random.c</in>
-                <in>random2.c</in>
-                <in>rootrem.c</in>
-                <in>rshift.c</in>
-                <in>sb_divrem_mn.c</in>
-                <in>scan0.c</in>
-                <in>scan1.c</in>
-                <in>set_str.c</in>
-                <in>sizeinbase.c</in>
-                <in>sqr_basecase.c</in>
-                <in>sqrtrem.c</in>
-                <in>sub.c</in>
-                <in>sub_1.c</in>
-                <in>sub_n.c</in>
-                <in>submul_1.c</in>
-                <in>tdiv_qr.c</in>
-                <in>udiv_w_sdiv.c</in>
               </df>
               <df name="i960" kind="SOURCE_LOGICAL_FOLDER">
               </df>
               <df name="ia64" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
-                <in>submul_1.c</in>
               </df>
               <df name="lisp" kind="SOURCE_LOGICAL_FOLDER">
               </df>
               <df name="m68k" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="mc68020" kind="SOURCE_LOGICAL_FOLDER">
                 </df>
-                <in>gmp-mparam.h</in>
               </df>
               <df name="m88k" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="mc88110" kind="SOURCE_LOGICAL_FOLDER">
                 </df>
               </df>
               <df name="mips32" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="mips64" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="ns32k" kind="SOURCE_LOGICAL_FOLDER">
               </df>
@@ -624,26 +264,19 @@
                 <df name="hppa1_1" kind="SOURCE_LOGICAL_FOLDER">
                   <df name="pa7100" kind="SOURCE_LOGICAL_FOLDER">
                   </df>
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="hppa2_0" kind="SOURCE_LOGICAL_FOLDER">
-                  <in>gmp-mparam.h</in>
                 </df>
-                <in>gmp-mparam.h</in>
               </df>
               <df name="pa64" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="power" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="powerpc32" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="750" kind="SOURCE_LOGICAL_FOLDER">
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="vmx" kind="SOURCE_LOGICAL_FOLDER">
                 </df>
-                <in>gmp-mparam.h</in>
               </df>
               <df name="powerpc64" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="mode32" kind="SOURCE_LOGICAL_FOLDER">
@@ -652,12 +285,10 @@
                 </df>
                 <df name="vmx" kind="SOURCE_LOGICAL_FOLDER">
                 </df>
-                <in>gmp-mparam.h</in>
               </df>
               <df name="pyr" kind="SOURCE_LOGICAL_FOLDER">
               </df>
               <df name="s390" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="sh" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="sh2" kind="SOURCE_LOGICAL_FOLDER">
@@ -666,400 +297,76 @@
               <df name="sparc32" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="v8" kind="SOURCE_LOGICAL_FOLDER">
                   <df name="supersparc" kind="SOURCE_LOGICAL_FOLDER">
-                    <in>gmp-mparam.h</in>
                   </df>
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="v9" kind="SOURCE_LOGICAL_FOLDER">
-                  <in>gmp-mparam.h</in>
                 </df>
-                <in>gmp-mparam.h</in>
               </df>
               <df name="sparc64" kind="SOURCE_LOGICAL_FOLDER">
-                <in>dive_1.c</in>
-                <in>divrem_1.c</in>
-                <in>gmp-mparam.h</in>
-                <in>mod_1.c</in>
-                <in>mode1o.c</in>
-                <in>sparc64.h</in>
               </df>
               <df name="thumb" kind="SOURCE_LOGICAL_FOLDER">
               </df>
               <df name="vax" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="x86" kind="SOURCE_LOGICAL_FOLDER">
                 <df name="fat" kind="SOURCE_LOGICAL_FOLDER">
-                  <in>fat.c</in>
-                  <in>gcd_1.c</in>
-                  <in>gmp-mparam.h</in>
-                  <in>mode1o.c</in>
                 </df>
                 <df name="i486" kind="SOURCE_LOGICAL_FOLDER">
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="k6" kind="SOURCE_LOGICAL_FOLDER">
                   <df name="k62mmx" kind="SOURCE_LOGICAL_FOLDER">
                   </df>
                   <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
                   </df>
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="k7" kind="SOURCE_LOGICAL_FOLDER">
                   <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
                   </df>
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="p6" kind="SOURCE_LOGICAL_FOLDER">
                   <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
-                    <in>gmp-mparam.h</in>
                   </df>
                   <df name="p3mmx" kind="SOURCE_LOGICAL_FOLDER">
                   </df>
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="pentium" kind="SOURCE_LOGICAL_FOLDER">
                   <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
-                    <in>gmp-mparam.h</in>
                   </df>
-                  <in>gmp-mparam.h</in>
                 </df>
                 <df name="pentium4" kind="SOURCE_LOGICAL_FOLDER">
                   <df name="mmx" kind="SOURCE_LOGICAL_FOLDER">
                   </df>
                   <df name="sse2" kind="SOURCE_LOGICAL_FOLDER">
-                    <in>gmp-mparam.h</in>
                   </df>
                 </df>
-                <in>gmp-mparam.h</in>
               </df>
               <df name="x86_64" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="z8000" kind="SOURCE_LOGICAL_FOLDER">
-                <in>gmp-mparam.h</in>
               </df>
               <df name="z8000x" kind="SOURCE_LOGICAL_FOLDER">
               </df>
             </df>
             <df name="mpq" kind="SOURCE_LOGICAL_FOLDER">
-              <in>abs.c</in>
-              <in>aors.c</in>
-              <in>canonicalize.c</in>
-              <in>clear.c</in>
-              <in>cmp.c</in>
-              <in>cmp_si.c</in>
-              <in>cmp_ui.c</in>
-              <in>div.c</in>
-              <in>equal.c</in>
-              <in>get_d.c</in>
-              <in>get_den.c</in>
-              <in>get_num.c</in>
-              <in>get_str.c</in>
-              <in>init.c</in>
-              <in>inp_str.c</in>
-              <in>inv.c</in>
-              <in>md_2exp.c</in>
-              <in>mul.c</in>
-              <in>neg.c</in>
-              <in>out_str.c</in>
-              <in>set.c</in>
-              <in>set_d.c</in>
-              <in>set_den.c</in>
-              <in>set_f.c</in>
-              <in>set_num.c</in>
-              <in>set_si.c</in>
-              <in>set_str.c</in>
-              <in>set_ui.c</in>
-              <in>set_z.c</in>
-              <in>swap.c</in>
             </df>
             <df name="mpz" kind="SOURCE_LOGICAL_FOLDER">
-              <in>abs.c</in>
-              <in>add.c</in>
-              <in>add_ui.c</in>
-              <in>and.c</in>
-              <in>aors.h</in>
-              <in>aors_ui.h</in>
-              <in>aorsmul.c</in>
-              <in>aorsmul_i.c</in>
-              <in>array_init.c</in>
-              <in>bin_ui.c</in>
-              <in>bin_uiui.c</in>
-              <in>cdiv_q.c</in>
-              <in>cdiv_q_ui.c</in>
-              <in>cdiv_qr.c</in>
-              <in>cdiv_qr_ui.c</in>
-              <in>cdiv_r.c</in>
-              <in>cdiv_r_ui.c</in>
-              <in>cdiv_ui.c</in>
-              <in>cfdiv_q_2exp.c</in>
-              <in>cfdiv_r_2exp.c</in>
-              <in>clear.c</in>
-              <in>clrbit.c</in>
-              <in>cmp.c</in>
-              <in>cmp_d.c</in>
-              <in>cmp_si.c</in>
-              <in>cmp_ui.c</in>
-              <in>cmpabs.c</in>
-              <in>cmpabs_d.c</in>
-              <in>cmpabs_ui.c</in>
-              <in>com.c</in>
-              <in>combit.c</in>
-              <in>cong.c</in>
-              <in>cong_2exp.c</in>
-              <in>cong_ui.c</in>
-              <in>dive_ui.c</in>
-              <in>divegcd.c</in>
-              <in>divexact.c</in>
-              <in>divis.c</in>
-              <in>divis_2exp.c</in>
-              <in>divis_ui.c</in>
-              <in>dump.c</in>
-              <in>export.c</in>
-              <in>fac_ui.c</in>
-              <in>fdiv_q.c</in>
-              <in>fdiv_q_ui.c</in>
-              <in>fdiv_qr.c</in>
-              <in>fdiv_qr_ui.c</in>
-              <in>fdiv_r.c</in>
-              <in>fdiv_r_ui.c</in>
-              <in>fdiv_ui.c</in>
-              <in>fib2_ui.c</in>
-              <in>fib_ui.c</in>
-              <in>fits_s.h</in>
-              <in>fits_sint.c</in>
-              <in>fits_slong.c</in>
-              <in>fits_sshort.c</in>
-              <in>fits_uint.c</in>
-              <in>fits_ulong.c</in>
-              <in>fits_ushort.c</in>
-              <in>gcd.c</in>
-              <in>gcd_ui.c</in>
-              <in>gcdext.c</in>
-              <in>get_d.c</in>
-              <in>get_d_2exp.c</in>
-              <in>get_si.c</in>
-              <in>get_str.c</in>
-              <in>get_ui.c</in>
-              <in>getlimbn.c</in>
-              <in>hamdist.c</in>
-              <in>import.c</in>
-              <in>init.c</in>
-              <in>init2.c</in>
-              <in>inp_raw.c</in>
-              <in>inp_str.c</in>
-              <in>invert.c</in>
-              <in>ior.c</in>
-              <in>iset.c</in>
-              <in>iset_d.c</in>
-              <in>iset_si.c</in>
-              <in>iset_str.c</in>
-              <in>iset_ui.c</in>
-              <in>jacobi.c</in>
-              <in>kronsz.c</in>
-              <in>kronuz.c</in>
-              <in>kronzs.c</in>
-              <in>kronzu.c</in>
-              <in>lcm.c</in>
-              <in>lcm_ui.c</in>
-              <in>lucnum2_ui.c</in>
-              <in>lucnum_ui.c</in>
-              <in>millerrabin.c</in>
-              <in>mod.c</in>
-              <in>mul.c</in>
-              <in>mul_2exp.c</in>
-              <in>mul_i.h</in>
-              <in>mul_si.c</in>
-              <in>mul_ui.c</in>
-              <in>n_pow_ui.c</in>
-              <in>neg.c</in>
-              <in>nextprime.c</in>
-              <in>out_raw.c</in>
-              <in>out_str.c</in>
-              <in>perfpow.c</in>
-              <in>perfsqr.c</in>
-              <in>popcount.c</in>
-              <in>pow_ui.c</in>
-              <in>powm.c</in>
-              <in>powm_ui.c</in>
-              <in>pprime_p.c</in>
-              <in>random.c</in>
-              <in>random2.c</in>
-              <in>realloc.c</in>
-              <in>realloc2.c</in>
-              <in>remove.c</in>
-              <in>root.c</in>
-              <in>rootrem.c</in>
-              <in>rrandomb.c</in>
-              <in>scan0.c</in>
-              <in>scan1.c</in>
-              <in>set.c</in>
-              <in>set_d.c</in>
-              <in>set_f.c</in>
-              <in>set_q.c</in>
-              <in>set_si.c</in>
-              <in>set_str.c</in>
-              <in>set_ui.c</in>
-              <in>setbit.c</in>
-              <in>size.c</in>
-              <in>sizeinbase.c</in>
-              <in>sqrt.c</in>
-              <in>sqrtrem.c</in>
-              <in>sub.c</in>
-              <in>sub_ui.c</in>
-              <in>swap.c</in>
-              <in>tdiv_q.c</in>
-              <in>tdiv_q_2exp.c</in>
-              <in>tdiv_q_ui.c</in>
-              <in>tdiv_qr.c</in>
-              <in>tdiv_qr_ui.c</in>
-              <in>tdiv_r.c</in>
-              <in>tdiv_r_2exp.c</in>
-              <in>tdiv_r_ui.c</in>
-              <in>tdiv_ui.c</in>
-              <in>tstbit.c</in>
-              <in>ui_pow_ui.c</in>
-              <in>ui_sub.c</in>
-              <in>urandomb.c</in>
-              <in>urandomm.c</in>
-              <in>xor.c</in>
             </df>
             <df name="printf" kind="SOURCE_LOGICAL_FOLDER">
-              <in>asprintf.c</in>
-              <in>asprntffuns.c</in>
-              <in>doprnt.c</in>
-              <in>doprntf.c</in>
-              <in>doprnti.c</in>
-              <in>fprintf.c</in>
-              <in>obprintf.c</in>
-              <in>obprntffuns.c</in>
-              <in>obvprintf.c</in>
-              <in>printf.c</in>
-              <in>printffuns.c</in>
-              <in>repl-vsnprintf.c</in>
-              <in>snprintf.c</in>
-              <in>snprntffuns.c</in>
-              <in>sprintf.c</in>
-              <in>sprintffuns.c</in>
-              <in>vasprintf.c</in>
-              <in>vfprintf.c</in>
-              <in>vprintf.c</in>
-              <in>vsnprintf.c</in>
-              <in>vsprintf.c</in>
             </df>
             <df name="scanf" kind="SOURCE_LOGICAL_FOLDER">
-              <in>doscan.c</in>
-              <in>fscanf.c</in>
-              <in>fscanffuns.c</in>
-              <in>scanf.c</in>
-              <in>sscanf.c</in>
-              <in>sscanffuns.c</in>
-              <in>vfscanf.c</in>
-              <in>vscanf.c</in>
-              <in>vsscanf.c</in>
             </df>
             <df name="tune" kind="SOURCE_LOGICAL_FOLDER">
-              <in>common.c</in>
-              <in>divrem1div.c</in>
-              <in>divrem1inv.c</in>
-              <in>divrem2div.c</in>
-              <in>divrem2inv.c</in>
-              <in>freq.c</in>
-              <in>gcd_bin.c</in>
-              <in>gcd_finda_gen.c</in>
-              <in>gcdext_double.c</in>
-              <in>gcdext_single.c</in>
-              <in>gcdextod.c</in>
-              <in>gcdextos.c</in>
-              <in>jacbase1.c</in>
-              <in>jacbase2.c</in>
-              <in>jacbase3.c</in>
-              <in>mod_1_div.c</in>
-              <in>mod_1_inv.c</in>
-              <in>modlinv.c</in>
-              <in>noop.c</in>
-              <in>powm_mod.c</in>
-              <in>powm_redc.c</in>
-              <in>pre_divrem_1.c</in>
-              <in>sb_div.c</in>
-              <in>sb_inv.c</in>
-              <in>set_strb.c</in>
-              <in>set_strs.c</in>
-              <in>speed-ext.c</in>
-              <in>speed.c</in>
-              <in>speed.h</in>
-              <in>time.c</in>
-              <in>tuneup.c</in>
             </df>
-            <in>ansi2knr.c</in>
-            <in>assert.c</in>
-            <in>compat.c</in>
-            <in>dumbmp.c</in>
-            <in>errno.c</in>
-            <in>extract-dbl.c</in>
-            <in>gen-bases.c</in>
-            <in>gen-fac_ui.c</in>
-            <in>gen-fib.c</in>
-            <in>gen-psqr.c</in>
-            <in>gmp-impl.h</in>
-            <in>gmpxx.h</in>
-            <in>invalid.c</in>
-            <in>longlong.h</in>
-            <in>memory.c</in>
-            <in>mp_bpl.c</in>
-            <in>mp_clz_tab.c</in>
-            <in>mp_dv_tab.c</in>
-            <in>mp_get_fns.c</in>
-            <in>mp_minv_tab.c</in>
-            <in>mp_set_fns.c</in>
-            <in>rand.c</in>
-            <in>randbui.c</in>
-            <in>randclr.c</in>
-            <in>randdef.c</in>
-            <in>randiset.c</in>
-            <in>randlc2s.c</in>
-            <in>randlc2x.c</in>
-            <in>randmt.c</in>
-            <in>randmt.h</in>
-            <in>randmts.c</in>
-            <in>randmui.c</in>
-            <in>rands.c</in>
-            <in>randsd.c</in>
-            <in>randsdui.c</in>
-            <in>tal-debug.c</in>
-            <in>tal-notreent.c</in>
-            <in>tal-reent.c</in>
-            <in>version.c</in>
           </df>
           <df name="h" kind="SOURCE_LOGICAL_FOLDER">
             <df name="impl" kind="SOURCE_LOGICAL_FOLDER">
-              <in>math_dispatch.h</in>
-              <in>math_dispatch2.h</in>
-              <in>math_fenv.h</in>
-              <in>math_fenv_msvc.h</in>
             </df>
-            <in>bytecodes.h</in>
-            <in>cs.h</in>
-            <in>ecl-cmp.h</in>
-            <in>ecl-inl.h</in>
-            <in>ecl.h</in>
-            <in>eval.h</in>
-            <in>external.h</in>
-            <in>internal.h</in>
-            <in>number.h</in>
-            <in>object.h</in>
-            <in>page.h</in>
-            <in>stacks.h</in>
-            <in>unify.h</in>
           </df>
           <df name="lsp" kind="SOURCE_LOGICAL_FOLDER">
           </df>
           <df name="new-cmp" kind="SOURCE_LOGICAL_FOLDER">
           </df>
           <df name="util" kind="SOURCE_LOGICAL_FOLDER">
-            <in>cut.c</in>
-            <in>iobuftest.c</in>
           </df>
         </df>
       </df>
@@ -1094,61 +401,10 @@
         <df name="ecl">
           <df name="gc" kind="SOURCE_LOGICAL_FOLDER">
             <df name="private" kind="SOURCE_LOGICAL_FOLDER">
-              <in>cord_pos.h</in>
-              <in>darwin_semaphore.h</in>
-              <in>darwin_stop_world.h</in>
-              <in>dbg_mlc.h</in>
-              <in>gc_hdrs.h</in>
-              <in>gc_locks.h</in>
-              <in>gc_pmark.h</in>
-              <in>gc_priv.h</in>
-              <in>gcconfig.h</in>
-              <in>msvc_dbg.h</in>
-              <in>pthread_stop_world.h</in>
-              <in>pthread_support.h</in>
-              <in>specific.h</in>
-              <in>thread_local_alloc.h</in>
             </df>
-            <in>gc.h</in>
-            <in>gc_allocator.h</in>
-            <in>gc_amiga_redirects.h</in>
-            <in>gc_backptr.h</in>
-            <in>gc_config_macros.h</in>
-            <in>gc_cpp.h</in>
-            <in>gc_gcj.h</in>
-            <in>gc_inline.h</in>
-            <in>gc_mark.h</in>
-            <in>gc_pthread_redirects.h</in>
-            <in>gc_tiny_fl.h</in>
-            <in>gc_typed.h</in>
-            <in>gc_version.h</in>
-            <in>leak_detector.h</in>
-            <in>new_gc_alloc.h</in>
-            <in>weakpointer.h</in>
           </df>
           <df name="impl" kind="SOURCE_LOGICAL_FOLDER">
-            <in>math_dispatch.h</in>
-            <in>math_dispatch2.h</in>
-            <in>math_fenv.h</in>
-            <in>math_fenv_msvc.h</in>
           </df>
-          <in>bytecodes.h</in>
-          <in>config.h</in>
-          <in>configpre.h</in>
-          <in>cs.h</in>
-          <in>ecl-cmp.h</in>
-          <in>ecl-inl.h</in>
-          <in>ecl.h</in>
-          <in>eval.h</in>
-          <in>external.h</in>
-          <in>gc.h</in>
-          <in>gc_cpp.h</in>
-          <in>internal.h</in>
-          <in>number.h</in>
-          <in>object.h</in>
-          <in>page.h</in>
-          <in>stacks.h</in>
-          <in>unify.h</in>
         </df>
         <in>Activeman.h</in>
         <in>Battlefield.h</in>
@@ -1175,6 +431,8 @@
         <in>Interpreter.h</in>
         <in>IsometricField.h</in>
         <in>Key_event.h</in>
+        <in>Key_storage.h</in>
+        <in>MouseTargeter.h</in>
         <in>Mouse_event.h</in>
         <in>Orient.h</in>
         <in>Player_manager.h</in>
@@ -1183,6 +441,7 @@
         <in>Socket.h</in>
         <in>Sprite.h</in>
         <in>TileFactory.h</in>
+        <in>Timer.h</in>
         <in>Transmitted.h</in>
         <in>UniId.h</in>
         <in>Vec.h</in>
@@ -1218,6 +477,8 @@
         <in>Graphic_subsystem.cpp</in>
         <in>Interpreter.cpp</in>
         <in>Key_event.cpp</in>
+        <in>Key_storage.cpp</in>
+        <in>MouseTargeter.cpp</in>
         <in>Orient.cpp</in>
         <in>Player_manager.cpp</in>
         <in>Rect.cpp</in>
@@ -1225,6 +486,7 @@
         <in>Socket.cpp</in>
         <in>Sprite.cpp</in>
         <in>TileFactory.cpp</in>
+        <in>Timer.cpp</in>
         <in>initparser.cpp</in>
       </df>
       <df name="textures">
@@ -1251,6 +513,7 @@
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>GNU|GNU</compilerSet>
+        <fortranRequired>false</fortranRequired>
         <platform>2</platform>
       </toolsSet>
       <makefileType>

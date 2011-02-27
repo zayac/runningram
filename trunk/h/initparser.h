@@ -17,7 +17,7 @@ class Serializator;
 class Initializable
 {
 public:
-	virtual Serializator* getParser() = 0;
+	virtual Serializator* newParser() = 0;
 };
 
 class Serializator

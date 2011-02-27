@@ -55,7 +55,8 @@ void Car::actions (float dt)
 	front.applayMotion (dt);
 	back.applayMotion (dt);
 
-	Orient ori(front.pos - back.pos);
+//	Orient ori(front.pos - back.pos);
+	Orient ori = getOri();
 
 //	float fm = 1/front.rev_mass, bm = 1/back.rev_mass;
 
@@ -428,7 +429,7 @@ void Car::applaySandFriction (Collision_vector cv, float fric, bool bORf)
 		host->subFrag ();
 }
 //--------------------------------------------------------------------------------------------------
-Vector2f Car::getVel (Vector2f p)
+Vector2f Car::getVel (Vector2f p) const
 {
     Vector2f trans = back.vel;
 
@@ -444,7 +445,7 @@ Vector2f Car::getVel (Vector2f p)
     return trans + rotary;
 }
 //--------------------------------------------------------------------------------------------------
-Vector2f Car::getImp (Vector2f p)
+Vector2f Car::getImp (Vector2f p) const
 {
     Vector2f to_back = p - back.pos;
     Vector2f to_front = p - front.pos;
@@ -453,6 +454,11 @@ Vector2f Car::getImp (Vector2f p)
     Vector2f front_imp = front.getImpulse().proj (to_front);
 
 	return back_imp + front_imp;
+}
+//--------------------------------------------------------------------------------------------------
+Orient Car::getOri() const
+{
+	return Orient (front.pos - back.pos);
 }
 //--------------------------------------------------------------------------------------------------
 bool Car::damage (Vector2f imp, Vector2f papp, float destructive_k)

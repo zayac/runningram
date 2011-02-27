@@ -116,7 +116,7 @@ public:
 //		vel += vel_add_across + vel_add_along;
 //		force = Vector2f();
 	}
-	inline Vector2f getImpulse()
+	inline Vector2f getImpulse() const
 	{
 		if (rev_mass) return vel/rev_mass;
 		return vel*VeryBigMass;
@@ -242,8 +242,9 @@ public:
 	void getMyVerticies (Vector2f* four);
 	void getMyFrontVerticies (Vector2f* four);
 	void getMyBackVerticies (Vector2f* four);
-	Vector2f getVel (Vector2f p);
-	Vector2f getImp (Vector2f p);
+	Vector2f getVel (Vector2f p) const;
+	Vector2f getImp (Vector2f p) const;
+	Orient getOri() const;
 	bool damage (Vector2f imp, Vector2f papp, float destructive_k);			//returns true if killed
 	void applImpulse (Vector2f imp, Vector2f papp, float destructive_k = 2);
 	void applForce (Vector2f f, Vector2f papp, bool resistancive);

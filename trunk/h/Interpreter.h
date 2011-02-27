@@ -44,7 +44,7 @@ public:
 	bool is(); 
 };
 
-typedef Arg_Functor<UniValue, UniValue, void> Hundler;
+typedef Arg_Functor<UniValue, UniValue, void> Handler;
 typedef Arg_Functor<UniValue, void, void> Informer;
 
 class Interpreter
@@ -56,7 +56,7 @@ private:
 
     vector<Functor*> funcs;
 	vector<Informer*> infos;
-	vector<Hundler*> hundlers;
+	vector<Handler*> Handlers;
 
 	struct Printer
 	{
@@ -64,7 +64,7 @@ private:
 		Arg_Functor<void, const string&>* preview;
 		Functor* flush;
 
-		UniValue charWriteHundler (UniValue c);
+		UniValue charWriteHandler (UniValue c);
 		UniValue charFlushInformer();
 
 		Printer():preview(0), flush(0) {}
@@ -86,13 +86,13 @@ public:
     static void destroy();
     static Functor* getFun (int number);
     static Informer* getInfo (int number);
-    static Hundler* getHundler (int number);
+    static Handler* getHandler (int number);
 
     virtual ~Interpreter();
 
     int regFun (string name, Functor* fun);
     int regInfo (string name, Informer* fun);
-    int regHundler (string name, Hundler* fun);
+    int regHandler (string name, Handler* fun);
 
 	void regOutput (Arg_Functor<void, const string&> *preview, Functor* flush);
 
@@ -122,7 +122,7 @@ class InfoTrans :public Informer
 };
 
 template <typename RET, typename TAK>
-class HundTrans :public Hundler
+class HundTrans :public Handler
 {
 	Arg_Functor<RET, TAK, void>* fun;
 	public:
@@ -146,11 +146,11 @@ public:
 	{ return Interpreter::getInstance()->eval(exec); }
 };
 
-class HundlerS :public Hundler
+class HandlerS :public Handler
 {
 	string exec;
 public:
-	HundlerS (const string& exe) :exec (exe) {}
+	HandlerS (const string& exe) :exec (exe) {}
 	virtual UniValue operator ()(UniValue arg)
 	{ return Interpreter::getInstance()->funcall(exec, arg); }
 };
