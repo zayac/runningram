@@ -53,7 +53,7 @@ public:
 	static void preInit (GUEventman* evman, Timer* time, const Graphic_subsystem* graphics);
 };
 
-const float infelicity = 5;//TODO: May be it should be added to configuration file
+const float infelicity = 1;//TODO: May be it should be added to configuration file
 
 #endif	/* MOUSETARGETER_H */
 

@@ -101,7 +101,7 @@ public:
     UniValue evalNprint (const string& code);
     UniValue unsafeEval (char* code);//It can break the whole program
 	string toString (const UniValue& val);
-	bool loadFile (char* fname);
+	bool loadFile (const char* fname);
 
 };
 
@@ -118,23 +118,23 @@ class InfoTrans :public Informer
 			return UniValue::by (false);
 		}
 		virtual ~InfoTrans()
-		{ if (!fun) delete fun;};
+			{if (!fun) delete fun;}
 };
 
 template <typename RET, typename TAK>
-class HundTrans :public Handler
+class HandTrans :public Handler
 {
 	Arg_Functor<RET, TAK, void>* fun;
 	public:
-		HundTrans (Arg_Functor<RET, TAK, void>* _fun)
+		HandTrans (Arg_Functor<RET, TAK, void>* _fun)
 		:fun(_fun) {}
 		virtual UniValue operator ()(UniValue val)
 		{
 			if (!fun) return UniValue::by ((*fun)(val.get<TAK>()));
 			return UniValue::by (false);
 		}
-		virtual ~HundTrans()
-		{ if (!fun) delete fun;};
+		virtual ~HandTrans()
+			{if (!fun) delete fun;}
 };
 
 class InformerS :public Informer
@@ -143,7 +143,7 @@ class InformerS :public Informer
 public:
 	InformerS (const string& exe) :exec (exe) {}
 	virtual UniValue operator ()()
-	{ return Interpreter::getInstance()->eval(exec); }
+		{return Interpreter::getInstance()->eval(exec);}
 };
 
 class HandlerS :public Handler
@@ -152,7 +152,7 @@ class HandlerS :public Handler
 public:
 	HandlerS (const string& exe) :exec (exe) {}
 	virtual UniValue operator ()(UniValue arg)
-	{ return Interpreter::getInstance()->funcall(exec, arg); }
+		{return Interpreter::getInstance()->funcall(exec, arg);}
 };
 
 template <typename T>
@@ -162,7 +162,7 @@ class InfoTranS: public Arg_Functor<T, void, void>
 public:
 	InfoTranS (const string& exe) :exec (exe) {}
 	virtual T operator ()()
-	{ return Interpreter::getInstance()->eval(exec).get<T>(); }
+		{return Interpreter::getInstance()->eval(exec).get<T>();}
 };
 
 template <typename RET, typename TAK>
@@ -172,9 +172,11 @@ class HundlTranS: public Arg_Functor<RET, TAK, void>
 public:
 	HundlTranS (const string& exe) :exec (exe) {}
 	virtual RET operator ()(TAK val)
-	{ UniValue ret = Interpreter::getInstance()->
+	{
+		UniValue ret = Interpreter::getInstance()->
 				funcall (exec, UniValue::by<TAK>(val));//TODO: optimize this.
-	return ret.get<RET>();}
+		return ret.get<RET>();
+	}
 };
 
 #endif	/* INTERPRETER_H */

@@ -26,7 +26,7 @@ cl_object eclEvalForm (cl_object form)
     cl_object value;
     CL_CATCH_ALL_BEGIN(ecl_process_env())
 	value = si_safe_eval (3, form, Cnil, eclError);
-    CL_CATCH_ALL_END;
+	CL_CATCH_ALL_END;
     return value;
 }
 //-----------------------------------------------------------
@@ -125,6 +125,12 @@ UniValue UniValue::tail()
 	return UniValue((SomeValueType*)cl_cdr((cl_object)val));
 }
 //--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
+template <>
+void UniValue::get<void>()
+{
+	return ; //for universality
+}
 //--------------------------------------------------------------------------------------------------
 template <>
 bool UniValue::get<bool>()
@@ -384,7 +390,7 @@ UniValue Interpreter::eval (const string& code)
 		return uniValueByLObj(Cnil);
     }
 	cl_object result = eclEvalForm (form);
-    if (eclIsError (result));
+    if (eclIsError (result))
 		return uniValueByLObj(Cnil);//evaluating error
 	return uniValueByLObj(result);
 }
@@ -414,7 +420,7 @@ string Interpreter::toString (const UniValue& val)
 	return rez.get<string>();
 }
 //--------------------------------------------------------------------------------------------------
-bool Interpreter::loadFile (char* fname)
+bool Interpreter::loadFile (const char* fname)
 {
     return eclIsError (eclEvalForm(CONS(c_string_to_object("load"),
 								   CONS(make_constant_base_string(fname), Cnil))));

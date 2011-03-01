@@ -30,6 +30,7 @@
 #include "Button.h"
 #include "GUI.h"
 #include "Timer.h"
+#include "BotControl.h"
 
 enum NET_STATUS
 {
@@ -48,6 +49,7 @@ state (RUNNING), show_frag_table (false)
 	Exception::setOutput (co);
 	Key_storage::preInit (sense);
 	MouseTargeter::preInit (sense, time, pic);
+	BotControl::preInit (time);
 
 	players = new Player_manager();
 
@@ -99,6 +101,7 @@ bool Game_manager::init (int argc, char *argv[])
 		gen.addParam (players->newParser ());
 		gen.addParam (eff->newParser ());
 		gen.addParam (gui->newParser ());
+		gen.addParam (look->newParcer());
 		fl.readSector (&gen);
 
 		models->setAM (cars);
@@ -130,6 +133,7 @@ bool Game_manager::init (int argc, char *argv[])
 		result = result && cmd	 ->init (pic, interp);
 		result = result && ground->init (interp);
 		result = result && eff	 ->init ();
+		result = result && look  ->init ();
 		result = result && gui	 ->init ();
 
 		interp->regFun ("quit", new Arg_Method<void, void, Game_manager> (this, &Game_manager::stop));
