@@ -11,21 +11,27 @@
 #include "Vec.h"
 
 class Active;
+class Serializator;
 
 class Camera
 {
+	int divider;
 	Point pos;
 	Active* target;
+	class Initializer;
+	Initializer* parser;
 
 public:
 	Camera();
 	virtual ~Camera();
 
+	Serializator* newParcer();
+	bool init();
+
 	Point getPos() const;
 	bool hasTarget() const {return target != 0;}
 
 	void setTarget (Active* a) {target = a;}
-
 	void actions();
 
 	bool ok() const {return true;}

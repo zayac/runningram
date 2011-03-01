@@ -408,6 +408,7 @@
         </df>
         <in>Activeman.h</in>
         <in>Battlefield.h</in>
+        <in>BotControl.h</in>
         <in>Button.h</in>
         <in>Camera.h</in>
         <in>Canvas.h</in>
@@ -458,6 +459,7 @@
       <df name="src">
         <in>Activeman.cpp</in>
         <in>Battlefield.cpp</in>
+        <in>BotControl.cpp</in>
         <in>Button.cpp</in>
         <in>Camera.cpp</in>
         <in>Canvas.cpp</in>

@@ -118,23 +118,6 @@ void MouseTargeter::directionUpdate()
 		rightRelease();
 		leftRelease();
 	}
-
-//	if (delta < -infelicity)
-//	{
-//		rightPress();
-//		leftRelease();
-//	}
-//	else if (delta < infelicity)
-//	{
-//		rightRelease();
-//		leftRelease();
-//	}
-//	else
-//	{
-//		rightRelease();
-//		leftPress();
-//	}
-
 }
 //--------------------------------------------------------------------------------------------------
 void MouseTargeter::setControl (Car* obj_)
