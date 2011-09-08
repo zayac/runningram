@@ -37,6 +37,7 @@ PROJ_PATH := $(PWD)
 
 
 install: runningram
+all: install
 
 runningram: $(TARGETDIR)/runningram
 	cp $(TARGETDIR)/runningram .
