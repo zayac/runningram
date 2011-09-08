@@ -8,6 +8,7 @@
 #include <assert.h>
 #include "ecl/ecl.h"
 #include "Interpreter.h"
+#include "Logger.h"
 
 Interpreter* Interpreter::instance = 0;
 static cl_object eclError;
@@ -25,7 +26,7 @@ cl_object eclEvalForm (cl_object form)
 {
     cl_object value;
     CL_CATCH_ALL_BEGIN(ecl_process_env())
-	value = si_safe_eval (3, form, Cnil, eclError);
+	value = cl_safe_eval (form, Cnil, eclError);
 	CL_CATCH_ALL_END;
     return value;
 }
@@ -267,6 +268,7 @@ Interpreter::Interpreter (int argc, char *argv[])
 {
     cl_boot(argc, argv);
     eclError = cl_gensym(0);
+    //ecl_disable_interrupts(); //!!! TODO: make interupts clear
 
 	regDispatcher (Functor_dispatcher, 1, (void*)eclCallCFun);
 	regDispatcher (Informer_dispatcher, 1, (void*)eclCallCInfo);
@@ -293,16 +295,19 @@ Interpreter::~Interpreter()
 //--------------------------------------------------------------------------------------------------
 UniValue Interpreter::Printer::charWriteHandler (UniValue c)
 {
-	if (preview) (*preview)(accumulator);
 	if (c.get<char>() == '\n') charFlushInformer();
-	else accumulator += c.get<char>();
+	else
+	{
+		accumulator += c.get<char>();
+		if (preview) (*preview)(accumulator);
+	}
 	return c;
 }
 //--------------------------------------------------------------------------------------------------
 UniValue Interpreter::Printer::charFlushInformer()
 {
 	if (flush && !accumulator.empty()) (*flush)();
-	if (preview && !accumulator.empty()) (*preview)(string());
+//	if (preview && !accumulator.empty()) (*preview)(string());
 	accumulator.clear();
 	return UniValue::by<bool>(false);
 }
@@ -377,7 +382,10 @@ UniValue Interpreter::funcall (const string& name, const UniValue& arg)
 	cl_object rezult = eclEvalForm(CONS(c_string_to_object(name.c_str()),
 								   CONS((cl_object)arg.getVal(), Cnil)));
     if (eclIsError (rezult))
-		return uniValueByLObj(Cnil);//evaluating error
+    {
+    	LOG(ERROR) <<"function calling failed: "<< name;
+		return uniValueByLObj(Cnil);
+    }
     return uniValueByLObj(rezult);
 }
 //--------------------------------------------------------------------------------------------------
@@ -386,12 +394,15 @@ UniValue Interpreter::eval (const string& code)
     cl_object form = eclSafeStringToObj (code);
     if (eclIsError(form))
     {
-		//reading error
+    	LOG(ERROR) <<"reading failed on: " <<code;
 		return uniValueByLObj(Cnil);
     }
 	cl_object result = eclEvalForm (form);
     if (eclIsError (result))
-		return uniValueByLObj(Cnil);//evaluating error
+    {
+    	LOG(ERROR) <<"evaluating failed on: " <<code;
+		return uniValueByLObj(Cnil);
+    }
 	return uniValueByLObj(result);
 }
 //--------------------------------------------------------------------------------------------------
@@ -417,7 +428,10 @@ UniValue Interpreter::unsafeEval (char* code)
 string Interpreter::toString (const UniValue& val)
 {
 	UniValue rez = funcall("princ-to-string", val);
-	return rez.get<string>();
+
+	if (rez.is<string>())
+		return rez.get<string>();
+	return "";
 }
 //--------------------------------------------------------------------------------------------------
 bool Interpreter::loadFile (const char* fname)

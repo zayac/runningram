@@ -14,9 +14,18 @@
                 <sourceRootElem>.</sourceRootElem>
             </sourceRootList>
             <confList>
-                <confElem>Default</confElem>
-                <confElem>client</confElem>
-                <confElem>server</confElem>
+                <confElem>
+                    <name>Default</name>
+                    <type>0</type>
+                </confElem>
+                <confElem>
+                    <name>client</name>
+                    <type>0</type>
+                </confElem>
+                <confElem>
+                    <name>server</name>
+                    <type>0</type>
+                </confElem>
             </confList>
         </data>
     </configuration>

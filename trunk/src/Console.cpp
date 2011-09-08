@@ -41,6 +41,7 @@ protected:
 		cmdFont->setFG(cmd_col);
 		*respFont = *printFont;
 		respFont->setFG(resp_col);
+		return true;
 	}
 public:
 
@@ -65,16 +66,6 @@ public:
 
 //!!! only for debug
 Console* interface = 0;
-
-//int Lua_execute (lua_State* ls)
-//{
-//	typedef Arg_Functor <int, lua_State*> Tfun;
-//	Tfun* function = (Tfun*)(long)lua_tonumber(ls, lua_upvalueindex(1));
-//	if (function)
-//		return (*function)(ls);
-//	lua_error (ls);
-//	return 0;
-//}
 
 Console::Console ()
 :history (printFont, 50), input (cmdFont)
@@ -110,12 +101,13 @@ bool Console::init (Graphic_subsystem* c, Interpreter* interp_)
 	input.init  (borders, new Arg_Method<void, const string&, Console> (this, &Console::onEnterString), "You:>");
 
 	
-	history.captureLastString();
+	//history.captureLastString();
+	history.flush();
 	interp = interp_;
 	interp->regOutput (new Arg_Method<void, const string&, Lines_view>
-								(&history, &Lines_view::changeCurrentString),
+								(&history, &Lines_view::changeLastString),
 					   new Arg_Method<void, void, Lines_view>
-								(&history, &Lines_view::copyCurrentString));
+								(&history, &Lines_view::flush));
 
 	enabled = false;
 
@@ -157,6 +149,7 @@ void Console::onEnterString (const string& str)
 {
 	assert(ok());
 	history.pushString (Stringc (input.getGreeting() + str, cmdFont));
+	history.freshLine();
 	string response = eval (str);
 	history.pushString (Stringc (response, respFont));
 }
@@ -469,20 +462,20 @@ void Lines_view::init (const Rect& brd)
 {
 	assert(ok());
 	borders = brd;
-	last_string_is_captured = false;
+//	last_string_is_captured = false;
 }
 //--------------------------------------------------------------------------------------------------
 void Lines_view::pushString (Stringc what)
 {
 	assert(ok());
-	if (last_string_is_captured)
-	{
-		Stringc current = data.back();
-		data.pop_back();
-		data.push_back (what);//don't understand why, but if i give a
-		data.push_back (current);
-	}
-	else
+//	if (last_string_is_captured)
+//	{
+//		Stringc current = data.back();
+//		data.pop_back();
+//		data.push_back (what);//don't understand why, but if i give a
+//		data.push_back (current);
+//	}
+//	else
 		data.push_back (what);// reference, i receive an error, connected with font
 	if (data.size () > max_lines)
 		data.erase (data.begin());
@@ -493,47 +486,32 @@ void Lines_view::pushString (const string& str)
 	pushString (Stringc (str, fontDefault));
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::captureLastString()
-{
-	last_string_is_captured = true;
-}
-//--------------------------------------------------------------------------------------------------
-void Lines_view::changeCurrentStringc (Stringc what)
+void Lines_view::changeLastString (Stringc what)
 {
 	assert(ok());
 	data.pop_back();
 	data.push_back (Stringc(what));
-	last_string_is_captured = true;
+//	last_string_is_captured = true;
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::changeCurrentString (const string& str)
+void Lines_view::changeLastString (const string& str)
 {
-	changeCurrentStringc (Stringc (str, fontDefault));
+	assert(ok());
+	changeLastString (Stringc (str, fontDefault));
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::releaseCurrentString()
+void Lines_view::flush()
 {
-	last_string_is_captured = false;
+	assert(ok());
+	pushString ("");
 }
 //--------------------------------------------------------------------------------------------------
-void Lines_view::copyCurrentString()
+void Lines_view::freshLine()
 {
-	if (data.size() > 0)
-		pushString (data.back());
+	assert(ok());
+	if (data.back() != "")
+		pushString ("");
 }
-//--------------------------------------------------------------------------------------------------
-//int Lines_view::getHeight (const Stringc& what) const
-//{
-//	assert(ok());
-//	Point size = what.pSize();
-//	float nlines = float(size.x)/borders.w;
-//
-//	if (nlines - float(int(nlines)) > 0.01) nlines += 1;//for tail
-//
-//	int num_lines = int (nlines);
-//	if (num_lines < 1) num_lines = 1;
-//	return size.y*num_lines;
-//}
 //--------------------------------------------------------------------------------------------------
 int Lines_view::Draw_tolerable_line (Canvas* screen, const Stringc& text, int offset, Rect brd) const
 {

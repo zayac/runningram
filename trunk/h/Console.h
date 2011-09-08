@@ -39,7 +39,7 @@ public:
 	Stringc (const Stringc& orig) :string (orig), font(orig.font), lab_upd(false) {}
 	Stringc (const string& str, Fontc f) :string(str), font(f), lab_upd(false) {}
 
-	Stringc& operator = (const string& str) {string::operator =(str); lab_upd = false;}
+	Stringc& operator = (const string& str) {string::operator =(str); lab_upd = false; return *this;}
 	void setFont (Fontc f) {font = f; lab_upd = false;}
 
 	inline int draw (Canvas* screen, Rect* brd, int offset = 0, bool color_reverse = false) const//!!!??? Offset may be is tooish
@@ -64,7 +64,7 @@ public:
 	int getFullHeight (Uint16 max_width) const;
 
 	Stringc getBorderedSubstring (int width, int offset = 0) const;
-			//There are more problems width russian characters
+			//There are more problems with russian characters
 
 	operator string& () {return *(string*)this;}
 
@@ -77,23 +77,22 @@ class Lines_view
 	Fontc& fontDefault;
 	Rect borders;
 	list <Stringc> data;
-	bool last_string_is_captured;
+//	bool last_string_is_captured;
 
 	int drawText (Canvas* screen, const Stringc&, int start_offset) const;
 	int Draw_tolerable_line (Canvas* screen, const Stringc&, int offset, Rect brd) const;
 		
 public:
-	Lines_view (Fontc& f, int max_lines_) :fontDefault(f), max_lines (max_lines_),
-											last_string_is_captured (false) {}
+	Lines_view (Fontc& f, int max_lines_) :fontDefault(f), max_lines (max_lines_)/*,
+											last_string_is_captured (false)*/ {}
 
 	void init (const Rect&);
 	void pushString (Stringc);
 	void pushString (const string& str);
-	void captureLastString();				 //current string will be on the
-	void changeCurrentStringc (Stringc);//last position while unless it released
-	void changeCurrentString (const string& str);
-	void releaseCurrentString();			
-	void copyCurrentString();
+	void changeLastString (Stringc);
+	void changeLastString (const string& str);
+	void flush();
+	void freshLine();
 	void draw (Canvas* c) const;
 
 	bool ok() const;
