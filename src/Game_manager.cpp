@@ -126,10 +126,6 @@ bool Game_manager::init (int argc, char *argv[])
 		sense->registerKeyAction (new Arg_Method<void, void, Game_manager > (this, &Game_manager::tmpImport),
 								EV_KEYDOWN, KI_x);
 
-
-		font.openFont ("default.ttf", 16);
-		font.setFG (Color (100, 100, 200)); //!!! deprecated
-
 		result = result && cmd	 ->init (pic, interp);
 		result = result && ground->init (interp);
 		result = result && eff	 ->init ();
@@ -215,7 +211,7 @@ bool Game_manager::mainLoop()
 				look->actions();
 				cars->deleteDeadalives();
 
-				Draw_fps (dt);
+				pic->drawFps (dt);
 
 				btl.draw (*pic->getScreen());
 				pic->draw (look);
@@ -246,32 +242,6 @@ void Game_manager::fillZbuffer()
 	ground->cleanZbuffer ();
 	for (Activeman::iterator i = cars->begin (); i != cars->end (); ++i)
 		ground->addDrawable (Canvas::transform ((**i).getPos ()).y - (**i).getHeight () / 2, *i);
-}
-//--------------------------------------------------------------------------------------------------
-
-void Game_manager::Draw_fps (float dt) const
-{
-	Point screen_pos = pic->getScreen ()->getPos ();
-
-	static int frames = 0;
-	static int fps = 0;
-	static int last_time = SDL_GetTicks ();
-
-	//	static float mid_dt = dt;
-	//	mid_dt = (49*mid_dt + dt)/50;
-
-	++frames;
-	if (SDL_GetTicks () - last_time > 100)
-	{
-		fps = (10 * frames + fps * 9) / 10;
-		frames = 0;
-		last_time = SDL_GetTicks ();
-	}
-
-	Rect brd (screen_pos.x + 10, screen_pos.y + 10, 100, 100);
-	char buf[128];
-	sprintf (buf, "fps: %.2f", (float) fps);
-	font.drawLine (pic->getScreen (), buf, &brd);
 }
 //--------------------------------------------------------------------------------------------------
 
