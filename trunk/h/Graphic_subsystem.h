@@ -9,6 +9,7 @@
 #define	_GRAPHIC_SUBSYSTEM_H
 
 #include "Canvas.h"
+#include "Fontc.h"
 
 //struct SDL_Surface;
 class Serializator;
@@ -23,6 +24,9 @@ class Graphic_subsystem
 	class Initializer;
 	Initializer* parser;
 
+	Fontc fpsFont;
+	Point fpsPos;
+
 public:
 	Graphic_subsystem();
 	virtual ~Graphic_subsystem();
@@ -31,6 +35,7 @@ public:
 	bool init();
 	void cleanup();
     void splashScreen();
+    void drawFps (float dt);
 	void winScreen();
     void draw (Camera* look);
 	Canvas* getScreen() {return &buffer;};
