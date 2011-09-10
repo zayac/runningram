@@ -31,7 +31,6 @@ protected:
 		if (spritefname.size() > 0 && nsprites > 0)
 		{
 			Sprite *sp = new Sprite (spritefname.c_str(), nsprites, 1, true);
-			//sp->setTransparency (Color (255, 0, 255));//!!! only for a time
 			sp->setPos (-sprite_offset);
 			data.setPicture (sp);
 		}

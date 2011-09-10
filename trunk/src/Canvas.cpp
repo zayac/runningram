@@ -14,6 +14,7 @@
 #include "Battlefield.h"
 #include "Orient.h"
 #include "Exception.h"
+#include "Logger.h"
 
 Canvas* Canvas::Screen = 0;
 
@@ -25,7 +26,11 @@ Canvas::Canvas (const char* file, bool alpha):UniId<SDL_Surface>(0, 0), pos()
 {
     SDL_Surface *temp = NULL;
     temp = IMG_Load (file);
-    if (temp == NULL) throw Exception (Sprintf ("can't load file %s !!!", file));
+    if (temp == NULL)
+    {
+    	LOG(ERROR) <<"Can't load file " << file <<"while initialising canvas";
+    	throw Exception (Sprintf ("can't load file %s !", file));
+    }
 
     if (alpha)
         reinit (SDL_DisplayFormatAlpha(temp), 0);

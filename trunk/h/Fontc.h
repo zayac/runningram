@@ -38,11 +38,15 @@ public:
 private:
 	Font_quality fq;
 
+	static unsigned number_opend_fonts; //for properly aninitialising ttf library
+	static TTF_Font * ttfOpenFont (const char* fname, int ptsize);
+	static void cleanUp();
+
 public:
 	Fontc ();
 	Fontc (int height, const char* fname, Font_quality fq = fqBAD, Color fg = Color(), Color bg = Color());
 	Fontc (const Fontc& orig);
-	~Fontc();
+	virtual ~Fontc();
 
 	Fontc& operator= (const Fontc& orig);
 	void openFont (const char* fname, int height);
@@ -64,8 +68,6 @@ public:
 
 	bool ok() const;
 };
-
-void FontcCleanUp();
 
 #ifdef INITPARSER_H_INCLUDED
 // <editor-fold defaultstate="collapsed" desc="From file Initializer">

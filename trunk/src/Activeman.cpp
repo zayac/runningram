@@ -9,6 +9,7 @@
 #include "Car.h"
 #include "Battlefield.h"
 #include "initparser.h"
+#include "DebugHelper.h"
 //
 Activeman::Activeman ():Transmitted ('A', false) { }
 //
@@ -25,11 +26,8 @@ void Activeman::activate (float dt)
 		(**i).actions (dt);
 }
 //--------------------------------------------------------------------------------------------------
-Canvas* globb = 0;//!!! deprecated, must be deleted
 void Activeman::draw (Canvas* c)
 {
-	globb = c;
-
 	assert(ok());
 	for (iterator i = begin(); i != end(); ++i)
 		(**i).draw (c);
@@ -126,7 +124,8 @@ inline void processRoughWalls (const Battlefield* bf, Active* cur,
 									   lup.y, lup.y, pos.x,
 									   cell, left, right, up, down);
 
-	if (globb) globb->fillRect (wall, Color (200, 0, 124));//!!! deprecated
+	if (DebugHelper::showDBG)
+		DebugHelper::c->fillRect (wall, Color (200, 0, 124));
 	cur->collisBrd (wall, bf->friction (cell.x, cell.y));
 }
 //-----------------
