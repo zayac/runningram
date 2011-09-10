@@ -13,6 +13,8 @@
 //--------------------------------------------------------------------------------------------------
 void LineEdit::init (const Rect& brd, Arg_Functor <void, const string&> *enter, string gr)
 {
+	onUp = 0;
+	onDown = 0;
 	on_enter = enter;
 	data = "";
 	data.setFont (font);
@@ -25,6 +27,13 @@ void LineEdit::init (const Rect& brd, Arg_Functor <void, const string&> *enter, 
 	grsize = greeting.width();
 	greeting.updateLab();
 	assert(ok());
+}
+//--------------------------------------------------------------------------------------------------
+void LineEdit::setContent (const string& text)
+{
+	assert(ok());
+	data = text;
+	correctCursor();
 }
 //--------------------------------------------------------------------------------------------------
 void LineEdit::operate (Kbd_event ev)
@@ -41,13 +50,13 @@ void LineEdit::operate (Kbd_event ev)
 		switch (ev.ki)
 		{
 		case KI_KP1:			cursorEnd();	return;
-		case KI_KP2:							return;
+		case KI_KP2:			processDown();	return;
 		case KI_KP3:							return;
 		case KI_KP4:			cursorLeft();	return;
 		case KI_KP5:							return;
 		case KI_KP6:			cursorRight();	return;
 		case KI_KP7:			cursorHome();	return;
-		case KI_KP8:							return;
+		case KI_KP8:			processUp();	return;
 		case KI_KP9:							return;
 		case KI_KP_PERIOD:						return;
 		case KI_KP_DIVIDE:						return;
@@ -201,6 +210,18 @@ void LineEdit::finishInput()
 	data.clear();
 }
 //--------------------------------------------------------------------------------------------------
+void LineEdit::processUp()
+{
+	assert(ok());
+	if (onUp) (*onUp)();
+}
+//--------------------------------------------------------------------------------------------------
+void LineEdit::processDown()
+{
+	assert(ok());
+	if (onDown) (*onDown)();
+}
+//--------------------------------------------------------------------------------------------------
 void LineEdit::cursorLeft()
 {
 	assert(ok());
@@ -233,6 +254,16 @@ void LineEdit::cursorEnd()
 	assert(ok());
 	cursor_pos = data.length();
 	while (cursorOffset() > borders.w) start_view++;
+}
+//--------------------------------------------------------------------------------------------------
+void LineEdit::correctCursor()
+{
+	if (cursor_pos > data.length()) cursor_pos = data.length();
+	if (cursor_pos < 0) 			cursor_pos = 0;
+	if (cursor_pos < start_view) 	start_view = cursor_pos;
+
+	while (cursorOffset() > borders.w) start_view++;
+	assert(ok());
 }
 //--------------------------------------------------------------------------------------------------
 void LineEdit::deleteLeft()

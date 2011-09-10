@@ -26,6 +26,8 @@ class Console::Initializer : public Sectionp
 	Fontc* printFont;
 	Fontc* cmdFont;
 	Fontc* respFont;
+public:
+	string cmdHistoryFile;
 protected:
 	bool afterRead (ifstream&)
 	{
@@ -40,13 +42,15 @@ protected:
 public:
 
 	Initializer (string name, Fontc* cmd_font, Fontc* print_font, Fontc* resp_font)
-	: Sectionp (name, '='), printFont (print_font), cmdFont(cmd_font), respFont(resp_font)
+	: Sectionp (name, '='), printFont (print_font), cmdFont(cmd_font), respFont(resp_font),
+	  cmdHistoryFile (".commands.history")
 	{
 		addParam (new Fontc::Initializer ("font", print_font));
 		addParam (new Color::Initializer ("color", &fg_col));
 		addParam (new Color::Initializer ("commands color", &cmd_col));
 		addParam (new Color::Initializer ("response color", &resp_col));
 		addParam (new Color::Initializer ("bgcolor", &bg_col));
+		addParam (new St_loader<string> ("command history file", &cmdHistoryFile));
 	}
 
 	virtual ~Initializer ()
@@ -62,6 +66,7 @@ Console::Console ()
 //--------------------------------------------------------------------------------------------------
 Console::~Console ()
 {
+	cmdHistory.saveToFile(parser->cmdHistoryFile);
 }
 //--------------------------------------------------------------------------------------------------
 Serializator* Console::newParser()
@@ -90,15 +95,13 @@ bool Console::init (Graphic_subsystem* c, Interpreter* interp_)
 
 	enabled = false;
 
+	input.setOnUp (new Arg_Method<void, void, Console> (this, &Console::cmdHistoryUp));
+	input.setOnDown (new Arg_Method<void, void, Console> (this, &Console::cmdHistoryDown));
+	cmdHistory.initFromFile(parser->cmdHistoryFile);
+
 	assert(ok());
 
 	return true;
-}
-//--------------------------------------------------------------------------------------------------
-void Console::cleanup()
-{
-	assert(ok());//!!! It may be necessary to close all opened fonts before
-//        FontcCleanUp();
 }
 //--------------------------------------------------------------------------------------------------
 void Console::operate (Kbd_event ev)
@@ -127,6 +130,7 @@ void Console::turn()
 void Console::onEnterString (const string& str)
 {
 	assert(ok());
+	cmdHistory.push (str);
 	history.pushString (Stringc (input.getGreeting() + str, cmdFont));
 	history.freshLine();
 	string response = eval (str);
@@ -147,8 +151,67 @@ void Console::pushString (const string& str)
 	history.pushString (str);
 }
 //--------------------------------------------------------------------------------------------------
+void Console::cmdHistoryUp()
+{
+	input.setContent(cmdHistory.next());
+}
+//--------------------------------------------------------------------------------------------------
+void Console::cmdHistoryDown()
+{
+	input.setContent(cmdHistory.prev());
+}
+//--------------------------------------------------------------------------------------------------
 bool Console::ok() const
 {
 	return printFont.ok() && history.ok() && input.ok() && parser != 0;
+}
+//--------------------------------------------------------------------------------------------------
+CommandHistory::CommandHistory()
+{
+	current = history.begin();
+}
+//--------------------------------------------------------------------------------------------------
+void CommandHistory::initFromFile (const string& fname)
+{
+	ifstream file (fname.c_str());
+	char buf[1024];
+	while (file.good() && !file.eof())
+	{
+		file.getline(buf, 1024);
+		push(buf);
+	}
+	file.close();
+}
+//--------------------------------------------------------------------------------------------------
+void CommandHistory::saveToFile (const string& fname) const
+{
+	ofstream file(fname.c_str());
+	list<string>::const_reverse_iterator iter = history.rbegin();
+	for (int i = 0;
+		 i < 50 && iter != history.rend();
+		 ++i, ++iter)
+		if (*iter != "")
+			file << *iter <<"\n";
+	file.close();
+}
+//--------------------------------------------------------------------------------------------------
+string CommandHistory::next()
+{
+	if (current == history.end()) return "";
+	return *(current++);
+}
+//--------------------------------------------------------------------------------------------------
+string CommandHistory::prev()
+{
+	if (  current == history.begin() ||
+		--current == history.begin())
+		return "";
+	return *((--current)++);//look back by 1
+}
+//--------------------------------------------------------------------------------------------------
+void CommandHistory::push (const string& cmd)
+{
+	history.push_front (cmd);
+	current = history.begin();
 }
 //--------------------------------------------------------------------------------------------------
