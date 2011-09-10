@@ -3,6 +3,8 @@
 #include "Fontc.h"
 #include "Player_manager.h"
 
+#include "Logger.h"
+
 //--------------------------------------------------------------------------------------------------
 Fontc::Fontc():UniId<TTF_Font> (0, 0), col (Color()), bgcol (Color()), fq(fqBAD), bg (bgcol), fg (col)
 {
@@ -50,6 +52,8 @@ Canvas Fontc::createLabel (const char* line, bool color_reverse, Rect* brd) cons
 {
     assert(ok());
     SDL_Surface *text_surface;
+    if (*line == '\0')
+    	line = " ";
 	if (color_reverse)
 		switch (fq)
 		{
@@ -76,6 +80,8 @@ Canvas Fontc::createLabel (const char* line, bool color_reverse, Rect* brd) cons
 			text_surface = TTF_RenderUTF8_Blended (data(), line, col);
 			break;
 		}
+	assert(text_surface != 0);
+
 	Canvas ret (text_surface);
 	if (brd && ret.ok()) ret.setPos (Point (brd->x, brd->y));
 

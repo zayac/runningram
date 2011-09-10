@@ -201,7 +201,7 @@ bool Game_manager::mainLoop()
 				eff->expClean();
 
 				if (show_frag_table)
-					players->drawCompTable (pic->getScreen(), &font);
+					pic->drawCompTable(players->getFragTable());
 
 				if (!look->hasTarget() && cars->size() > 0)
 					if (players->getCamTarget())
@@ -225,7 +225,7 @@ bool Game_manager::mainLoop()
 				break;
 			case WIN:
 				pic->winScreen();
-				players->drawCompTable (pic->getScreen(), &font);
+				pic->drawCompTable(players->getFragTable());
 				break;
 		}
 	}

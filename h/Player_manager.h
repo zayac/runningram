@@ -73,7 +73,6 @@ public:
 	virtual ~Player_manager();
 
 	Serializator* newParser();
-	void drawCompTable (Canvas* where, Fontc* font);
 
 	int exportEvents (char* buffer, int size) const;
 	int importEvents (char* buffer, int size);
@@ -87,6 +86,18 @@ public:
 	int imp (char* buffer, int size);
 
 	void createCarsForPoors (Carman* shop, Activeman* dest, Battlefield* site);
+
+public:
+	struct Raiting
+	{
+		string player;
+		int frags;
+
+		Raiting (string pl, int fr)
+			:player(pl), frags(fr) {}
+	};
+
+	list<Raiting> getFragTable() const;
 
 };
 

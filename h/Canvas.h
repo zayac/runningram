@@ -117,13 +117,13 @@ public:
 	SDL_Surface* getSurface() { return data(); }
 	//void getSurfaceInformation();
 
-	inline bool valid() {return data() != 0;}
+	inline bool valid() const {return data() != 0;}
 	//void setSurface (SDL_Surface* surf) {data = surf};
 	Canvas createCompatible (Point size = Point()) const;
 
 	bool ok() const;
 
-	static Canvas* getScreenCanvas (Point size);//Run once!!!
+	static Canvas* getScreenCanvas (Point size);//Must be runned only once!
 };
 
 

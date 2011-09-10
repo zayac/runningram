@@ -155,39 +155,14 @@ void Player_manager::erase (iterator start, iterator finish)
 	erase (start, finish);
 }
 //--------------------------------------------------------------------------------------------------
-#include "Canvas.h"
-#include "Fontc.h"
-void Player_manager::drawCompTable (Canvas* where, Fontc* font)
+list<Player_manager::Raiting> Player_manager::getFragTable() const
 {
-	where->pushPos(Point());
-	
-	Point size = where->getSize();
-	Point pos = size/10;
-
-	Canvas c = where->createCompatible (size - 2*pos);
-	c.setTotalTransparency (200);
-	c.fill (Color (160, 160, 180));
-
-	Rect label_brd;
-	label_brd.x = 0;
-	label_brd.y = 0;
-	label_brd.w = 100;
-	label_brd.h = 100;
-	for (iterator i = begin(); i != end(); ++i)
+	list<Raiting> ret;
+	for (const_iterator i = begin(); i != end(); ++i)
 	{
-		label_brd.x = 0;
-
-		font->drawLine (&c, (**i).name.c_str(), &label_brd);
-		label_brd.x += 100;
-
-		char buf[256];
-		#include <stdlib.h>
-		sprintf (buf, "%i", (**i).getFrags ());
-		font->drawLine (&c, buf, &label_brd);
-		label_brd.y += font->height();
+		ret.push_back(Raiting((**i).name, (**i).getFrags()));
 	}
-	c.draw (*where, pos);
-	where->popPos();
+	return ret;
 }
 //--------------------------------------------------------------------------------------------------
 int Player_manager::exportEvents (char* buffer, int size) const

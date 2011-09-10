@@ -13,6 +13,7 @@
 #include "Graphic_subsystem.h"
 #include "Interpreter.h"
 #include "Car.h"
+#include <assert.h>
 
 //extern "C"
 //{
@@ -185,6 +186,7 @@ void Line_edit::init (const Rect& brd, Arg_Functor <void, const string&> *enter,
 	greeting = gr;
 	greeting.setFont (font);
 	grsize = greeting.width();
+	greeting.updateLab();
 	assert(ok());
 }
 //--------------------------------------------------------------------------------------------------
@@ -233,6 +235,7 @@ void Line_edit::operate (Kbd_event ev)
 	default:
 		typeChar (ev);
 	}
+	data.updateLab();//!!! work around, must be shadowed
 }
 //--------------------------------------------------------------------------------------------------
 void Line_edit::typeChar (Kbd_event& ev)
@@ -374,7 +377,7 @@ void Line_edit::cursorLeft()
 void Line_edit::cursorRight()
 {
 	assert(ok());
-	if (cursor_pos < data.size())
+	if (cursor_pos < data.length())
 	{
 		cursor_pos++;
 		while (cursorOffset() > borders.w) start_view++;
@@ -391,7 +394,7 @@ void Line_edit::cursorHome()
 void Line_edit::cursorEnd()
 {
 	assert(ok());
-	cursor_pos = data.size();
+	cursor_pos = data.length();
 	while (cursorOffset() > borders.w) start_view++;
 }
 //--------------------------------------------------------------------------------------------------
@@ -408,7 +411,7 @@ void Line_edit::deleteLeft()
 void Line_edit::deleteRight()
 {
 	assert(ok());
-	if (cursor_pos < data.size()) data.erase (cursor_pos, 1);
+	if (cursor_pos < data.length()) data.erase (cursor_pos, 1);
 }
 //--------------------------------------------------------------------------------------------------
 void Line_edit::draw (Canvas* c) const
@@ -454,29 +457,21 @@ int Line_edit::cursorOffset() const
 //--------------------------------------------------------------------------------------------------
 bool Line_edit::ok() const
 {
-	return 0 <= cursor_pos && cursor_pos <= data.size() && 0 <= start_view && start_view <= data.size() &&
-		data.ok() && greeting.ok() && grsize >= 0 && on_enter != 0;
+	return 0 <= cursor_pos && cursor_pos <= data.length() &&
+		   0 <= start_view && start_view <= data.length() &&
+		   data.ok() && greeting.ok() && grsize >= 0 && on_enter != 0;
 }
 //--------------------------------------------------------------------------------------------------
 void Lines_view::init (const Rect& brd)
 {
 	assert(ok());
 	borders = brd;
-//	last_string_is_captured = false;
 }
 //--------------------------------------------------------------------------------------------------
 void Lines_view::pushString (Stringc what)
 {
 	assert(ok());
-//	if (last_string_is_captured)
-//	{
-//		Stringc current = data.back();
-//		data.pop_back();
-//		data.push_back (what);//don't understand why, but if i give a
-//		data.push_back (current);
-//	}
-//	else
-		data.push_back (what);// reference, i receive an error, connected with font
+	data.push_back (what);// reference, i receive an error, connected with font
 	if (data.size () > max_lines)
 		data.erase (data.begin());
 }
@@ -491,7 +486,6 @@ void Lines_view::changeLastString (Stringc what)
 	assert(ok());
 	data.pop_back();
 	data.push_back (Stringc(what));
-//	last_string_is_captured = true;
 }
 //--------------------------------------------------------------------------------------------------
 void Lines_view::changeLastString (const string& str)
@@ -518,7 +512,7 @@ int Lines_view::Draw_tolerable_line (Canvas* screen, const Stringc& text, int of
 	assert(ok());
 	Stringc buf = text.getBorderedSubstring (brd.w, offset);
 	if (buf.draw (screen, &brd))
-		return buf.size();
+		return buf.length();
 	return false;
 }
 //--------------------------------------------------------------------------------------------------
@@ -526,7 +520,7 @@ int Lines_view::drawText (Canvas* screen, const Stringc& text, int start_offset)
 {
 	assert(ok());
 	int result_height = 0;
-	int total_symbols = text.size();
+	int total_symbols = text.length();
 	int symbols_showed = 0;
 
 	Rect brd = borders;
@@ -578,7 +572,7 @@ void Lines_view::draw (Canvas* c) const
 	{
 		if (i->empty()) continue;
 		cur_height = drawText (c, *i, total_height);
-		if (cur_height == 0 && i->size() > 0) return;//!!! Error
+		if (cur_height == 0 && i->length() > 0) return;//!!! Error
 		total_height += cur_height;
 	}
 
@@ -593,8 +587,68 @@ bool Lines_view::ok() const
 	return fontDefault.ok();
 }
 //--------------------------------------------------------------------------------------------------
+void Stringc::insert (int pos, int number, char c)
+{
+	assert(ok());
+	text.insert(pos, number, c);
+	if (lab_upd)
+		updateLab();
+}
+//--------------------------------------------------------------------------------------------------
+void Stringc::clear()
+{
+	assert(ok());
+	text.clear();
+	if (lab_upd)
+		updateLab();
+}
+//--------------------------------------------------------------------------------------------------
+void Stringc::erase (int pos, int number)
+{
+	assert(ok());
+	text.erase (pos, number);
+	if (lab_upd)
+		updateLab();
+}
+//--------------------------------------------------------------------------------------------------
+Stringc& Stringc::operator = (const string& str)
+{
+	assert(ok());
+	text = str;
+	if (lab_upd)
+		updateLab();
+}
+//--------------------------------------------------------------------------------------------------
+void Stringc::setFont (Fontc f)
+{
+	assert(ok());
+	font = f;
+	if (lab_upd)
+		updateLab();
+}
+//--------------------------------------------------------------------------------------------------
+int Stringc::draw (Canvas* screen, Rect* brd, int offset, bool color_reverse) const//!!!??? Offset may be is tooish
+{
+	assert(brd != 0);
+	if (lab_upd && !color_reverse)//!!! Not debugged yet
+	{
+		int pos = font.strLen (substr(0, offset).c_str());
+		screen->copy (lab, Point(pos, 0), Rect (brd->x, brd->y, brd->w - pos, brd->h));
+		return min (brd->h, lab.getHeight());
+	}
+	else
+		return font.drawLine (screen, c_str() + offset, brd, color_reverse);
+}
+//--------------------------------------------------------------------------------------------------
+void Stringc::dontUpdateLab()
+{
+	assert(ok());
+	lab_upd = false;
+}
+//--------------------------------------------------------------------------------------------------
 void Stringc::updateLab()
 {
+	assert(ok());
 	lab = font.createLabel (c_str(), false);
 	lab_upd = true;
 }
@@ -615,11 +669,11 @@ int Stringc::getFullHeight (Uint16 max_width) const
 Stringc Stringc::getBorderedSubstring (int width, int offset) const
 {
 	int ret = font.approximateNumSymbols (width);
-	if (0 >= ret || ret > size()) ret = size();
+	if (0 >= ret || ret > length()) ret = length();
 	if (ret > 500) ret = 500;
 
 	char buf[512];
-	strncpy (buf, data() + offset, ret);
+	strncpy (buf, c_str() + offset, ret);
 	buf[ret] = 0;
 
 	int w = font.strLen (buf);

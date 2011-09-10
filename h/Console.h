@@ -27,8 +27,9 @@ class Interpreter;
 const int cursor_width = 2;
 const int blink_interval = 300;
 
-class Stringc :public string
+class Stringc
 {
+	string text;
 	Fontc font;
 
 	Canvas lab;
@@ -36,28 +37,28 @@ class Stringc :public string
 
 public:
 	Stringc ():lab_upd (false){}
-	Stringc (const Stringc& orig) :string (orig), font(orig.font), lab_upd(false) {}
-	Stringc (const string& str, Fontc f) :string(str), font(f), lab_upd(false) {}
+	Stringc (const Stringc& orig) :text (orig.text), font (orig.font), lab_upd (false) {}
+	Stringc (const string& str, Fontc f) :text (str), font (f), lab_upd (false) {}
 
-	Stringc& operator = (const string& str) {string::operator =(str); lab_upd = false; return *this;}
-	void setFont (Fontc f) {font = f; lab_upd = false;}
+	void insert (int pos, int number, char c);
+	void clear();
+	void erase (int pos, int number);
+	inline string::size_type length() const {return text.size();}
+	inline string substr (int start, int number) const {return text.substr(start, number);}
+	inline bool empty() const {return text.empty();}
+	inline const char* c_str() const {return text.c_str();}
+	inline bool operator != (const string& str) const {return text != str;}
+	inline bool operator == (const string& str) const {return text == str;}
 
-	inline int draw (Canvas* screen, Rect* brd, int offset = 0, bool color_reverse = false) const//!!!??? Offset may be is tooish
-	{
-		assert(brd != 0);
-		if (lab_upd && !color_reverse)//!!! Not debugged yet
-		{
-			int pos = font.strLen (substr(0, offset).c_str());
-			screen->copy (lab, Point(pos, 0), Rect (brd->x, brd->y, brd->w - pos, brd->h));
-			return min (brd->h, lab.getHeight());
-		}
-		else
-			return font.drawLine (screen, c_str() + offset, brd, color_reverse);
-	}
+	Stringc& operator = (const string& str);
+	void setFont (Fontc f);
 
+	int draw (Canvas* screen, Rect* brd, int offset = 0, bool color_reverse = false) const;//!!!??? Offset may be is tooish
+
+	void dontUpdateLab();
 	void updateLab();
 
-	inline Point pSize (int offset = 0) const {return font.strSize (c_str() + offset);}
+	inline Point pSize (int offset = 0) const {return font.strSize (text.c_str() + offset);}
 	inline int height (int offset = 0) const {return pSize (offset).y;}
 	inline int width (int offset = 0) const {return pSize (offset).x;}
 
@@ -66,9 +67,10 @@ public:
 	Stringc getBorderedSubstring (int width, int offset = 0) const;
 			//There are more problems with russian characters
 
-	operator string& () {return *(string*)this;}
+	operator string& () {return text;}
+	operator const string& () const {return text;}
 
-	bool ok() const {return font.ok() && (!lab_upd || lab.ok());}
+	bool ok() const {return font.ok() && (!lab_upd || (lab.ok() && lab.valid()));}
 };
 
 class Lines_view
@@ -77,14 +79,12 @@ class Lines_view
 	Fontc& fontDefault;
 	Rect borders;
 	list <Stringc> data;
-//	bool last_string_is_captured;
 
 	int drawText (Canvas* screen, const Stringc&, int start_offset) const;
 	int Draw_tolerable_line (Canvas* screen, const Stringc&, int offset, Rect brd) const;
 		
 public:
-	Lines_view (Fontc& f, int max_lines_) :fontDefault(f), max_lines (max_lines_)/*,
-											last_string_is_captured (false)*/ {}
+	Lines_view (Fontc& f, int max_lines_) :fontDefault(f), max_lines (max_lines_) {}
 
 	void init (const Rect&);
 	void pushString (Stringc);
