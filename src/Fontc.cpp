@@ -5,13 +5,15 @@
 
 #include "Logger.h"
 
+unsigned Fontc::number_opend_fonts = 0;
+
 //--------------------------------------------------------------------------------------------------
 Fontc::Fontc():UniId<TTF_Font> (0, 0), col (Color()), bgcol (Color()), fq(fqBAD), bg (bgcol), fg (col)
 {
 }
 //--------------------------------------------------------------------------------------------------
 Fontc::Fontc (int height, const char* fname, Font_quality fq_, Color f, Color b)
-	:UniId<TTF_Font>(TTF_OpenFont (fname, height), 0), col (f), bgcol (b), fq (fq_), bg (bgcol), fg (col)
+	:UniId<TTF_Font>(ttfOpenFont (fname, height), 0), col (f), bgcol (b), fq (fq_), bg (bgcol), fg (col)
 {
 	assert (ok());
 }
@@ -27,17 +29,33 @@ Fontc::~Fontc()
 	destroy();
 }
 //--------------------------------------------------------------------------------------------------
+TTF_Font * Fontc::ttfOpenFont (const char* fname, int ptsize)
+{
+	if (!TTF_WasInit () && TTF_Init() == -1) return 0;
+	TTF_Font *ret = TTF_OpenFont (fname, ptsize);
+	if (ret) ++number_opend_fonts;
+	return ret;
+}
+//--------------------------------------------------------------------------------------------------
 void Fontc::deleteData()
 {
 	if (data())
+	{
 		TTF_CloseFont (data());
+		--number_opend_fonts;
+		if (number_opend_fonts <= 0)
+			cleanUp();
+	}
+}
+//--------------------------------------------------------------------------------------------------
+void Fontc::cleanUp()
+{
+	if (TTF_WasInit()) TTF_Quit();
 }
 //--------------------------------------------------------------------------------------------------
 void Fontc::openFont (const char* fname, int height)
 {
-	if (!TTF_WasInit () && TTF_Init() == -1) return;
-
-	reinit (TTF_OpenFont (fname, height), 0);
+	reinit (ttfOpenFont (fname, height), 0);
 }
 //--------------------------------------------------------------------------------------------------
 Fontc& Fontc::operator= (const Fontc& orig)
@@ -136,7 +154,3 @@ bool Fontc::ok() const
 	return UniId<TTF_Font>::ok();
 }
 //--------------------------------------------------------------------------------------------------
-void FontcCleanUp()
-{
-	if (TTF_WasInit()) TTF_Quit();
-}

@@ -31,6 +31,7 @@
 #include "GUI.h"
 #include "Timer.h"
 #include "BotControl.h"
+#include "DebugHelper.h"
 
 enum NET_STATUS
 {
@@ -94,6 +95,8 @@ bool Game_manager::init (int argc, char *argv[])
 		fl.readSector (&gen);
 		result = result && pic->init (); //Graphic subsystem must be initialaised previously
 		pic->splashScreen();
+		DebugHelper::c = pic->getScreen();
+		DebugHelper::showDBG = true;
 
 		gen.addParam (cmd->newParser ());
 		gen.addParam (ground->newParser ());
