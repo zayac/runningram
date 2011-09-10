@@ -25,6 +25,23 @@ using std::list;
 
 class Interpreter;
 
+class CommandHistory
+{
+	list<string> history;
+	list<string>::const_iterator current;
+
+public:
+	CommandHistory();
+
+	void initFromFile (const string& fname);
+	void saveToFile (const string& fname) const;
+
+	string next();
+	string prev();
+
+	void push (const string& cmd);
+};
+
 class Console
 {
 	bool enabled;
@@ -33,6 +50,7 @@ class Console
 	Fontc respFont;
 	LinesView history;
 	LineEdit input;
+	CommandHistory cmdHistory;
 
 	Interpreter* interp;
 
@@ -47,9 +65,11 @@ public:
 
 	Serializator* newParser();
 	bool init (Graphic_subsystem* c, Interpreter* interp);
-	void cleanup();
 	void onEnterString (const string& str);
 	void pushString (const string&);
+
+	void cmdHistoryUp();
+	void cmdHistoryDown();
 
 	void operate (Kbd_event ev);
 	void draw (Graphic_subsystem* c) const;
