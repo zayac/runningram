@@ -82,9 +82,6 @@ public:
 	void sendContext();
 
 	bool ok() const;
-
-
-Fontc font;//!!! deprecated, must be deleted
 };
 
 #endif	/* _GAME_MANAGER_H */

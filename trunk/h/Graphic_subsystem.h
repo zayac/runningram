@@ -11,6 +11,8 @@
 #include "Canvas.h"
 #include "Fontc.h"
 
+#include "Player_manager.h"
+
 //struct SDL_Surface;
 class Serializator;
 class Camera;
@@ -27,6 +29,9 @@ class Graphic_subsystem
 	Fontc fpsFont;
 	Point fpsPos;
 
+	Fontc ftFont;
+	Color ftBgColor;
+
 public:
 	Graphic_subsystem();
 	virtual ~Graphic_subsystem();
@@ -36,6 +41,7 @@ public:
 	void cleanup();
     void splashScreen();
     void drawFps (float dt);
+    void drawCompTable (list<Player_manager::Raiting> fragTable);
 	void winScreen();
     void draw (Camera* look);
 	Canvas* getScreen() {return &buffer;};
