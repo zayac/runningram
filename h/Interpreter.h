@@ -10,9 +10,11 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "Functor.h"
 
 using std::string;
+using std::map;
 using std::vector;
 
 class SomeValueType;
@@ -96,7 +98,7 @@ public:
 
 	void regOutput (Arg_Functor<void, const string&> *preview, Functor* flush);
 
-	UniValue funcall (const string& name, const UniValue& arg);
+	UniValue funcall (const char* name, const UniValue& arg);
     UniValue eval (const string& code);
     UniValue evalNprint (const string& code);
     UniValue unsafeEval (char* code);//It can break the whole program
@@ -104,6 +106,32 @@ public:
 	bool loadFile (const char* fname);
 
 };
+
+class CustomStructure
+{
+	friend class CustomObject;
+	string name;
+	vector<string> fields;
+
+	Interpreter* environment;
+
+public:
+	CustomStructure (const string& name, Interpreter* env);
+	void registerField (const string& name);
+};
+
+class CustomObject
+{
+	map<string, UniValue> vals;
+	const CustomStructure* ref;
+
+public:
+	explicit CustomObject (const CustomStructure* ref);
+
+	void set (const string& name, UniValue val);
+	UniValue convert() const;
+};
+
 
 template <typename T>
 class InfoTrans :public Informer
@@ -152,7 +180,7 @@ class HandlerS :public Handler
 public:
 	HandlerS (const string& exe) :exec (exe) {}
 	virtual UniValue operator ()(UniValue arg)
-		{return Interpreter::getInstance()->funcall(exec, arg);}
+		{return Interpreter::getInstance()->funcall(exec.c_str(), arg);}
 };
 
 template <typename T>

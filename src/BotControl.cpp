@@ -8,6 +8,7 @@
 #include "BotControl.h"
 #include "Interpreter.h"
 #include "Timer.h"
+#include "Logger.h"
 
 
 // <editor-fold defaultstate="collapsed" desc="From file Initializer">
@@ -182,6 +183,7 @@ BotControl::Command UniValue::get<BotControl::Command>()
 
 		return BotControl::Command (lor_val, fob_val);
 	}
+	LOG(ERROR)<<"wrong command received!";
 	return BotControl::Command (0, 0);
 }
 //--------------------------------------------------------------------------------------------------

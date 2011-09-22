@@ -72,6 +72,8 @@ void LineEdit::operate (Kbd_event ev)
 	case KI_RIGHT:			cursorRight();		break;
 	case KI_HOME:			cursorHome();		break;
 	case KI_END:			cursorEnd();		break;
+	case KI_UP:				processUp();		break;
+	case KI_DOWN:			processDown();		break;
 
 	case KI_BACKSPACE:		deleteLeft();		break;
 	case KI_DELETE:			deleteRight();		break;

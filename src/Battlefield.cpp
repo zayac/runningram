@@ -153,7 +153,7 @@ bool Battlefield::init (Interpreter* interp)
 	if (!loadFromFile (parser->filename.c_str()))
 		return false;
 	bool res = interp->loadFile (script_fname);
-	return true;//It's strange, but if i put 'res' here it cause an error in
+	return true;//!!! It's strange, but if i put 'res' here it cause an error in
 				//interpreter (???)
 }
 //--------------------------------------------------------------------------------------------------
