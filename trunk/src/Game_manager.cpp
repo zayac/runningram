@@ -135,6 +135,17 @@ bool Game_manager::init (int argc, char *argv[])
 		result = result && look  ->init ();
 		result = result && gui	 ->init ();
 
+//		Interpreter::getInstance()->eval ("(print (list 34 5))");
+		LOG(INFO)<<Interpreter::getInstance()->toString(Interpreter::getInstance()->eval("(print (list '(tt 3)))"));
+
+//		CustomStructure cs("fla", Interpreter::getInstance());
+//		cs.registerField ("proso");
+//		cs.registerField ("truso");
+//		CustomObject co (&cs);
+//		co.set("truso", UniValue::by(5));
+//		co.set("proso", UniValue::by(20));
+//		LOG(INFO)<<"attempt to use:" <<Interpreter::getInstance()->toString(co.convert());
+
 		interp->regFun ("quit", new Arg_Method<void, void, Game_manager> (this, &Game_manager::stop));
 		btl.init (sense);
 		btl.addButton (new Arg_Method <void, void, GUEventman> (sense, &GUEventman::stop), Point(500, 433));

@@ -39,7 +39,7 @@ cl_object eclSafeStringToObj (string str)
     return eclEvalForm (exec);
 }
 //-----------------------------------------------------------
-inline bool eclIsError (cl_object obj) {return obj == eclError;}
+inline bool eclIsError (cl_object obj) {return obj == eclError;}//!!! Is the == right eq-function here?
 //-----------------------------------------------------------
 cl_object eclCallCFun (cl_object fnum)
 {
@@ -377,14 +377,16 @@ void Interpreter::regOutput (Arg_Functor<void, const string&> *preview, Functor*
 
 }
 //--------------------------------------------------------------------------------------------------
-UniValue Interpreter::funcall (const string& name, const UniValue& arg)
+#define QUOTE(value) (CONS(c_string_to_object("quote"), CONS((value), Cnil)))
+//--------------------------------------------------------------------------------------------------
+UniValue Interpreter::funcall (const char* name, const UniValue& arg)
 {
-	cl_object rezult = eclEvalForm(CONS(c_string_to_object(name.c_str()),
-								   CONS((cl_object)arg.getVal(), Cnil)));
+	cl_object rezult = eclEvalForm(CONS(c_string_to_object(name),
+								   CONS(QUOTE((cl_object)arg.getVal()), Cnil)));
     if (eclIsError (rezult))
     {
     	LOG(ERROR) <<"function calling failed: "<< name;
-		return uniValueByLObj(Cnil);
+		return uniValueByLObj (Cnil);
     }
     return uniValueByLObj(rezult);
 }
@@ -398,6 +400,7 @@ UniValue Interpreter::eval (const string& code)
 		return uniValueByLObj(Cnil);
     }
 	cl_object result = eclEvalForm (form);
+
     if (eclIsError (result))
     {
     	LOG(ERROR) <<"evaluating failed on: " <<code;
@@ -410,9 +413,12 @@ UniValue Interpreter::evalNprint (const string& code)
 {
 	UniValue rez = eval(code);
 	if (rez.isNull())
+	{
+		LOG(WARNING) <<"result is nil";
 		unsafeEval ("(print nil)");
+	}
 	else
-		eclEvalForm(CONS(c_string_to_object("load"),
+		eclEvalForm(CONS(c_string_to_object("print"),
 					CONS((cl_object)rez.getVal(), Cnil)));
 	return rez;
 }
@@ -441,3 +447,45 @@ bool Interpreter::loadFile (const char* fname)
 }
 //--------------------------------------------------------------------------------------------------
 //====================Interpreter===================================================================
+//====================CustomStructure===============================================================
+CustomStructure::CustomStructure (const string& name_, Interpreter* env)
+	:name(name_), environment (env)
+{
+}
+//--------------------------------------------------------------------------------------------------
+void CustomStructure::registerField (const string& fieldname)
+{
+	fields.push_back (fieldname);
+	char fnumber[32];
+	sprintf (fnumber, "%d", fields.size());
+	environment->eval (string("(defun ") + name + "-" + fieldname + " (obj) " +
+				 	 	 	 	 "(nth " + fnumber + " obj))");
+}
+//--------------------------------------------------------------------------------------------------
+CustomObject::CustomObject (const CustomStructure* reference): ref(reference)
+{
+}
+//--------------------------------------------------------------------------------------------------
+void CustomObject::set (const string& name, UniValue val)
+{
+	vals.insert(std::pair<string, UniValue>(name, val));
+}
+//--------------------------------------------------------------------------------------------------
+UniValue CustomObject::convert() const
+{
+	string valList = "(list ";
+	for (vector<string>::const_iterator field = ref->fields.begin();
+		 field != ref->fields.end(); ++field)
+	{
+		map<string, UniValue>::const_iterator val = vals.find (*field);
+		if (val == vals.end())
+			valList += "() ";
+		else
+			valList += ref->environment->toString ((*val).second) + " ";
+	}
+	valList += ")";
+	LOG(INFO)<<"conversion result: " <<valList;
+	return ref->environment->eval (valList);
+}
+//--------------------------------------------------------------------------------------------------
+

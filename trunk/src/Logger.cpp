@@ -23,9 +23,12 @@ Logger& log (Levels level, const char* file, int line)
 }
 //--------------------------------------------------------------------------------------------------
 Logger::Logger()
-	:file ("log.txt"), current (NOLEVEL), printFname (true),
+	:file ("log.txt", std::ios_base::out|std::ios_base::app),
+	 current (NOLEVEL), printFname (true),
 	 printLineNumber (true), filter(NOLEVEL)
 {
+	file <<"\n========================= execution started : " <<timeStr()
+		  <<" =========================" <<std::endl;
 }
 //--------------------------------------------------------------------------------------------------
 Logger::~Logger()
@@ -44,7 +47,7 @@ string Logger::levelName (Levels level)
 	case ERROR:
 		return "ERROR";
 	}
-	return "uncnown level";
+	return "Unknown level";
 }
 //--------------------------------------------------------------------------------------------------
 string Logger::timeStr()
