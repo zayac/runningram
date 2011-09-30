@@ -130,21 +130,11 @@ bool Game_manager::init (int argc, char *argv[])
 								EV_KEYDOWN, KI_x);
 
 		result = result && cmd	 ->init (pic, interp);
+		Interpreter::getInstance()->loadFile ("scripts/init.lisp");
 		result = result && ground->init (interp);
 		result = result && eff	 ->init ();
 		result = result && look  ->init ();
 		result = result && gui	 ->init ();
-
-//		Interpreter::getInstance()->eval ("(print (list 34 5))");
-		LOG(INFO)<<Interpreter::getInstance()->toString(Interpreter::getInstance()->eval("(print (list '(tt 3)))"));
-
-//		CustomStructure cs("fla", Interpreter::getInstance());
-//		cs.registerField ("proso");
-//		cs.registerField ("truso");
-//		CustomObject co (&cs);
-//		co.set("truso", UniValue::by(5));
-//		co.set("proso", UniValue::by(20));
-//		LOG(INFO)<<"attempt to use:" <<Interpreter::getInstance()->toString(co.convert());
 
 		interp->regFun ("quit", new Arg_Method<void, void, Game_manager> (this, &Game_manager::stop));
 		btl.init (sense);

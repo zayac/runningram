@@ -33,7 +33,7 @@ public:
 	template <typename T>
 	static inline UniValue by (T orig);
 
-	void append (UniValue& what);
+	void append (const UniValue& what);
 	UniValue head();		//Makes sense only in list case
 	UniValue tail();
 	template <typename T>
@@ -98,8 +98,10 @@ public:
 
 	void regOutput (Arg_Functor<void, const string&> *preview, Functor* flush);
 
-	UniValue funcall (const char* name, const UniValue& arg);
+	UniValue functcall (const char* name, const UniValue& arg);//desired to call it just funcall,
+															   //but in ecl.h #define funcall cl_funcall
     UniValue eval (const string& code);
+    UniValue eval (UniValue code);
     UniValue evalNprint (const string& code);
     UniValue unsafeEval (char* code);//It can break the whole program
 	string toString (const UniValue& val);
@@ -107,28 +109,15 @@ public:
 
 };
 
-class CustomStructure
-{
-	friend class CustomObject;
-	string name;
-	vector<string> fields;
-
-	Interpreter* environment;
-
-public:
-	CustomStructure (const string& name, Interpreter* env);
-	void registerField (const string& name);
-};
-
 class CustomObject
 {
 	map<string, UniValue> vals;
-	const CustomStructure* ref;
+	string type;
 
 public:
-	explicit CustomObject (const CustomStructure* ref);
+	explicit CustomObject (string type);
 
-	void set (const string& name, UniValue val);
+	void set (const string& field, UniValue val);
 	UniValue convert() const;
 };
 
@@ -180,7 +169,7 @@ class HandlerS :public Handler
 public:
 	HandlerS (const string& exe) :exec (exe) {}
 	virtual UniValue operator ()(UniValue arg)
-		{return Interpreter::getInstance()->funcall(exec.c_str(), arg);}
+		{return Interpreter::getInstance()->functcall(exec.c_str(), arg);}
 };
 
 template <typename T>
@@ -202,7 +191,7 @@ public:
 	virtual RET operator ()(TAK val)
 	{
 		UniValue ret = Interpreter::getInstance()->
-				funcall (exec, UniValue::by<TAK>(val));//TODO: optimize this.
+				functcall (exec, UniValue::by<TAK>(val));//TODO: optimize this.
 		return ret.get<RET>();
 	}
 };

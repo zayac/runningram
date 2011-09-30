@@ -6,5 +6,7 @@
 
 ;; the main function which decides what bot should do
 (defun just-decide ()
-  (make-answer 'left 'forward))
+  (if (> (x (vel *current-car*)) 0)
+  	(make-answer 'left 'backward)
+	(make-answer 'right 'backward)))
 
