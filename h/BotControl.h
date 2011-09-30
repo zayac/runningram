@@ -63,6 +63,8 @@ private:
 	class Initializer;
 	class ParserHolder;
 
+	void defineContext();
+
 public:
 	void decide();
 
