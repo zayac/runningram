@@ -117,6 +117,10 @@ class CustomObject
 public:
 	explicit CustomObject (string type);
 
+	template<typename T>
+	inline void set (const string& field, T val)
+	{set (field, UniValue::by<T>(val));}
+
 	void set (const string& field, UniValue val);
 	UniValue convert() const;
 };
