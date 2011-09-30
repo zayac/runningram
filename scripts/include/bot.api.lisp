@@ -16,3 +16,8 @@
 (defun make-answer (lor fob)
   (list (make-lor lor)
 		(make-fob fob)))
+
+(defvar *current-car* nil)
+
+(defun set-current-car (c)
+  (setq *current-car* c))

@@ -9,6 +9,7 @@
 #include "Interpreter.h"
 #include "Timer.h"
 #include "Logger.h"
+#include "Car.h"
 
 
 // <editor-fold defaultstate="collapsed" desc="From file Initializer">
@@ -78,10 +79,21 @@ BotControl::BotControl (Decider* mind_, Timer* time_)
 //--------------------------------------------------------------------------------------------------
 BotControl::~BotControl()
 {
+	if (mind) delete mind;
 }
 //--------------------------------------------------------------------------------------------------
 void BotControl::decide()
-{
+{return;
+	CustomObject pos("vec");
+	pos.set("x", UniValue::by (object->getPos().x));
+	pos.set("y", UniValue::by (object->getPos().y));
+	CustomObject vel("vec");
+	vel.set("x", UniValue::by (object->getVel(object->getPos()).x));
+	vel.set("y", UniValue::by (object->getVel(object->getPos()).y));
+	CustomObject car("car-properties");
+	car.set("pos", pos.convert());
+	car.set("vel", vel.convert());
+	Interpreter::getInstance()->functcall ("set-current-car", car.convert());
 	Command act = (*mind)();
 	act.applay (this);
 }
