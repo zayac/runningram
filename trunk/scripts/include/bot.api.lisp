@@ -21,3 +21,5 @@
 
 (defun set-current-car (c)
   (setq *current-car* c))
+
+(defvar *where-to-go* -1)
